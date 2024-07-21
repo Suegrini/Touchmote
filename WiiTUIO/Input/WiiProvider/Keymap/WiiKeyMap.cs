@@ -31,6 +31,9 @@ namespace WiiTUIO.Provider
 
         private long id;
 
+        private double inputAngle = 0;
+        private double prevAngle = 0;
+
         private Dictionary<string, bool> PressedButtons = new Dictionary<string, bool>()
         {
             {"AccelX+",false},
@@ -43,6 +46,8 @@ namespace WiiTUIO.Provider
             {"Nunchuk.StickDown",false},
             {"Nunchuk.StickLeft",false},
             {"Nunchuk.StickRight",false},
+            {"Nunchuk.Rotation+",false},
+            {"Nunchuk.Rotation-",false},
             {"Nunchuk.AccelX+",false},
             {"Nunchuk.AccelX-",false},
             {"Nunchuk.AccelY+",false},
@@ -377,6 +382,35 @@ namespace WiiTUIO.Provider
                 {
                     PressedButtons["Nunchuk.StickDown"] = false;
                     this.executeButtonUp("Nunchuk.StickDown");
+                }
+
+                prevAngle = inputAngle;
+
+                if (this.config.TryGetValue("Nunchuk.Rotation+", out outConfig))
+                {
+                    if (Math.Abs(nunchuk.Joystick.Y) * 2 > outConfig.Threshold || Math.Abs(nunchuk.Joystick.X) * 2 > outConfig.Threshold) //Only calculate if the stick exceeds the threshold value
+                        inputAngle = Math.Atan2(nunchuk.Joystick.Y, nunchuk.Joystick.X) / Math.PI;
+                    else
+                        inputAngle = 0;
+                }
+                if (this.config.TryGetValue("Nunchuk.Rotation-", out outConfig))
+                {
+                    if (Math.Abs(nunchuk.Joystick.Y) * 2 > outConfig.Threshold || Math.Abs(nunchuk.Joystick.X) * 2 > outConfig.Threshold)
+                        inputAngle = Math.Atan2(nunchuk.Joystick.Y, nunchuk.Joystick.X) / Math.PI;
+                    else
+                        inputAngle = 0;
+                }
+
+                double angleDiff = (inputAngle - prevAngle);
+
+                if (angleDiff != 0) //If the angle changed
+                {
+                    this.executeButtonDown(angleDiff > 0 ? "Nunchuk.Rotation-" : "Nunchuk.Rotation+");
+                }
+                else //No rotation
+                {
+                    this.executeButtonUp("Nunchuk.Rotation+");
+                    this.executeButtonUp("Nunchuk.Rotation-");
                 }
             }
 
