@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using WiimoteLib;
+using WiiTUIO.ArcadeHook;
 using WiiTUIO.Output.Handlers;
 using WiiTUIO.Properties;
 using WindowsInput;
@@ -29,6 +30,7 @@ namespace WiiTUIO.Provider
         /// </summary>
         public Mutex WiimoteMutex = new Mutex();
         private WiiKeyMapper keyMapper;
+        private OutputProvider arcadeHook;
         private bool firstConfig = true;
         private string currentKeymap;
         private HandlerFactory handlerFactory;
@@ -42,11 +44,13 @@ namespace WiiTUIO.Provider
             this.handlerFactory = new HandlerFactory();
 
             this.keyMapper = new WiiKeyMapper(id,handlerFactory);
+            this.arcadeHook = new OutputProvider(id);
 
             this.keyMapper.OnButtonDown += WiiButton_Down;
             this.keyMapper.OnButtonUp += WiiButton_Up;
             this.keyMapper.OnConfigChanged += WiiKeyMap_ConfigChanged;
             this.keyMapper.OnRumble += WiiKeyMap_OnRumble;
+            this.arcadeHook.OnOutput += ArcadeHook_OnOutput;
         }
 
         private void WiiKeyMap_OnRumble(bool rumble)
@@ -55,6 +59,27 @@ namespace WiiTUIO.Provider
             WiimoteMutex.WaitOne();
             this.Wiimote.SetRumble(rumble);
             WiimoteMutex.ReleaseMutex();
+        }
+
+        private void ArcadeHook_OnOutput(string key, int value)
+        {
+            switch (key)
+            {
+                case "rumble":
+                    WiiKeyMap_OnRumble(value > 0);
+                    break;
+                case "LED":
+                    WiimoteMutex.WaitOne();
+                    this.Wiimote.SetLEDs(value >= 1, value >= 2, value >= 3, value >= 4);
+                    WiimoteMutex.ReleaseMutex();
+                    break;
+                case "MameStop":
+                    WiiKeyMap_OnRumble(false);
+                    WiimoteMutex.WaitOne();
+                    this.Wiimote.SetLEDs(this.Status.ID == 1, this.Status.ID == 2, this.Status.ID == 3, this.Status.ID == 4);
+                    WiimoteMutex.ReleaseMutex();
+                    break;
+            }
         }
 
 

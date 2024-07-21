@@ -33,6 +33,7 @@ using Newtonsoft.Json.Linq;
 using WiiTUIO.DeviceUtils;
 using WiiCPP;
 using WiiTUIO.Output.Handlers.Xinput;
+using WiiTUIO.ArcadeHook;
 
 namespace WiiTUIO
 {
@@ -52,6 +53,10 @@ namespace WiiTUIO
         private bool tryingToConnect = false;
 
         private bool startupPair = false;
+
+        private ArcadeHookMain arcadeHook;
+
+        private Thread arcadeHookThread;
 
         private Mutex statusStackMutex = new Mutex();
 
@@ -145,6 +150,8 @@ namespace WiiTUIO
 
             KeymapConfigWindow.Instance.Visibility = System.Windows.Visibility.Collapsed;
             KeymapDatabase.Current.CreateDefaultFiles();
+
+            StartArcadeHook();
 
             this.mainPanel.Visibility = Visibility.Visible;
             this.canvasSettings.Visibility = Visibility.Collapsed;
@@ -346,6 +353,7 @@ namespace WiiTUIO
 
             this.stopWiiPair();
             this.disconnectProvider();
+            this.StopArcadeHook();
 
             ViGEmBusClientSingleton.Disconnect();
             //this.disconnectProviderHandler();
@@ -818,6 +826,26 @@ namespace WiiTUIO
         {
             //this.spErrorMsg.Visibility = Visibility.Collapsed;
             this.animateCollapse(spErrorMsg,false);
+        }
+
+        private void StartArcadeHook()
+        {
+            arcadeHook = ArcadeHookSingleton.Default;
+
+            arcadeHookThread = new Thread(new ThreadStart(arcadeHook.ConnectToServer));
+            arcadeHookThread.IsBackground = true;
+            arcadeHookThread.Start();
+        }
+
+        public void StopArcadeHook()
+        {
+            if (arcadeHook != null)
+            {
+                arcadeHook.Stop();
+                arcadeHookThread.Join();
+                arcadeHook = null;
+                arcadeHookThread = null;
+            }
         }
 
     }

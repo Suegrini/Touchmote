@@ -170,7 +170,7 @@
     <Reference Include="TCD.System.TouchInjection">
       <HintPath>..\packages\TCD.System.TouchInjection.1.0.0\lib\net45\TCD.System.TouchInjection.dll</HintPath>
     </Reference>
-    <Reference Include="VMultiDllWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=AMD64">
+    <Reference Include="VMultiDllWrapper, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\VMultiDllWrapper.dll</HintPath>
     </Reference>
@@ -205,6 +205,10 @@
     <Compile Include="AppSettings.xaml.cs">
       <DependentUpon>AppSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ArcadeHook\ArcadeHook.cs" />
+    <Compile Include="ArcadeHook\ArcadeHookSingleton.cs" />
+    <Compile Include="ArcadeHook\IniFileHandler.cs" />
+    <Compile Include="ArcadeHook\OutputProvider.cs" />
     <Compile Include="Autostart.cs" />
     <Compile Include="DeviceUtils\VmultiUtil.cs" />
     <Compile Include="DeviceUtils\DeviceUtil.cs" />
