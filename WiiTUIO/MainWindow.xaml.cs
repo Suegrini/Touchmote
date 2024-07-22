@@ -233,7 +233,7 @@ namespace WiiTUIO
             if((Settings.Default.dolphin_path == "" && obj.Process.ProcessName == "Dolphin"))
             {
                 Console.WriteLine("Dolphin detected. Disconnecting provider. Hiding overlay window.");
-                this.disconnectProvider();
+                this.disconnectDolphin();
                 D3DCursorWindow.Current.RefreshCursors();
             }
             else if(obj.Process.ProcessName == "Dolphin" && (Settings.Default.dolphin_path.IndexOfAny(Path.GetInvalidPathChars()) == -1))
@@ -241,7 +241,7 @@ namespace WiiTUIO
                 if (obj.Process.MainModule?.FileName == Path.GetFullPath(Settings.Default.dolphin_path))
                 {
                     Console.WriteLine("Dolphin detected. Disconnecting provider. Hiding overlay window.");
-                    this.disconnectProvider();
+                    this.disconnectDolphin();
                     D3DCursorWindow.Current.RefreshCursors();
                 }
             }
@@ -667,6 +667,16 @@ namespace WiiTUIO
                         }));
                     }));
                 }));
+            }
+        }
+
+        private void disconnectDolphin()
+        {
+            this.tryingToConnect = false;
+            // Disconnect the Wiimote.
+            if (this.pWiiProvider != null)
+            {
+                this.pWiiProvider.stop();
             }
         }
         #endregion
