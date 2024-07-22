@@ -134,10 +134,13 @@ namespace WiiTUIO.Provider
         public int WiimoteID;
         private bool hideOverlayOnUp = false;
         private bool releaseHomeOnNextUpdate = false;
+        private bool prevOutOfReach = true;
 
         private List<IOutputHandler> outputHandlers;
 
         private ScreenPositionCalculator screenPositionCalculator;
+
+        public CursorPos cursorPos;
 
         public WiiKeyMapper(int wiimoteID, HandlerFactory handlerFactory)
         {
@@ -420,7 +423,7 @@ namespace WiiTUIO.Provider
                 handler.startUpdate();
             }
 
-            CursorPos cursorPos = this.screenPositionCalculator.CalculateCursorPos(wiimoteState);
+            cursorPos = this.screenPositionCalculator.CalculateCursorPos(wiimoteState);
 
             this.KeyMap.updateCursorPosition(cursorPos);
             this.KeyMap.updateAccelerometer(wiimoteState.AccelState);
@@ -483,6 +486,8 @@ namespace WiiTUIO.Provider
             {
                 Console.WriteLine("********************************significant");
             }
+
+            prevOutOfReach = this.cursorPos.OutOfReach ? true : false;
 
             return significant;
         }
@@ -567,6 +572,8 @@ namespace WiiTUIO.Provider
                 }
                 else
                 {
+                    if (this.cursorPos.OutOfReach)
+                        buttonName = "OffScreen." + buttonName;
                     this.KeyMap.executeButtonDown(buttonName);
                 }
             }
@@ -578,6 +585,9 @@ namespace WiiTUIO.Provider
                 {
                     Console.WriteLine("home up");
                     this.homeButtonTimer.Stop();
+
+                    if (this.cursorPos.OutOfReach)
+                        buttonName = "OffScreen." + buttonName;
 
                     if (this.hideOverlayOnUp)
                     {
@@ -595,7 +605,30 @@ namespace WiiTUIO.Provider
                 }
                 else
                 {
+                    if (this.cursorPos.OutOfReach)
+                        buttonName = "OffScreen." + buttonName;
+
                     this.KeyMap.executeButtonUp(buttonName);
+                }
+            }
+            else if (pressedNow && pressedBefore)
+            {
+                if (this.cursorPos.OutOfReach != prevOutOfReach) //Change pressed button if OutOfReach value changes
+                {
+                    //Only execute if OnScreen and OffScreen values are different
+                    if (!this.KeyMap.isInherited("OffScreen." + buttonName))
+                    {
+                        if (this.cursorPos.OutOfReach)
+                        {
+                            this.KeyMap.executeButtonUp(buttonName);
+                            this.KeyMap.executeButtonDown("OffScreen." + buttonName);
+                        }
+                        else
+                        {
+                            this.KeyMap.executeButtonUp("OffScreen." + buttonName);
+                            this.KeyMap.executeButtonDown(buttonName);
+                        }
+                    }
                 }
             }
 

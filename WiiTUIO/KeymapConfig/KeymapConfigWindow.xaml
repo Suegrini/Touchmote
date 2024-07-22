@@ -58,21 +58,27 @@
                     </StackPanel>
                     <Border BorderBrush="#FFCBCBCB" BorderThickness="0,0,0,1" Margin="6"></Border>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10">
-                        <Label FontFamily="Segoe UI Semilight" FontSize="13" Margin="20,2,2,2">Controllers</Label>
+                        <Label FontFamily="Segoe UI Semilight" FontSize="13" Margin="2,2,2,2">Controllers</Label>
                         <Border Name="btnAllBorder" Background="#FF2E2E2E" CornerRadius="2" Margin="2">
-                            <Button Cursor="Hand" Name="btnAll" Click="btnAll_Click" Background="{x:Null}" Foreground="White" Padding="8,0" Height="27">All</Button>
+                            <Button Cursor="Hand" Name="btnAll" Click="btnAll_Click" Background="{x:Null}" Foreground="White" Padding="4,0" Height="27">All</Button>
                         </Border>
                         <Border Name="btn1Border" Background="#FF2E2E2E" CornerRadius="2" Margin="2">
-                            <Button Cursor="Hand" Name="btn1" Click="btn1_Click" Background="{x:Null}" Foreground="White" Padding="8,0" Height="27">1</Button>
+                            <Button Cursor="Hand" Name="btn1" Click="btn1_Click" Background="{x:Null}" Foreground="White" Padding="6,0" Height="27">1</Button>
                         </Border>
                         <Border Name="btn2Border" Background="#FF2E2E2E" CornerRadius="2" Margin="2">
-                            <Button Cursor="Hand" Name="btn2" Click="btn2_Click" Background="{x:Null}" Foreground="White" Padding="8,0" Height="27">2</Button>
+                            <Button Cursor="Hand" Name="btn2" Click="btn2_Click" Background="{x:Null}" Foreground="White" Padding="6,0" Height="27">2</Button>
                         </Border>
                         <Border Name="btn3Border" Background="#FF2E2E2E" CornerRadius="2" Margin="2">
-                            <Button Cursor="Hand" Name="btn3" Click="btn3_Click" Background="{x:Null}" Foreground="White" Padding="8,0" Height="27">3</Button>
+                            <Button Cursor="Hand" Name="btn3" Click="btn3_Click" Background="{x:Null}" Foreground="White" Padding="6,0" Height="27">3</Button>
                         </Border>
                         <Border Name="btn4Border" Background="#FF2E2E2E" CornerRadius="2" Margin="2">
-                            <Button Cursor="Hand" Name="btn4" Click="btn4_Click" Background="{x:Null}" Foreground="White" Padding="8,0" Height="27">4</Button>
+                            <Button Cursor="Hand" Name="btn4" Click="btn4_Click" Background="{x:Null}" Foreground="White" Padding="6,0" Height="27">4</Button>
+                        </Border>
+                        <Border Name="rad1Border" CornerRadius="2" Margin="20,2,2,2">
+                            <RadioButton Name="rbOnscreen" FontFamily="Segoe UI Semilight" Margin="2">On Screen</RadioButton>
+                        </Border>
+                        <Border Name="rad2Border" CornerRadius="2" Margin="2">
+                            <RadioButton Name="rbOffscreen" FontFamily="Segoe UI Semilight" Margin="2">Off Screen</RadioButton>
                         </Border>
                     </StackPanel>
                     <Label FontFamily="Segoe UI Light" FontSize="18" Padding="10">Wiimote</Label>

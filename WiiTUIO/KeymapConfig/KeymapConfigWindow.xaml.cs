@@ -12,8 +12,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace WiiTUIO
 {
@@ -73,11 +71,16 @@ namespace WiiTUIO
             this.cbApplicationSearch.Checked += cbApplicationSearch_Checked;
             this.cbApplicationSearch.Unchecked += cbApplicationSearch_Unchecked;
 
+            this.rbOnscreen.Checked += rbOnscreen_Checked;
+            this.rbOffscreen.Checked += rbOffscreen_Checked;
+
         }
 
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
+
+            rbOnscreen.IsChecked = true;
 
             this.fillOutputList(selectedOutput, null);
 
@@ -180,10 +183,10 @@ namespace WiiTUIO
             this.spNunchukConnections.Children.Clear();
             this.spClassicConnections.Children.Clear();
 
-            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.IR), keymap, wiimote, defaultKeymap, this.spWiimoteConnections);
-            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.WIIMOTE), keymap, wiimote, defaultKeymap, this.spWiimoteConnections);
-            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.NUNCHUK), keymap, wiimote, defaultKeymap, this.spNunchukConnections);
-            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.CLASSIC), keymap, wiimote, defaultKeymap, this.spClassicConnections);
+            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.IR, rbOnscreen.IsChecked ?? false), keymap, wiimote, defaultKeymap, this.spWiimoteConnections);
+            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.WIIMOTE, rbOnscreen.IsChecked ?? false), keymap, wiimote, defaultKeymap, this.spWiimoteConnections);
+            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.NUNCHUK, rbOnscreen.IsChecked ?? false), keymap, wiimote, defaultKeymap, this.spNunchukConnections);
+            this.appendConnectionList(KeymapDatabase.Current.getAvailableInputs(KeymapInputSource.CLASSIC, rbOnscreen.IsChecked ?? false), keymap, wiimote, defaultKeymap, this.spClassicConnections);
 
         }
 
@@ -442,6 +445,18 @@ namespace WiiTUIO
         {
             e.Cancel = true;
             this.Visibility = System.Windows.Visibility.Collapsed;
+        }
+
+        private void rbOnscreen_Checked(object sender, RoutedEventArgs e)
+        {
+            rbOffscreen.IsChecked = false;
+            this.fillConnectionLists(currentKeymap, this.selectedWiimote);
+        }
+
+        private void rbOffscreen_Checked(object sender, RoutedEventArgs e)
+        {
+            rbOnscreen.IsChecked = false;
+            this.fillConnectionLists(currentKeymap, this.selectedWiimote);
         }
     }
 }
