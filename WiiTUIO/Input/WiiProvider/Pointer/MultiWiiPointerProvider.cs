@@ -437,11 +437,15 @@ namespace WiiTUIO.Provider
                     wiimoteid = this.pWiimoteMap.Count + 1;
                 }
                 pDeviceMutex.ReleaseMutex();
+                
+                try
+                {
+                    pDevice.SetReportType(InputReport.Status, false);
 
-                pDevice.SetReportType(InputReport.Status, false);
-
-                pDevice.SetRumble(false);
-                pDevice.SetLEDs(true, true, true, true);
+                    pDevice.SetRumble(false);
+                    pDevice.SetLEDs(true, true, true, true);
+                }
+                catch { }
 
                 // Close the connection and dispose of the device.
                 pDevice.Disconnect();
