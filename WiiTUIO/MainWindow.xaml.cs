@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Threading;
 
 using OSC.NET;
@@ -231,11 +230,20 @@ namespace WiiTUIO
 
         private void processChanged(ProcessChangedEvent obj)
         {
-            if (obj.Process.ProcessName == "Dolphin")
+            if((Settings.Default.dolphin_path == "" && obj.Process.ProcessName == "Dolphin"))
             {
                 Console.WriteLine("Dolphin detected. Disconnecting provider. Hiding overlay window.");
                 this.disconnectProvider();
                 D3DCursorWindow.Current.RefreshCursors();
+            }
+            else if(obj.Process.ProcessName == "Dolphin" && (Settings.Default.dolphin_path.IndexOfAny(Path.GetInvalidPathChars()) == -1))
+            {
+                if (obj.Process.MainModule?.FileName == Path.GetFullPath(Settings.Default.dolphin_path))
+                {
+                    Console.WriteLine("Dolphin detected. Disconnecting provider. Hiding overlay window.");
+                    this.disconnectProvider();
+                    D3DCursorWindow.Current.RefreshCursors();
+                }
             }
             else
             {

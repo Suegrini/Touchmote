@@ -181,6 +181,17 @@ namespace WiiTUIO.Properties
             }
         }
 
+        private string _dolphin_path = "";
+        public string dolphin_path
+        {
+            get { return _dolphin_path; }
+            set
+            {
+                _dolphin_path = value;
+                OnPropertyChanged("dolphin_path");
+            }
+        }
+
         private string _tuio_IP = "127.0.0.1";
         public string tuio_IP
         {
