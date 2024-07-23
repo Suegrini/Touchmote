@@ -217,6 +217,9 @@
     <Compile Include="Filters\OneEuroFilter.cs" />
     <Compile Include="Filters\RadiusBuffer.cs" />
     <Compile Include="Filters\SmoothingBuffer.cs" />
+    <Compile Include="Input\WiiProvider\Settings\CalibrationOverlay.xaml.cs">
+      <DependentUpon>CalibrationOverlay.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Output\CursorPositionHelper.cs" />
     <Compile Include="Output\Handlers\HandlerFactory.cs" />
     <Compile Include="Output\Handlers\ICursorHandler.cs" />
@@ -289,6 +292,10 @@
     <Page Include="AppSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Input\WiiProvider\Settings\CalibrationOverlay.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="KeymapConfig\KeymapOutputRow.xaml">
       <Generator>MSBuild:Compile</Generator>

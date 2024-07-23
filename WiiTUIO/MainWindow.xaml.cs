@@ -184,6 +184,17 @@ namespace WiiTUIO
             overlayUIThread.Priority = ThreadPriority.Highest;
             overlayUIThread.Start();
 
+            Thread CalibrationThread = new Thread(() =>
+            {
+                CalibrationOverlay.Current.Show();
+
+                System.Windows.Threading.Dispatcher.Run();
+            });
+            CalibrationThread.SetApartmentState(ApartmentState.STA);
+            CalibrationThread.IsBackground = true;
+            CalibrationThread.Priority = ThreadPriority.Highest;
+            CalibrationThread.Start();
+
             Application.Current.Exit += appWillExit;
             Application.Current.SessionEnding += windowsShutdownEvent;
 

@@ -128,12 +128,13 @@ namespace WiiTUIO.Provider
         private Keymap defaultKeymap; //Always default.json
         private Keymap fallbackKeymap; //Decided by the layout chooser
         private Keymap applicationKeymap; // Loaded by auto profile system
+        private Keymap calibrationKeymap;
 
-        private Timer homeButtonTimer;
+        private Timer buttonTimer;
 
         public int WiimoteID;
         private bool hideOverlayOnUp = false;
-        private bool releaseHomeOnNextUpdate = false;
+        private string releaseButtonOnNextUpdate = "";
         private bool prevOffScreen = true;
 
         private List<IOutputHandler> outputHandlers;
@@ -167,10 +168,10 @@ namespace WiiTUIO.Provider
             this.processMonitor.ProcessChanged += processChanged;
             this.processMonitor.Start();
 
-            homeButtonTimer = new Timer();
-            homeButtonTimer.Interval = 1000;
-            homeButtonTimer.AutoReset = true;
-            homeButtonTimer.Elapsed += homeButtonTimer_Elapsed;
+            buttonTimer = new Timer();
+            buttonTimer.Interval = 1000;
+            buttonTimer.AutoReset = true;
+            buttonTimer.Elapsed += buttonTimer_Elapsed;
 
             KeymapConfigWindow.Instance.OnConfigChanged += keymapConfigWindow_OnConfigChanged;
         }
@@ -178,6 +179,7 @@ namespace WiiTUIO.Provider
         private void initialize(bool callConfigChangedEvt=true)
         {
             this.defaultKeymap = KeymapDatabase.Current.getDefaultKeymap();
+            this.calibrationKeymap = KeymapDatabase.Current.getCalibrationKeymap();
 
             JObject specificKeymap = new JObject();
             JObject commonKeymap = new JObject();
@@ -295,9 +297,18 @@ namespace WiiTUIO.Provider
             this.setKeymap(this.fallbackKeymap); //Switch to fallback even if we did not choose anything in the chooser.
         }
 
-        void homeButtonTimer_Elapsed(object sender, ElapsedEventArgs e)
+        public void SwitchToCalibration()
         {
-            if (isButtonPressed(ButtonFlag.Home))
+            this.setKeymap(this.calibrationKeymap); //Switch to fallback even if we did not choose anything in the chooser.
+        }
+
+        void buttonTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (isButtonPressed(ButtonFlag.Minus))
+            {
+                CalibrationOverlay.Current.StartCalibration(this);
+            }
+            else if (isButtonPressed(ButtonFlag.Home))
             {
                 this.setKeymap(this.defaultKeymap);
                 OverlayWindow.Current.ShowLayoutOverlay(this);
@@ -459,10 +470,15 @@ namespace WiiTUIO.Provider
                 significant |= checkButtonState(classicButtonState.ZR, "Classic.ZR");
             }
 
-            if (this.releaseHomeOnNextUpdate)
+            if (this.releaseButtonOnNextUpdate == "Home")
             {
-                this.releaseHomeOnNextUpdate = false;
+                this.releaseButtonOnNextUpdate = "";
                 this.KeyMap.executeButtonUp("Home");
+            }
+            if (this.releaseButtonOnNextUpdate == "Minus")
+            {
+                this.releaseButtonOnNextUpdate = "";
+                this.KeyMap.executeButtonUp("Minus");
             }
 
             significant |= checkButtonState(buttonState.A, "A");
@@ -557,17 +573,17 @@ namespace WiiTUIO.Provider
             {
                 setPressedButton(buttonFlag, true);
                 significant = true;
-                if (buttonName == "Home")
+                if (buttonName == "Home" || buttonName == "Minus")
                 {
-                    Console.WriteLine("home down");
-                    if (OverlayWindow.Current.OverlayIsOn())
+                    Console.WriteLine("button down");
+                    if (OverlayWindow.Current.OverlayIsOn() || CalibrationOverlay.Current.OverlayIsOn())
                     {
                         this.hideOverlayOnUp = true;
                         Console.WriteLine("hide overlay on up");
                     }
                     else
                     {
-                        this.homeButtonTimer.Start();
+                        this.buttonTimer.Start();
                     }
                 }
                 else
@@ -581,10 +597,10 @@ namespace WiiTUIO.Provider
             {
                 setPressedButton(buttonFlag, false);
                 significant = true;
-                if (buttonName == "Home")
+                if (buttonName == "Home" || buttonName == "Minus")
                 {
-                    Console.WriteLine("home up");
-                    this.homeButtonTimer.Stop();
+                    Console.WriteLine("button up");
+                    this.buttonTimer.Stop();
 
                     if (this.cursorPos.OffScreen)
                         buttonName = "OffScreen." + buttonName;
@@ -592,15 +608,16 @@ namespace WiiTUIO.Provider
                     if (this.hideOverlayOnUp)
                     {
                         this.hideOverlayOnUp = false;
-                        OverlayWindow.Current.HideOverlay();
+                        if (OverlayWindow.Current.OverlayIsOn()) OverlayWindow.Current.HideOverlay();
+                        if (CalibrationOverlay.Current.OverlayIsOn()) CalibrationOverlay.Current.CancelCalibration();
                     }
                     else if (OverlayWindow.Current.OverlayIsOn()) //We opened the overlay on this down
                     {
                     }
                     else
                     {
-                        this.KeyMap.executeButtonDown("Home");
-                        this.releaseHomeOnNextUpdate = true;
+                        this.KeyMap.executeButtonDown(buttonName);
+                        this.releaseButtonOnNextUpdate = buttonName;
                     }
                 }
                 else
