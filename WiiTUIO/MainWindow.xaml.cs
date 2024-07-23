@@ -165,6 +165,7 @@ namespace WiiTUIO
             overlayUIThread = new Thread(() =>
             {
                 OverlayWindow.Current.Show();
+                CalibrationOverlay.Current.Show();
 
                 if (Settings.Default.pointer_customCursor)
                 {
@@ -183,17 +184,6 @@ namespace WiiTUIO
             overlayUIThread.IsBackground = true;
             overlayUIThread.Priority = ThreadPriority.Highest;
             overlayUIThread.Start();
-
-            Thread CalibrationThread = new Thread(() =>
-            {
-                CalibrationOverlay.Current.Show();
-
-                System.Windows.Threading.Dispatcher.Run();
-            });
-            CalibrationThread.SetApartmentState(ApartmentState.STA);
-            CalibrationThread.IsBackground = true;
-            CalibrationThread.Priority = ThreadPriority.Highest;
-            CalibrationThread.Start();
 
             Application.Current.Exit += appWillExit;
             Application.Current.SessionEnding += windowsShutdownEvent;
