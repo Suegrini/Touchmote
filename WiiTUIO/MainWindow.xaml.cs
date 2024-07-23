@@ -145,10 +145,11 @@ namespace WiiTUIO
 
         protected override void OnInitialized(EventArgs e)
         {
- 	        base.OnInitialized(e);
+            KeymapDatabase.Current.CreateDefaultFiles();
+
+            base.OnInitialized(e);
 
             KeymapConfigWindow.Instance.Visibility = System.Windows.Visibility.Collapsed;
-            KeymapDatabase.Current.CreateDefaultFiles();
 
             StartArcadeHook();
 
