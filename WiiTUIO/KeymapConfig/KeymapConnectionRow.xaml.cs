@@ -234,7 +234,7 @@ namespace WiiTUIO
         {
             if (this.config.Stack.Count == 1)
             {
-                if (this.fromDefault)
+                if (this.fromDefault && this.input.OnScreen)
                 {
                     this.SetConfig(new KeymapOutConfig(KeymapDatabase.Current.getDisableOutput(), false));
                 }
