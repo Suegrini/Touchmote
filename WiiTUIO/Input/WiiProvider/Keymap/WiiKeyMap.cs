@@ -34,7 +34,7 @@ namespace WiiTUIO.Provider
         private double inputAngle = 0;
         private double prevAngle = 0;
 
-        private bool prevOutOfReach = false;
+        private bool prevOffScreen = false;
 
         private Dictionary<string, bool> PressedButtons = new Dictionary<string, bool>()
         {
@@ -133,7 +133,7 @@ namespace WiiTUIO.Provider
         {
             KeymapOutConfig outConfig;
 
-            if (cursorPosition.OutOfReach != prevOutOfReach) //Change pressed button if OutOfReach value changes
+            if (cursorPosition.OffScreen != prevOffScreen) //Change pressed button if OffScreen value changes
             {
                 foreach (var button in PressedButtons)
                 {
@@ -143,7 +143,7 @@ namespace WiiTUIO.Provider
                         if (!this.isInherited("OffScreen." + button.Key))
                         {
                             Console.WriteLine(button.Key);
-                            if (!cursorPosition.OutOfReach)
+                            if (!cursorPosition.OffScreen)
                             {
                                 this.executeButtonUp("OffScreen." + button.Key);
                                 this.executeButtonDown(button.Key);
@@ -158,46 +158,46 @@ namespace WiiTUIO.Provider
                 }
             }
 
-
-            if (!cursorPosition.OutOfReach)
+            if (!cursorPosition.OffScreen)
             {
-                prevOutOfReach = false;
+                prevOffScreen = false;
                 this.executeButtonUp("OffScreen.Pointer");
-                if (this.config.TryGetValue("Pointer", out outConfig))
+            }
+            else
+            {
+                if (this.config.TryGetValue("OffScreen.Pointer", out outConfig) && !prevOffScreen)
                 {
-                    foreach (IOutputHandler handler in outputHandlers)
+                    this.executeButtonDown("OffScreen.Pointer");
+                }
+                prevOffScreen = true;
+            }
+
+            if (this.config.TryGetValue("Pointer", out outConfig))
+            {
+                foreach (IOutputHandler handler in outputHandlers)
+                {
+                    ICursorHandler cursorHandler = handler as ICursorHandler;
+                    if (cursorHandler != null)
                     {
-                        ICursorHandler cursorHandler = handler as ICursorHandler;
-                        if (cursorHandler != null)
+                        foreach (KeymapOutput output in outConfig.Stack) //Will normally be only one output config
                         {
-                            foreach (KeymapOutput output in outConfig.Stack) //Will normally be only one output config
+                            if (output.Cursor)
                             {
-                                if (output.Cursor)
+                                if (cursorHandler.setPosition(output.Key, cursorPosition))
                                 {
-                                    if (cursorHandler.setPosition(output.Key, cursorPosition))
-                                    {
-                                        break; // we will break for the first accepting handler, for each output key
-                                    }
+                                    break; // we will break for the first accepting handler, for each output key
                                 }
                             }
                         }
                     }
                 }
             }
-            else
-            {
-                if (this.config.TryGetValue("OffScreen.Pointer", out outConfig) && !prevOutOfReach)
-                {
-                    this.executeButtonDown("OffScreen.Pointer");
-                }
-                prevOutOfReach = true;
-            }
         }
 
         public void updateAccelerometer(AccelState accelState)
         {
             string offscreen = null;
-            if (prevOutOfReach)
+            if (prevOffScreen)
             {
                 offscreen = "OffScreen.";
             }
@@ -339,7 +339,7 @@ namespace WiiTUIO.Provider
         public void updateNunchuk(NunchukState nunchuk)
         {
             string offscreen = null;
-            if (prevOutOfReach)
+            if (prevOffScreen)
             {
                 offscreen = "OffScreen.";
             }
@@ -619,7 +619,7 @@ namespace WiiTUIO.Provider
         public void updateClassicController(ClassicControllerState classic)
         {
             string offscreen = null;
-            if (prevOutOfReach)
+            if (prevOffScreen)
             {
                 offscreen = "OffScreen.";
             }
