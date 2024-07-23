@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WiiTUIO.Input;
+using PointF = WiimoteLib.PointF;
 
 namespace WiiTUIO.Properties
 {
@@ -492,51 +493,107 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private double _test_topLeftGunX = 0.15;
-        public double test_topLeftGunX
+        private PointF _test_topLeftGun1 = new PointF { X = 0.15f, Y = 0.002f };
+        public PointF test_topLeftGun1
         {
-            get => _test_topLeftGunX;
+            get => _test_topLeftGun1;
             set
             {
-                if (_test_topLeftGunX == value) return;
-                _test_topLeftGunX = Math.Min(1.0, Math.Max(0.0, value));
-                OnPropertyChanged("test_topLeftGunX");
+                if (_test_topLeftGun1.X == value.X && _test_topLeftGun1.Y == value.Y) return;
+                _test_topLeftGun1.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_topLeftGun1.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
             }
         }
 
-        private double _test_topLeftGunY = 0.002;
-        public double test_topLeftGunY
+        private PointF _test_centerGun1 = new PointF { X = 0.43f, Y = 0.205f };
+        public PointF test_centerGun1
         {
-            get => _test_topLeftGunY;
+            get => _test_centerGun1;
             set
             {
-                if (_test_topLeftGunY == value) return;
-                _test_topLeftGunY = Math.Min(1.0, Math.Max(0.0, value));
-                OnPropertyChanged("test_topLeftGunY");
+                if (_test_centerGun1.X == value.X && _test_centerGun1.Y == value.Y) return;
+                _test_centerGun1.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_centerGun1.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
             }
         }
 
-        private double _test_centerGunX = 0.43;
-        public double test_centerGunX
+        private PointF _test_topLeftGun2 = new PointF { X = 0.15f, Y = 0.002f };
+        public PointF test_topLeftGun2
         {
-            get => _test_centerGunX;
+            get => _test_topLeftGun2;
             set
             {
-                if (_test_centerGunX == value) return;
-                _test_centerGunX = Math.Min(1.0, Math.Max(0.0, value));
-                OnPropertyChanged("test_centerGunX");
+                if (_test_topLeftGun2.X == value.X && _test_topLeftGun2.Y == value.Y) return;
+                _test_topLeftGun2.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_topLeftGun2.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
             }
         }
 
-        private double _test_centerGunY = 0.205;
-        public double test_centerGunY
+        private PointF _test_centerGun2 = new PointF { X = 0.43f, Y = 0.205f };
+        public PointF test_centerGun2
         {
-            get => _test_centerGunY;
+            get => _test_centerGun2;
             set
             {
-                if (_test_centerGunY == value) return;
-                _test_centerGunY = Math.Min(1.0, Math.Max(0.0, value));
-                OnPropertyChanged("test_centerGunY");
+                if (_test_centerGun2.X == value.X && _test_centerGun2.Y == value.Y) return;
+                _test_centerGun2.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_centerGun2.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
+            }
+        }
+
+        private PointF _test_topLeftGun3 = new PointF { X = 0.15f, Y = 0.002f };
+        public PointF test_topLeftGun3
+        {
+            get => _test_topLeftGun3;
+            set
+            {
+                if (_test_topLeftGun3.X == value.X && _test_topLeftGun3.Y == value.Y) return;
+                _test_topLeftGun3.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_topLeftGun3.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
+            }
+        }
+
+        private PointF _test_centerGun3 = new PointF { X = 0.43f, Y = 0.205f };
+        public PointF test_centerGun3
+        {
+            get => _test_centerGun3;
+            set
+            {
+                if (_test_centerGun3.X == value.X && _test_centerGun3.Y == value.Y) return;
+                _test_centerGun3.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_centerGun3.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
+            }
+        }
+
+        private PointF _test_topLeftGun4 = new PointF { X = 0.15f, Y = 0.002f };
+        public PointF test_topLeftGun4
+        {
+            get => _test_topLeftGun4;
+            set
+            {
+                if (_test_topLeftGun4.X == value.X && _test_topLeftGun4.Y == value.Y) return;
+                _test_topLeftGun4.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_topLeftGun4.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
+            }
+        }
+
+        private PointF _test_centerGun4 = new PointF { X = 0.43f, Y = 0.205f };
+        public PointF test_centerGun4
+        {
+            get => _test_centerGun4;
+            set
+            {
+                if (_test_centerGun4.X == value.X && _test_centerGun4.Y == value.Y) return;
+                _test_centerGun4.X = (float)Math.Min(1.0, Math.Max(0.0, value.X));
+                _test_centerGun4.Y = (float)Math.Min(1.0, Math.Max(0.0, value.Y));
+                OnPropertyChanged("test_topLeftGun");
             }
         }
 

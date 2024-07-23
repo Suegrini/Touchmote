@@ -153,7 +153,7 @@ namespace WiiTUIO.Provider
 
             // Need process monitor and screen position calculator here
             this.processMonitor = SystemProcessMonitor.Default;
-            this.screenPositionCalculator = new ScreenPositionCalculator();
+            this.screenPositionCalculator = new ScreenPositionCalculator(this.WiimoteID);
 
             // Do not launch config changed event yet. Wait.
             this.initialize(callConfigChangedEvt: false);
