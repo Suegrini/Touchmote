@@ -93,7 +93,8 @@ namespace WiiTUIO.Provider
             else if(evt.Filename != currentKeymap)
             {
                 currentKeymap = evt.Filename;
-                OverlayWindow.Current.ShowNotice("Layout for Wiimote " + this.Status.ID + " changed to \"" + evt.Name + "\"", this.Status.ID);
+                if (Settings.Default.notifications_enabled)
+                    OverlayWindow.Current.ShowNotice("Layout for Wiimote " + this.Status.ID + " changed to \"" + evt.Name + "\"", this.Status.ID);
             }
         }
 

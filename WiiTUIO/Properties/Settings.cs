@@ -83,6 +83,17 @@ namespace WiiTUIO.Properties
             }
         }
 
+        private bool _notifications_enabled = true;
+        public bool notifications_enabled
+        {
+            get { return _notifications_enabled; }
+            set
+            {
+                _notifications_enabled = value;
+                OnPropertyChanged("notifications_enabled");
+            }
+        }
+
         private bool _pairedOnce = false;
         public bool pairedOnce
         {
