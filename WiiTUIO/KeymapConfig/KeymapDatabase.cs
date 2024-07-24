@@ -39,6 +39,10 @@ namespace WiiTUIO
 
             allInputs = new List<KeymapInput>();
             allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer", "Pointer", false, false, true));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Left", "Pointer.Left", true, true, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Right", "Pointer.Right", true, true, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Up", "Pointer.Up", true, true, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Down", "Pointer.Down", true, true, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "A", "A"));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "B", "B"));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "Home", "Home"));
@@ -103,6 +107,10 @@ namespace WiiTUIO
 
 
             allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer", "OffScreen.Pointer", false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Left", "OffScreen.Pointer.Left", true, true, false, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Right", "OffScreen.Pointer.Right", true, true, false, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Up", "OffScreen.Pointer.Up", true, true, false, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer Down", "OffScreen.Pointer.Down", true, true, false, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "A", "OffScreen.A", false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "B", "OffScreen.B", false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "Home", "OffScreen.Home", false));

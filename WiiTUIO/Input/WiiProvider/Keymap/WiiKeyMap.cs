@@ -38,6 +38,10 @@ namespace WiiTUIO.Provider
 
         private Dictionary<string, bool> PressedButtons = new Dictionary<string, bool>()
         {
+            {"Pointer.Left",false},
+            {"Pointer.Right",false},
+            {"Pointer.Up",false},
+            {"Pointer.Down",false},
             {"AccelX+",false},
             {"AccelX-",false},
             {"AccelY+",false},
@@ -192,6 +196,103 @@ namespace WiiTUIO.Provider
                     }
                 }
             }
+
+            string offscreen = null;
+
+            if (prevOffScreen)
+            {
+                offscreen = "OffScreen.";
+            }
+
+            if (this.config.TryGetValue(offscreen + "Pointer.Left", out outConfig))
+            {
+                if (cursorPosition.X < 0.5)
+                {
+                    updateStickHandlers(outConfig, 2 *cursorPosition.X);
+                }
+                else if (cursorPosition.X == 0.5)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.X < outConfig.Threshold / 2 && !PressedButtons["Pointer.Left"])
+                {
+                    PressedButtons["Pointer.Left"] = true;
+                    this.executeButtonDown(offscreen + "Pointer.Left");
+                }
+                else if (cursorPosition.X < outConfig.Threshold / 2 && PressedButtons["Pointer.Left"])
+                {
+                    PressedButtons["Pointer.Left"] = false;
+                    this.executeButtonUp(offscreen + "Pointer.Left");
+                }
+            }
+            if (this.config.TryGetValue(offscreen + "Pointer.Right", out outConfig))
+            {
+                if (cursorPosition.X - 0.5 > 0)
+                {
+                    updateStickHandlers(outConfig, 2 * cursorPosition.X);
+                }
+                else if (cursorPosition.X - 0.5 == 0)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.X - 0.5 > outConfig.Threshold / 2 && !PressedButtons["Pointer.Right"])
+                {
+                    PressedButtons["Pointer.Right"] = true;
+                    this.executeButtonDown(offscreen + "Pointer.Right");
+                }
+                else if (cursorPosition.X - 0.5 < outConfig.Threshold / 2 && PressedButtons["Pointer.Right"])
+                {
+                    PressedButtons["Pointer.Right"] = false;
+                    this.executeButtonUp(offscreen + "Pointer.Right");
+                }
+            }
+            if (this.config.TryGetValue(offscreen + "Pointer.Down", out outConfig))
+            {
+                if (cursorPosition.Y - 0.5 > 0)
+                {
+                    updateStickHandlers(outConfig, 2 * cursorPosition.Y);
+                }
+                else if (cursorPosition.Y - 0.5 == 0)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.Y - 0.5 > outConfig.Threshold / 2 && !PressedButtons["Pointer.Down"])
+                {
+                    PressedButtons["Pointer.Down"] = true;
+                    this.executeButtonDown(offscreen + "Pointer.Down");
+                }
+                else if (cursorPosition.Y - 0.5 < outConfig.Threshold / 2 && PressedButtons["Pointer.Down"])
+                {
+                    PressedButtons["Pointer.Down"] = false;
+                    this.executeButtonUp(offscreen + "Pointer.Down");
+                }
+            }
+            if (this.config.TryGetValue(offscreen + "Pointer.Up", out outConfig))
+            {
+                if (cursorPosition.Y < 0.5)
+                {
+                    updateStickHandlers(outConfig, 2 * cursorPosition.Y);
+                }
+                else if (cursorPosition.Y == 0.5)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.Y < outConfig.Threshold / 2 && !PressedButtons["Pointer.Up"])
+                {
+                    PressedButtons["Pointer.Up"] = true;
+                    this.executeButtonDown(offscreen + "Pointer.Up");
+                }
+                else if (cursorPosition.Y < outConfig.Threshold / 2 && PressedButtons["Pointer.Up"])
+                {
+                    PressedButtons["Pointer.Up"] = false;
+                    this.executeButtonUp(offscreen + "Pointer.Up");
+                }
+            }
+
         }
 
         public void updateAccelerometer(AccelState accelState)
