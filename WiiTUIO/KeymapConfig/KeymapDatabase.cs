@@ -335,6 +335,7 @@ namespace WiiTUIO
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Left Stick Down", "360.stickldown", true, true, false, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Left Stick Left", "360.sticklleft", true, true, false, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Left Stick Right", "360.sticklright", true, true, false, false));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Left Stick Center", "360.sticklcenter"));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Stick", "360.stickr", false, false, true, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Stick Light", "360.stickr-light", false, false, true, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Stick Light 4:3", "360.stickr-light-4:3", false, false, true, false));
@@ -342,6 +343,7 @@ namespace WiiTUIO
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Stick Down", "360.stickrdown", true, true, false, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Stick Left", "360.stickrleft", true, true, false, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Stick Right", "360.stickrright", true, true, false, false));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Stick Center", "360.stickrcenter"));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Left Trigger", "360.triggerl", true, true, false, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Trigger", "360.triggerr", true, true, false, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Left Bumper", "360.bumperl"));

@@ -167,6 +167,14 @@ namespace WiiTUIO.Output.Handlers.Xinput
                     case "stickldown":
                         device.Cont.SetAxisValue(Xbox360Axis.LeftThumbY, -32768);
                         break;
+                    case "stickrcenter":
+                        device.Cont.SetAxisValue(Xbox360Axis.RightThumbY, 0);
+                        device.Cont.SetAxisValue(Xbox360Axis.RightThumbX, 0);
+                        break;
+                    case "sticklcenter":
+                        device.Cont.SetAxisValue(Xbox360Axis.LeftThumbY, 0);
+                        device.Cont.SetAxisValue(Xbox360Axis.LeftThumbX, 0);
+                        break;
                     default:
                         return false; //No valid key code was found
                 }
