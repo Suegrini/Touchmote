@@ -10,6 +10,8 @@ using System.Windows.Controls;
 using System.Diagnostics;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.IO.Pipes;
+using System.IO;
 
 namespace WiiTUIO
 {
@@ -26,11 +28,24 @@ namespace WiiTUIO
         protected override void OnStartup(StartupEventArgs e)
         {
             Process thisProc = Process.GetCurrentProcess();
-            if (Process.GetProcessesByName(thisProc.ProcessName).Length > 1)
+            if (e.Args.Length != 0)
+            {
+                switch (e.Args[0])
+                {
+                    case "-exit":
+                        if (isAnotherInstanceRunning(thisProc))
+                            sendCommand("exit");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid argument");
+                        break;
+                }
+                Application.Current.Shutdown(220);
+            }
+            else if (isAnotherInstanceRunning(thisProc))
             {
                 MessageBox.Show("Touchmote is already running. Look for it in the taskbar.");
                 Application.Current.Shutdown(220);
-                return;
             }
 
             // Initialise the Tray Icon
@@ -65,6 +80,31 @@ namespace WiiTUIO
             TB.ShowTrayPopup();
         }
          * */
+
+        private bool isAnotherInstanceRunning(Process thisProcess)
+        {
+            return Process.GetProcessesByName(thisProcess.ProcessName).Length > 1;
+        }
+
+        private void sendCommand(string command, string value = null)
+        {
+            try
+            {
+                using (var client = new NamedPipeClientStream(".", "Touchmote", PipeDirection.Out))
+                {
+                    client.Connect(500);
+                    using (var writer = new StreamWriter(client) { AutoFlush = true })
+                    {
+                        if (value != null)
+                            writer.Write($"{command} {value}");
+                        else
+                            writer.Write(command);
+                    }
+                    client.Close();
+                }
+            }
+            catch { }
+        }
     }
 }
 

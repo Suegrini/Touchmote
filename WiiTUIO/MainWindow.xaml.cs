@@ -13,6 +13,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Threading;
+using System.Threading.Tasks;
 
 using OSC.NET;
 using WiiTUIO.WinTouch;
@@ -33,6 +34,7 @@ using WiiTUIO.DeviceUtils;
 using WiiCPP;
 using WiiTUIO.Output.Handlers.Xinput;
 using WiiTUIO.ArcadeHook;
+using System.IO.Pipes;
 
 namespace WiiTUIO
 {
@@ -152,6 +154,8 @@ namespace WiiTUIO
             KeymapConfigWindow.Instance.Visibility = System.Windows.Visibility.Collapsed;
 
             StartArcadeHook();
+
+            Task.Run(() => ListenForCommands());
 
             this.mainPanel.Visibility = Visibility.Visible;
             this.canvasSettings.Visibility = Visibility.Collapsed;
@@ -877,6 +881,32 @@ namespace WiiTUIO
                 arcadeHookThread.Join();
                 arcadeHook = null;
                 arcadeHookThread = null;
+            }
+        }
+
+        public async Task ListenForCommands()
+        {
+            while (true)
+            {
+                using (var server = new NamedPipeServerStream("Touchmote"))
+                {
+                    await server.WaitForConnectionAsync();
+    
+                    using (var reader = new StreamReader(server))
+                    {
+                        string command = await reader.ReadLineAsync();
+                        HandleCommand(command);
+                    }
+                }
+            }
+        }
+
+        private void HandleCommand(string command)
+        {
+            Console.WriteLine($"Received command: {command}");
+            if (command == "exit")
+            {
+                Application.Current.Dispatcher.InvokeShutdown();
             }
         }
 
