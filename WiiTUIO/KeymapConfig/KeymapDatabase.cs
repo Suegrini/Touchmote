@@ -39,6 +39,10 @@ namespace WiiTUIO
 
             allInputs = new List<KeymapInput>();
             allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer", "Pointer", false, false, true));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Left", "CursorX-", true, true, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Right", "CursorX+", true, true, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Up", "CursorY-", true, true, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Down", "CursorY+", true, true, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "A", "A"));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "B", "B"));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "Home", "Home"));
@@ -103,6 +107,10 @@ namespace WiiTUIO
 
 
             allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer", "OffScreen.Pointer", false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Left", "OffScreen.CursorX-", true, true, false, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Right", "OffScreen.CursorX+", true, true, false, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Up", "OffScreen.CursorY-", true, true, false, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Down", "OffScreen.CursorY+", true, true, false, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "A", "OffScreen.A", false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "B", "OffScreen.B", false));
             allInputs.Add(new KeymapInput(KeymapInputSource.WIIMOTE, "Home", "OffScreen.Home", false));

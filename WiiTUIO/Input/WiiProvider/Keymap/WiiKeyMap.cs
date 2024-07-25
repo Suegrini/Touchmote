@@ -38,6 +38,10 @@ namespace WiiTUIO.Provider
 
         private Dictionary<string, bool> PressedButtons = new Dictionary<string, bool>()
         {
+            {"CursorX+",false},
+            {"CursorX-",false},
+            {"CursorY+",false},
+            {"CursorY-",false},
             {"AccelX+",false},
             {"AccelX-",false},
             {"AccelY+",false},
@@ -190,6 +194,119 @@ namespace WiiTUIO.Provider
                             }
                         }
                     }
+                }
+            }
+
+            string offscreen = null;
+
+            if (prevOffScreen)
+            {
+                offscreen = "OffScreen.";
+            }
+
+            if (this.config.TryGetValue(offscreen + "CursorX+", out outConfig))
+            {
+                if (cursorPosition.LightbarX > 1 - outConfig.Deadzone * 0.5)
+                {
+                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
+                    {
+                        Deadzone = 0
+                    };
+
+                    updateStickHandlers(stickConfig, (cursorPosition.LightbarX + (outConfig.Deadzone * 0.5) - 1) / (outConfig.Deadzone * 0.5));
+                }
+                else if (cursorPosition.LightbarX < 1 - outConfig.Deadzone * 0.5 && cursorPosition.LightbarX > 0.5)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.LightbarX > 0.5 + outConfig.Threshold * 0.5 && !PressedButtons["CursorX+"])
+                {
+                    PressedButtons["CursorX+"] = true;
+                    this.executeButtonDown(offscreen + "CursorX+");
+                }
+                else if (cursorPosition.LightbarX < 0.5 + outConfig.Threshold * 0.5 && PressedButtons["CursorX+"])
+                {
+                    PressedButtons["CursorX+"] = false;
+                    this.executeButtonUp(offscreen + "CursorX+");
+                }
+            }
+            if (this.config.TryGetValue(offscreen + "CursorX-", out outConfig))
+            {
+                if (cursorPosition.LightbarX < outConfig.Deadzone * 0.5)
+                {
+                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
+                    {
+                        Deadzone = 0
+                    };
+                    updateStickHandlers(stickConfig, (cursorPosition.LightbarX - outConfig.Deadzone * 0.5) / (outConfig.Deadzone * -0.5));
+                }
+                else if (cursorPosition.LightbarX > outConfig.Deadzone * 0.5 && cursorPosition.LightbarX < 0.5)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.LightbarX < (1 - outConfig.Threshold) * 0.5 && !PressedButtons["CursorX-"])
+                {
+                    PressedButtons["CursorX-"] = true;
+                    this.executeButtonDown(offscreen + "CursorX-");
+                }
+                else if (cursorPosition.LightbarX > (1 - outConfig.Threshold) * 0.5 && PressedButtons["CursorX-"])
+                {
+                    PressedButtons["CursorX-"] = false;
+                    this.executeButtonUp(offscreen + "CursorX-");
+                }
+            }
+            if (this.config.TryGetValue(offscreen + "CursorY+", out outConfig))
+            {
+                if (cursorPosition.LightbarY > 1 - outConfig.Deadzone * 0.5)
+                {
+                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
+                    {
+                        Deadzone = 0
+                    };
+                    updateStickHandlers(stickConfig, (cursorPosition.LightbarY + (outConfig.Deadzone * 0.5) - 1) / (outConfig.Deadzone * 0.5));
+                }
+                else if (cursorPosition.LightbarY < 1 - outConfig.Deadzone * 0.5 && cursorPosition.LightbarY > 0.5)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.LightbarY > 0.5 + outConfig.Threshold * 0.5 && !PressedButtons["CursorY+"])
+                {
+                    PressedButtons["CursorY+"] = true;
+                    this.executeButtonDown(offscreen + "CursorY+");
+                }
+                else if (cursorPosition.LightbarY > 0.5 + outConfig.Threshold * 0.5 && PressedButtons["CursorY+"])
+                {
+                    PressedButtons["CursorY+"] = false;
+                    this.executeButtonUp(offscreen + "CursorY+");
+                }
+            }
+            if (this.config.TryGetValue(offscreen + "CursorY-", out outConfig))
+            {
+                if (cursorPosition.LightbarY < outConfig.Deadzone * 0.5)
+                {
+                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
+                    {
+                        Deadzone = 0
+                    };
+                    updateStickHandlers(stickConfig, (cursorPosition.LightbarY - outConfig.Deadzone * 0.5) / (outConfig.Deadzone * -0.5));
+                }
+                else if (cursorPosition.LightbarY > outConfig.Deadzone * 0.5 && cursorPosition.LightbarY < 0.5)
+                {
+                    updateStickHandlers(outConfig, 0);
+                }
+
+                if (cursorPosition.LightbarY < (1 - outConfig.Threshold) * 0.5 && !PressedButtons["CursorY-"])
+                {
+                    PressedButtons["CursorY-"] = true;
+                    this.executeButtonDown(offscreen + "CursorY-");
+                }
+                else if (cursorPosition.LightbarY > (1 - outConfig.Threshold) * 0.5 && PressedButtons["CursorY-"])
+                {
+                    PressedButtons["CursorY-"] = false;
+                    this.executeButtonUp(offscreen + "CursorY-");
                 }
             }
         }
