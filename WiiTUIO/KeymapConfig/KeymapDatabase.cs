@@ -38,7 +38,7 @@ namespace WiiTUIO
             this.DisableKey = "disable";
 
             allInputs = new List<KeymapInput>();
-            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer", "Pointer", false, false, true));
+            allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Pointer", "Pointer", true, false, true));
             allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Left", "CursorX-", true, true, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Right", "CursorX+", true, true, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.IR, "Cursor Up", "CursorY-", true, true, false));
@@ -814,7 +814,7 @@ namespace WiiTUIO
 
         public bool canHandle(KeymapOutput output)
         {
-            return ((this.Button == output.Button || this.Continous == output.Continous) && this.Cursor == output.Cursor) || output.Type == KeymapOutputType.DISABLE;
+            return (this.Button == output.Button || this.Continous == output.Continous || this.Cursor == output.Cursor) || output.Type == KeymapOutputType.DISABLE;
         }
     }
 

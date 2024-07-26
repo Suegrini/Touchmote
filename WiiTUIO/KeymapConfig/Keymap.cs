@@ -274,6 +274,12 @@ namespace WiiTUIO
             if (screen == "OffScreen")
             {
                 KeymapOutConfig result = this.getConfigFor(controllerId, inputKey);
+                if (inputKey == "Pointer")
+                {
+                    result = new KeymapOutConfig(KeymapDatabase.Current.getDisableOutput(), false);
+                    result.Inherited = true;
+                    return result;
+                }
                 if (result != null)
                 {
                     result.Inherited = true;

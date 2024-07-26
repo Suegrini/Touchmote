@@ -38,6 +38,8 @@ namespace WiiTUIO.Provider
 
         private Dictionary<string, bool> PressedButtons = new Dictionary<string, bool>()
         {
+            {"OnScreen",false},
+            {"OffScreen",false},
             {"CursorX+",false},
             {"CursorX-",false},
             {"CursorY+",false},
@@ -162,19 +164,7 @@ namespace WiiTUIO.Provider
                 }
             }
 
-            if (!cursorPosition.OffScreen)
-            {
-                prevOffScreen = false;
-                this.executeButtonUp("OffScreen.Pointer");
-            }
-            else
-            {
-                if (this.config.TryGetValue("OffScreen.Pointer", out outConfig) && !prevOffScreen)
-                {
-                    this.executeButtonDown("OffScreen.Pointer");
-                }
-                prevOffScreen = true;
-            }
+            prevOffScreen = cursorPosition.OffScreen;
 
             if (this.config.TryGetValue("Pointer", out outConfig))
             {
@@ -195,14 +185,34 @@ namespace WiiTUIO.Provider
                         }
                     }
                 }
+
+                if (!prevOffScreen)
+                {
+                    PressedButtons["OnScreen"] = true;
+                    this.executeButtonDown("Pointer");
+                }
+                else if (prevOffScreen && PressedButtons["OnScreen"])
+                {
+                    PressedButtons["OnScreen"] = false;
+                    this.executeButtonUp("Pointer");
+                }
             }
 
-            string offscreen = null;
-
-            if (prevOffScreen)
+            if (this.config.TryGetValue("OffScreen.Pointer", out outConfig))
             {
-                offscreen = "OffScreen.";
+                if (prevOffScreen)
+                {
+                    PressedButtons["OffScreen"] = true;
+                    this.executeButtonDown("OffScreen.Pointer");
+                }
+                else if (!prevOffScreen && PressedButtons["OffScreen"])
+                {
+                    PressedButtons["OffScreen"] = false;
+                    this.executeButtonUp("OffScreen.Pointer");
+                }
             }
+
+            string offscreen = prevOffScreen ? "OffScreen." : null;
 
             if (this.config.TryGetValue(offscreen + "CursorX+", out outConfig))
             {
