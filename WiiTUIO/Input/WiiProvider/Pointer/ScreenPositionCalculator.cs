@@ -168,29 +168,30 @@ namespace WiiTUIO.Provider
             //topLeftPt = new PointF() { X = 0.15f, Y = 0.002f };
             //centerPt = new PointF() { X = 0.43f, Y = 0.205f };
 
+            switch (this.wiimoteId)
+            {
+                case 1:
+                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
+                    trueCenterPt = centerPt = Settings.Default.test_centerGun1;
+                    break;
+                case 2:
+                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
+                    trueCenterPt = centerPt = Settings.Default.test_centerGun2;
+                    break;
+                case 3:
+                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
+                    trueCenterPt = centerPt = Settings.Default.test_centerGun3;
+                    break;
+                case 4:
+                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
+                    trueCenterPt = centerPt = Settings.Default.test_centerGun4;
+                    break;
+                default:
+                    break;
+            }
+
             if (targetAspectRatio == 0.0)
             {
-                switch (this.wiimoteId)
-                {
-                    case 1:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun1;
-                        break;
-                    case 2:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun2;
-                        break;
-                    case 3:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun3;
-                        break;
-                    case 4:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun4;
-                        break;
-                    default:
-                        break;
-                }
                 //topLeftPt = new PointF() { X = (float)0.22010275999999998,
                 //    Y = (float)Settings.Default.test_topLeftGunY
                 //};
@@ -466,8 +467,9 @@ namespace WiiTUIO.Provider
             this.targetAspectRatio = targetAspect;
 
             int outputWidth = (int)(targetAspect * primaryScreen.Bounds.Height);
-            float scaleFactor = outputWidth / primaryScreen.Bounds.Width;
-            float target_topLeftX = trueCenterPt.X -
+            double scaleFactor = outputWidth / (double)primaryScreen.Bounds.Width;
+            Console.WriteLine("scale: " + scaleFactor);
+            double target_topLeftX = trueCenterPt.X -
                 ((trueCenterPt.X - trueTopLeftPt.X) *
                 scaleFactor);
 
@@ -475,7 +477,7 @@ namespace WiiTUIO.Provider
 
             topLeftPt = new PointF()
             {
-                X = target_topLeftX,
+                X = (float)target_topLeftX,
                 Y = trueTopLeftPt.Y
             };
             //topLeftPt = new PointF() { X = (float)0.22010275999999998,
