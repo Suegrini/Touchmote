@@ -103,20 +103,20 @@ namespace WiiTUIO.Provider
                         trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun1":
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun1;
+                    case "test_bottomRightGun1":
+                        trueCenterPt = centerPt = Settings.Default.test_bottomRightGun1;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun2":
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun2;
+                    case "test_bottomRightGun2":
+                        trueCenterPt = centerPt = Settings.Default.test_bottomRightGun2;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun3":
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun3;
+                    case "test_bottomRightGun3":
+                        trueCenterPt = centerPt = Settings.Default.test_bottomRightGun3;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun4":
-                        trueCenterPt = centerPt = Settings.Default.test_centerGun4;
+                    case "test_bottomRightGun4":
+                        trueCenterPt = centerPt = Settings.Default.test_bottomRightGun4;
                         recalculateLightgunCoordBounds();
                         break;
                     default: break;
@@ -172,19 +172,19 @@ namespace WiiTUIO.Provider
             {
                 case 1:
                     trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
-                    trueCenterPt = centerPt = Settings.Default.test_centerGun1;
+                    trueCenterPt = centerPt = Settings.Default.test_bottomRightGun1;
                     break;
                 case 2:
                     trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
-                    trueCenterPt = centerPt = Settings.Default.test_centerGun2;
+                    trueCenterPt = centerPt = Settings.Default.test_bottomRightGun2;
                     break;
                 case 3:
                     trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
-                    trueCenterPt = centerPt = Settings.Default.test_centerGun3;
+                    trueCenterPt = centerPt = Settings.Default.test_bottomRightGun3;
                     break;
                 case 4:
                     trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
-                    trueCenterPt = centerPt = Settings.Default.test_centerGun4;
+                    trueCenterPt = centerPt = Settings.Default.test_bottomRightGun4;
                     break;
                 default:
                     break;
