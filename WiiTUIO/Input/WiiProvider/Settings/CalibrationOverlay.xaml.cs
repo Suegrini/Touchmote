@@ -337,16 +337,31 @@ namespace WiiTUIO.Provider
             }
             else if (e.Button.ToLower().Equals("a") || e.Button.ToLower().Equals("b"))
             {
-                this.buttonTimer.Start();
-                Dispatcher.BeginInvoke(new Action(delegate ()
+                if (!this.keyMapper.cursorPos.OutOfReach)
                 {
-                    this.wiimoteNo.Text = null;
-                    this.insText2.Text = "Hold";
+                    this.buttonTimer.Start();
+                    Dispatcher.BeginInvoke(new Action(delegate ()
+                    {
+                        this.wiimoteNo.Text = null;
+                        this.insText2.Text = "Hold";
 
-                    this.TextBorder.UpdateLayout();
-                    this.TextBorder.SetValue(Canvas.LeftProperty, 0.5 * this.ActualWidth - (this.TextBorder.ActualWidth / 2));
-                    this.TextBorder.SetValue(Canvas.TopProperty, 0.25 * this.ActualHeight - (this.TextBorder.ActualHeight / 2));
-                }), null);
+                        this.TextBorder.UpdateLayout();
+                        this.TextBorder.SetValue(Canvas.LeftProperty, 0.5 * this.ActualWidth - (this.TextBorder.ActualWidth / 2));
+                        this.TextBorder.SetValue(Canvas.TopProperty, 0.25 * this.ActualHeight - (this.TextBorder.ActualHeight / 2));
+                    }), null);
+                }
+                else
+                {
+                    Dispatcher.BeginInvoke(new Action(delegate ()
+                    {
+                        this.wiimoteNo.Text = null;
+                        this.insText2.Text = "Can't find sensors. Make sure you're at a proper distance and pointing at the screen";
+
+                        this.TextBorder.UpdateLayout();
+                        this.TextBorder.SetValue(Canvas.LeftProperty, 0.5 * this.ActualWidth - (this.TextBorder.ActualWidth / 2));
+                        this.TextBorder.SetValue(Canvas.TopProperty, 0.25 * this.ActualHeight - (this.TextBorder.ActualHeight / 2));
+                    }), null);
+                }
             }
         }
 
