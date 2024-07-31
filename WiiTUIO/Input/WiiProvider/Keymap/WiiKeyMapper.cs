@@ -576,6 +576,7 @@ namespace WiiTUIO.Provider
             {
                 setPressedButton(buttonFlag, true);
                 significant = true;
+
                 if (buttonName == "Home" || buttonName == "Minus")
                 {
                     Console.WriteLine("button down");
@@ -589,12 +590,11 @@ namespace WiiTUIO.Provider
                         this.buttonTimer.Start();
                     }
                 }
-                else
-                {
-                    if (this.cursorPos.OffScreen)
-                        buttonName = "OffScreen." + buttonName;
-                    this.KeyMap.executeButtonDown(buttonName);
-                }
+
+                if (this.cursorPos.OffScreen)
+                    buttonName = "OffScreen." + buttonName;
+
+                this.KeyMap.executeButtonDown(buttonName);
             }
             else if (!pressedNow && pressedBefore) //On up
             {
@@ -604,9 +604,6 @@ namespace WiiTUIO.Provider
                 {
                     Console.WriteLine("button up");
                     this.buttonTimer.Stop();
-
-                    if (this.cursorPos.OffScreen)
-                        buttonName = "OffScreen." + buttonName;
 
                     if (this.hideOverlayOnUp)
                     {
@@ -619,21 +616,17 @@ namespace WiiTUIO.Provider
                     }
                     else
                     {
-                        this.KeyMap.executeButtonDown(buttonName);
                         this.releaseButtonOnNextUpdate = buttonName;
                     }
                 }
-                else
-                {
-                    if (this.cursorPos.OffScreen)
-                        buttonName = "OffScreen." + buttonName;
 
-                    this.KeyMap.executeButtonUp(buttonName);
-                }
+                if (this.cursorPos.OffScreen)
+                    buttonName = "OffScreen." + buttonName;
+
+                this.KeyMap.executeButtonUp(buttonName);
             }
             else if (pressedNow && pressedBefore)
             {
-                Console.WriteLine(this.cursorPos.OffScreen);
                 if (this.cursorPos.OffScreen != prevOffScreen) //Change pressed button if OffScreen value changes
                 {
                     //Only execute if OnScreen and OffScreen values are different
