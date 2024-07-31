@@ -227,17 +227,19 @@ namespace WiiTUIO
         */
         private void keyMapper_OnButtonUp(WiiButtonEvent e)
         {
-            if(!hidden)
+            string button = e.Button.Replace("OffScreen.", "");
+
+            if (!hidden)
             {
-                if (e.Button.ToLower().Equals("down"))
+                if (button.ToLower().Equals("down"))
                 {
                     highlightNext();
                 }
-                else if (e.Button.ToLower().Equals("up"))
+                else if (button.ToLower().Equals("up"))
                 {
                     highlightPrev();
                 }
-                else if (e.Button.ToLower().Equals("right") || e.Button.ToLower().Equals("a"))
+                else if (button.ToLower().Equals("right") || button.ToLower().Equals("a"))
                 {
                     selectHighlighted();
                 }
