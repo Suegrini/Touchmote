@@ -299,7 +299,7 @@ namespace WiiTUIO.Provider
 
         public void SwitchToCalibration()
         {
-            this.setKeymap(this.calibrationKeymap); //Switch to fallback even if we did not choose anything in the chooser.
+            this.setKeymap(this.calibrationKeymap);
         }
 
         void buttonTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -341,7 +341,7 @@ namespace WiiTUIO.Provider
                     {
                         string search = appList[i];
 
-                        if (appStringToMatch.ToLower().Replace(" ", "").Contains(search.ToLower().Replace(" ", "")))
+                        if (search != "" && appStringToMatch.ToLower().Replace(" ", "").Contains(search.ToLower().Replace(" ", "")))
                         {
                             this.applicationKeymap = this.loadKeyMap(searchSetting.Keymap);
                             keymapFound = true;
