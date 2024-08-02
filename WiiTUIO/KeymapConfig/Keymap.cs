@@ -267,7 +267,6 @@ namespace WiiTUIO
                 KeymapOutConfig result = this.getConfigFor(0, screen + "." + inputKey);
                 if (result != null && !result.Inherited)
                 {
-                    result.Inherited = true;
                     return result;
                 }
             }
