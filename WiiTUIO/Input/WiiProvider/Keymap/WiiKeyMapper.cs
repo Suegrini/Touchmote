@@ -304,6 +304,7 @@ namespace WiiTUIO.Provider
 
         void buttonTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            this.buttonTimer.Stop();
             if (isButtonPressed(ButtonFlag.Minus))
             {
                 CalibrationOverlay.Current.StartCalibration(this);
