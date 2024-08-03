@@ -814,7 +814,7 @@ namespace WiiTUIO
 
         public bool canHandle(KeymapOutput output)
         {
-            return (this.Button == output.Button || this.Continous == output.Continous || this.Cursor == output.Cursor) || output.Type == KeymapOutputType.DISABLE;
+            return ((this.Button == output.Button || this.Continous == output.Continous) && (this.Button == output.Button || this.Cursor == output.Cursor)) || output.Type == KeymapOutputType.DISABLE;
         }
     }
 
