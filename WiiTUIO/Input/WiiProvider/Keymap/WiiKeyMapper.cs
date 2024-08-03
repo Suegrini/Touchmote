@@ -572,13 +572,14 @@ namespace WiiTUIO.Provider
             bool significant = false;
             ButtonFlag buttonFlag = getButtonFlag(buttonName);
             bool pressedBefore = isButtonPressed(buttonFlag);
+            string offScreenState = this.cursorPos.OffScreen ? "OffScreen." : "";
 
             if (pressedNow && !pressedBefore) //On down
             {
                 setPressedButton(buttonFlag, true);
                 significant = true;
 
-                if (buttonName == "Home" || buttonName == "Minus")
+                if (buttonName == "Home")
                 {
                     Console.WriteLine("button down");
                     if (OverlayWindow.Current.OverlayIsOn() || CalibrationOverlay.Current.OverlayIsOn())
@@ -591,20 +592,18 @@ namespace WiiTUIO.Provider
                         this.buttonTimer.Start();
                     }
                 }
-
-                if (this.cursorPos.OffScreen)
-                    buttonName = "OffScreen." + buttonName;
-
-                this.KeyMap.executeButtonDown(buttonName);
+                else
+                {
+                    this.KeyMap.executeButtonDown(offScreenState + buttonName);
+                }
             }
             else if (!pressedNow && pressedBefore) //On up
             {
                 setPressedButton(buttonFlag, false);
                 significant = true;
-                if (buttonName == "Home" || buttonName == "Minus")
+                if (buttonName == "Home")
                 {
                     Console.WriteLine("button up");
-                    this.buttonTimer.Stop();
 
                     if (this.hideOverlayOnUp)
                     {
@@ -617,14 +616,14 @@ namespace WiiTUIO.Provider
                     }
                     else
                     {
+                        this.KeyMap.executeButtonDown(offScreenState + "Home");
                         this.releaseButtonOnNextUpdate = buttonName;
                     }
                 }
-
-                if (this.cursorPos.OffScreen)
-                    buttonName = "OffScreen." + buttonName;
-
-                this.KeyMap.executeButtonUp(buttonName);
+                else
+                {
+                    this.KeyMap.executeButtonUp(offScreenState + buttonName);
+                }
             }
             else if (pressedNow && pressedBefore)
             {
