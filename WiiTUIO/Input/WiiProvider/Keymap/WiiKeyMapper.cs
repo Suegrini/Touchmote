@@ -130,11 +130,12 @@ namespace WiiTUIO.Provider
         private Keymap applicationKeymap; // Loaded by auto profile system
         private Keymap calibrationKeymap;
 
-        private Timer buttonTimer;
+        private Timer homeButtonTimer;
 
         public int WiimoteID;
         private bool hideOverlayOnUp = false;
-        private string releaseButtonOnNextUpdate = "";
+        private bool releaseHomeOnNextUpdate = false;
+
         private bool prevOffScreen = true;
 
         private List<IOutputHandler> outputHandlers;
@@ -168,10 +169,10 @@ namespace WiiTUIO.Provider
             this.processMonitor.ProcessChanged += processChanged;
             this.processMonitor.Start();
 
-            buttonTimer = new Timer();
-            buttonTimer.Interval = 1000;
-            buttonTimer.AutoReset = true;
-            buttonTimer.Elapsed += buttonTimer_Elapsed;
+            homeButtonTimer = new Timer();
+            homeButtonTimer.Interval = 1000;
+            homeButtonTimer.AutoReset = true;
+            homeButtonTimer.Elapsed += homeButtonTimer_Elapsed;
 
             KeymapConfigWindow.Instance.OnConfigChanged += keymapConfigWindow_OnConfigChanged;
         }
@@ -302,14 +303,13 @@ namespace WiiTUIO.Provider
             this.setKeymap(this.calibrationKeymap);
         }
 
-        void buttonTimer_Elapsed(object sender, ElapsedEventArgs e)
+        void homeButtonTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            this.buttonTimer.Stop();
-            if (isButtonPressed(ButtonFlag.Minus))
+            if (isButtonPressed(ButtonFlag.Minus) && !OverlayWindow.Current.OverlayIsOn()) //Prevent calibration overlay from loading if on keymap overlay
             {
                 CalibrationOverlay.Current.StartCalibration(this);
             }
-            else if (isButtonPressed(ButtonFlag.Home))
+            else if (isButtonPressed(ButtonFlag.Home) && !CalibrationOverlay.Current.OverlayIsOn()) //Prevent keymap overlay from loading if on calibration overlay
             {
                 this.setKeymap(this.defaultKeymap);
                 OverlayWindow.Current.ShowLayoutOverlay(this);
@@ -474,15 +474,10 @@ namespace WiiTUIO.Provider
                 significant |= checkButtonState(classicButtonState.ZR, "Classic.ZR");
             }
 
-            if (this.releaseButtonOnNextUpdate == "Home")
+            if (this.releaseHomeOnNextUpdate)
             {
-                this.releaseButtonOnNextUpdate = "";
+                this.releaseHomeOnNextUpdate = false;
                 this.KeyMap.executeButtonUp("Home");
-            }
-            if (this.releaseButtonOnNextUpdate == "Minus")
-            {
-                this.releaseButtonOnNextUpdate = "";
-                this.KeyMap.executeButtonUp("Minus");
             }
 
             significant |= checkButtonState(buttonState.A, "A");
@@ -581,7 +576,7 @@ namespace WiiTUIO.Provider
 
                 if (buttonName == "Home")
                 {
-                    Console.WriteLine("button down");
+                    Console.WriteLine("home down");
                     if (OverlayWindow.Current.OverlayIsOn() || CalibrationOverlay.Current.OverlayIsOn())
                     {
                         this.hideOverlayOnUp = true;
@@ -589,7 +584,7 @@ namespace WiiTUIO.Provider
                     }
                     else
                     {
-                        this.buttonTimer.Start();
+                        this.homeButtonTimer.Start();
                     }
                 }
                 else
@@ -603,7 +598,8 @@ namespace WiiTUIO.Provider
                 significant = true;
                 if (buttonName == "Home")
                 {
-                    Console.WriteLine("button up");
+                    Console.WriteLine("home up");
+                    this.homeButtonTimer.Stop();
 
                     if (this.hideOverlayOnUp)
                     {
@@ -617,7 +613,7 @@ namespace WiiTUIO.Provider
                     else
                     {
                         this.KeyMap.executeButtonDown(offScreenState + "Home");
-                        this.releaseButtonOnNextUpdate = buttonName;
+                        this.releaseHomeOnNextUpdate = true;
                     }
                 }
                 else
