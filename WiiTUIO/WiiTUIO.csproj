@@ -210,6 +210,7 @@
     <Compile Include="ArcadeHook\IniFileHandler.cs" />
     <Compile Include="ArcadeHook\OutputProvider.cs" />
     <Compile Include="Autostart.cs" />
+    <Compile Include="CommandListener.cs" />
     <Compile Include="DeviceUtils\VmultiUtil.cs" />
     <Compile Include="DeviceUtils\DeviceUtil.cs" />
     <Compile Include="Filters\CircularBuffer.cs" />

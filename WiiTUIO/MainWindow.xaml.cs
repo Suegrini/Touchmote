@@ -63,6 +63,8 @@ namespace WiiTUIO
 
         private SystemProcessMonitor processMonitor;
 
+        private CommandListener commandListener;
+
         /// <summary>
         /// A reference to the WiiProvider we want to use to get/forward input.
         /// </summary>
@@ -153,10 +155,6 @@ namespace WiiTUIO
 
             KeymapConfigWindow.Instance.Visibility = System.Windows.Visibility.Collapsed;
 
-            StartArcadeHook();
-
-            Task.Run(() => ListenForCommands());
-
             this.mainPanel.Visibility = Visibility.Visible;
             this.canvasSettings.Visibility = Visibility.Collapsed;
             this.canvasAbout.Visibility = Visibility.Collapsed;
@@ -232,6 +230,10 @@ namespace WiiTUIO
                 this.processMonitor.ProcessChanged += processChanged;
                 this.processMonitor.Start();
             }
+
+            StartArcadeHook();
+
+            this.commandListener = CommandListener.Default;
         }
 
         private void processChanged(ProcessChangedEvent obj)
@@ -881,32 +883,6 @@ namespace WiiTUIO
                 arcadeHookThread.Join();
                 arcadeHook = null;
                 arcadeHookThread = null;
-            }
-        }
-
-        public async Task ListenForCommands()
-        {
-            while (true)
-            {
-                using (var server = new NamedPipeServerStream("Touchmote"))
-                {
-                    await server.WaitForConnectionAsync();
-    
-                    using (var reader = new StreamReader(server))
-                    {
-                        string command = await reader.ReadLineAsync();
-                        HandleCommand(command);
-                    }
-                }
-            }
-        }
-
-        private void HandleCommand(string command)
-        {
-            Console.WriteLine($"Received command: {command}");
-            if (command == "exit")
-            {
-                Application.Current.Dispatcher.InvokeShutdown();
             }
         }
 

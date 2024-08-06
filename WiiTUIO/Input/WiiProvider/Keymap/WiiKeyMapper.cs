@@ -124,6 +124,7 @@ namespace WiiTUIO.Provider
         private ButtonFlag PressedButtons;
 
         private SystemProcessMonitor processMonitor;
+        private CommandListener commandListener;
 
         private Keymap defaultKeymap; //Always default.json
         private Keymap fallbackKeymap; //Decided by the layout chooser
@@ -168,6 +169,9 @@ namespace WiiTUIO.Provider
             // Set window monitor hook
             this.processMonitor.ProcessChanged += processChanged;
             this.processMonitor.Start();
+
+            this.commandListener = CommandListener.Default;
+            this.commandListener.OnKeymapRequested += keymapRequested;
 
             homeButtonTimer = new Timer();
             homeButtonTimer.Interval = 1000;
@@ -230,6 +234,7 @@ namespace WiiTUIO.Provider
                 handler.disconnect();
             }
             this.processMonitor.ProcessChanged -= processChanged;
+            this.commandListener.OnKeymapRequested -= keymapRequested;
         }
 
         public List<LayoutChooserSetting> GetLayoutList()
@@ -362,6 +367,19 @@ namespace WiiTUIO.Provider
             catch (Exception e)
             {
                 Console.WriteLine("Could not change keymap config for " + evt.Process);
+            }
+        }
+
+        private void keymapRequested(string keymapName)
+        {
+            foreach (LayoutChooserSetting config in this.GetLayoutList())
+            {
+                string name = config.Title;
+                string filename = config.Keymap;
+                if (name == keymapName && filename != KeymapDatabase.Current.getKeymapSettings().getCalibrationKeymap())//Hide calibration keymap from layout chooser
+                {
+                    this.loadKeyMap(filename);
+                }
             }
         }
 

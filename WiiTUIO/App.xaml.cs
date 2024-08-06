@@ -28,35 +28,45 @@ namespace WiiTUIO
         protected override void OnStartup(StartupEventArgs e)
         {
             Process thisProc = Process.GetCurrentProcess();
-            if (e.Args.Length != 0)
+            if (isAnotherInstanceRunning(thisProc))
             {
-                switch (e.Args[0])
+                if (e.Args.Length != 0)
                 {
-                    case "-exit":
-                        if (isAnotherInstanceRunning(thisProc))
+                    switch (e.Args[0])
+                    {
+                        case "-exit":
                             sendCommand("exit");
-                        break;
-                    default:
-                        Console.WriteLine("Invalid argument");
-                        break;
+                            break;
+                        case "-k":
+                            string keymapValue = e.Args.Length > 1 ? e.Args[1] : "Default";
+                            sendCommand("keymap", keymapValue);
+                            break;
+                        default:
+                            Console.WriteLine("Invalid argument");
+                            break;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Touchmote is already running. Look for it in the taskbar.");
                 }
                 Application.Current.Shutdown(220);
             }
-            else if (isAnotherInstanceRunning(thisProc))
+            else
             {
-                MessageBox.Show("Touchmote is already running. Look for it in the taskbar.");
-                Application.Current.Shutdown(220);
+                MainWindow mainWindow = new MainWindow();
+                mainWindow.Show();
+
+                // Initialise the Tray Icon
+                //TB = (TaskbarIcon)FindResource("tbNotifyIcon");
+                //TB.ShowBalloonTip("Touchmote is running", "Click here to set it up", BalloonIcon.Info);
+
+                RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
+                Application.Current.Exit += appWillExit;
+
+
+                base.OnStartup(e);
             }
-
-            // Initialise the Tray Icon
-            //TB = (TaskbarIcon)FindResource("tbNotifyIcon");
-            //TB.ShowBalloonTip("Touchmote is running", "Click here to set it up", BalloonIcon.Info);
-
-            RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
-            Application.Current.Exit += appWillExit;
-
-
-            base.OnStartup(e);
         }
 
         private void appWillExit(object sender, ExitEventArgs e)
@@ -96,7 +106,9 @@ namespace WiiTUIO
                     using (var writer = new StreamWriter(client) { AutoFlush = true })
                     {
                         if (value != null)
-                            writer.Write($"{command} {value}");
+                        {
+                            writer.Write($"{command}{Convert.ToChar(31)}{value}");
+                        }
                         else
                             writer.Write(command);
                     }
