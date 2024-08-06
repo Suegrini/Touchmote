@@ -34,6 +34,11 @@ namespace WiiTUIO.Provider
         private double inputAngle = 0;
         private double prevAngle = 0;
 
+        private int ShakeCounter = 0;
+        private DateTime lastShakeTime;
+        private float lastAccel;
+        private float smoothedAccel;
+
         private bool prevOffScreen = false;
 
         private Dictionary<string, bool> PressedButtons = new Dictionary<string, bool>()
@@ -50,6 +55,7 @@ namespace WiiTUIO.Provider
             {"AccelY-",false},
             {"AccelZ+",false},
             {"AccelZ-",false},
+            {"Shake",false},
             {"Nunchuk.StickUp",false},
             {"Nunchuk.StickDown",false},
             {"Nunchuk.StickLeft",false},
@@ -460,6 +466,43 @@ namespace WiiTUIO.Provider
                     PressedButtons["AccelZ-"] = false;
                     this.executeButtonUp(offscreen + "AccelZ-");
                 }
+            }
+            if (this.config.TryGetValue(offscreen + "Shake", out outConfig))
+            {
+                var now = DateTime.Now;
+
+                float totalAccel = (float)Math.Sqrt(Math.Pow(accelState.Values.X, 2) + Math.Pow(accelState.Values.Y, 2) + Math.Pow(accelState.Values.Z, 2));
+                float delta = totalAccel - lastAccel;
+                smoothedAccel = smoothedAccel * 0.9f + delta;
+                Console.WriteLine(smoothedAccel);
+
+                if (!PressedButtons["Shake"])
+                {
+                    if (Math.Abs(smoothedAccel) > Settings.Default.shake_threshold)
+                    {
+                        if ((now - lastShakeTime).TotalMilliseconds < Settings.Default.shake_maxTimeInBetween)
+                        {
+                            ShakeCounter++;
+                            if (ShakeCounter >= Settings.Default.shake_count)
+                            {
+                                PressedButtons["Shake"] = true;
+                                this.executeButtonDown(offscreen + "Shake");
+                                ShakeCounter = 0;
+                            }
+                        }
+                        else
+                        {
+                            ShakeCounter = 0;
+                        }
+                        lastShakeTime = now;
+                    }
+                }
+                else if ((now - lastShakeTime).TotalMilliseconds > Settings.Default.shake_pressedTime)
+                {
+                    PressedButtons["Shake"] = false;
+                    this.executeButtonUp(offscreen + "Shake");
+                }
+                lastAccel = totalAccel;
             }
         }
 
