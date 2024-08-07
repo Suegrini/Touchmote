@@ -305,6 +305,7 @@ namespace WiiTUIO.Provider
 
         public void SwitchToCalibration()
         {
+            this.applicationKeymap = null;
             this.setKeymap(this.calibrationKeymap);
         }
 

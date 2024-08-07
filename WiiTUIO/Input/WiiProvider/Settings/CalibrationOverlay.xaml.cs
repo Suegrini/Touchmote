@@ -157,6 +157,7 @@ namespace WiiTUIO.Provider
 
                 Dispatcher.BeginInvoke(new Action(delegate ()
                 {
+                    this.Activate();
 
                     Color pointColor = CursorColor.getColor(keyMapper.WiimoteID);
                     pointColor.R = (byte)(pointColor.R * 0.8);
