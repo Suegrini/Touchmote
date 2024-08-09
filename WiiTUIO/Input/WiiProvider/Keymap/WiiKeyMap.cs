@@ -232,7 +232,8 @@ namespace WiiTUIO.Provider
                 {
                     KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
                     {
-                        Deadzone = 0
+                        Deadzone = 0,
+                        Scale = outConfig.Scale
                     };
 
                     updateStickHandlers(stickConfig, (cursorPosition.LightbarX + (outConfig.Deadzone * 0.5) - 1) / (outConfig.Deadzone * 0.5));
@@ -259,7 +260,8 @@ namespace WiiTUIO.Provider
                 {
                     KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
                     {
-                        Deadzone = 0
+                        Deadzone = 0,
+                        Scale = outConfig.Scale
                     };
                     updateStickHandlers(stickConfig, (cursorPosition.LightbarX - outConfig.Deadzone * 0.5) / (outConfig.Deadzone * -0.5));
                 }
@@ -285,7 +287,8 @@ namespace WiiTUIO.Provider
                 {
                     KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
                     {
-                        Deadzone = 0
+                        Deadzone = 0,
+                        Scale = outConfig.Scale
                     };
                     updateStickHandlers(stickConfig, (cursorPosition.LightbarY + (outConfig.Deadzone * 0.5) - 1) / (outConfig.Deadzone * 0.5));
                 }
@@ -311,7 +314,8 @@ namespace WiiTUIO.Provider
                 {
                     KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
                     {
-                        Deadzone = 0
+                        Deadzone = 0,
+                        Scale = outConfig.Scale
                     };
                     updateStickHandlers(stickConfig, (cursorPosition.LightbarY - outConfig.Deadzone * 0.5) / (outConfig.Deadzone * -0.5));
                 }
