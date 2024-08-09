@@ -76,6 +76,7 @@ namespace WiiTUIO
             allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Tilt Y+", "Nunchuk.AccelY+", true, true, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Tilt Z-", "Nunchuk.AccelZ-", true, true, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Tilt Z+", "Nunchuk.AccelZ+", true, true, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Shake", "Nunchuk.Shake"));
 
 
             allInputs.Add(new KeymapInput(KeymapInputSource.CLASSIC, "Left", "Classic.Left"));
@@ -145,6 +146,7 @@ namespace WiiTUIO
             allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Tilt Y+", "OffScreen.Nunchuk.AccelY+", true, true, false, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Tilt Z-", "OffScreen.Nunchuk.AccelZ-", true, true, false, false));
             allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Tilt Z+", "OffScreen.Nunchuk.AccelZ+", true, true, false, false));
+            allInputs.Add(new KeymapInput(KeymapInputSource.NUNCHUK, "Shake", "OffScreen.Nunchuk.Shake", false));
 
             allInputs.Add(new KeymapInput(KeymapInputSource.CLASSIC, "Left", "OffScreen.Classic.Left", false));
             allInputs.Add(new KeymapInput(KeymapInputSource.CLASSIC, "Right", "OffScreen.Classic.Right", false));

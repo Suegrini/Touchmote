@@ -34,10 +34,15 @@ namespace WiiTUIO.Provider
         private double inputAngle = 0;
         private double prevAngle = 0;
 
-        private int ShakeCounter = 0;
+        private int shakeCounter = 0;
         private DateTime lastShakeTime;
         private float lastAccel;
         private float smoothedAccel;
+
+        private int nunShakeCounter = 0;
+        private DateTime nunLastShakeTime;
+        private float nunLastAccel;
+        private float nunSmoothedAccel;
 
         private bool prevOffScreen = false;
 
@@ -68,6 +73,7 @@ namespace WiiTUIO.Provider
             {"Nunchuk.AccelY-",false},
             {"Nunchuk.AccelZ+",false},
             {"Nunchuk.AccelZ-",false},
+            {"Nunchuk.Shake",false},
             {"Classic.StickLUp",false},
             {"Classic.StickLDown",false},
             {"Classic.StickLLeft",false},
@@ -474,7 +480,6 @@ namespace WiiTUIO.Provider
                 float totalAccel = (float)Math.Sqrt(Math.Pow(accelState.Values.X, 2) + Math.Pow(accelState.Values.Y, 2) + Math.Pow(accelState.Values.Z, 2));
                 float delta = totalAccel - lastAccel;
                 smoothedAccel = smoothedAccel * 0.9f + delta;
-                Console.WriteLine(smoothedAccel);
 
                 if (!PressedButtons["Shake"])
                 {
@@ -482,17 +487,17 @@ namespace WiiTUIO.Provider
                     {
                         if ((now - lastShakeTime).TotalMilliseconds < Settings.Default.shake_maxTimeInBetween)
                         {
-                            ShakeCounter++;
-                            if (ShakeCounter >= Settings.Default.shake_count)
+                            shakeCounter++;
+                            if (shakeCounter >= Settings.Default.shake_count)
                             {
                                 PressedButtons["Shake"] = true;
                                 this.executeButtonDown(offscreen + "Shake");
-                                ShakeCounter = 0;
+                                shakeCounter = 0;
                             }
                         }
                         else
                         {
-                            ShakeCounter = 0;
+                            shakeCounter = 0;
                         }
                         lastShakeTime = now;
                     }
@@ -783,6 +788,42 @@ namespace WiiTUIO.Provider
                     PressedButtons["Nunchuk.AccelZ-"] = false;
                     this.executeButtonUp(offscreen + "Nunchuk.AccelZ-");
                 }
+            }
+            if (this.config.TryGetValue(offscreen + "Nunchuk.Shake", out outConfig))
+            {
+                var now = DateTime.Now;
+
+                float totalAccel = (float)Math.Sqrt(Math.Pow(accelState.Values.X, 2) + Math.Pow(accelState.Values.Y, 2) + Math.Pow(accelState.Values.Z, 2));
+                float delta = totalAccel - nunLastAccel;
+                nunSmoothedAccel = nunSmoothedAccel * 0.9f + delta;
+
+                if (!PressedButtons["Nunchuk.Shake"])
+                {
+                    if (Math.Abs(nunSmoothedAccel) > Settings.Default.shake_threshold)
+                    {
+                        if ((now - nunLastShakeTime).TotalMilliseconds < Settings.Default.shake_maxTimeInBetween)
+                        {
+                            nunShakeCounter++;
+                            if (nunShakeCounter >= Settings.Default.shake_count)
+                            {
+                                PressedButtons["Nunchuk.Shake"] = true;
+                                this.executeButtonDown(offscreen + "Nunchuk.Shake");
+                                nunShakeCounter = 0;
+                            }
+                        }
+                        else
+                        {
+                            nunShakeCounter = 0;
+                        }
+                        nunLastShakeTime = now;
+                    }
+                }
+                else if ((now - nunLastShakeTime).TotalMilliseconds > Settings.Default.shake_pressedTime)
+                {
+                    PressedButtons["Nunchuk.Shake"] = false;
+                    this.executeButtonUp(offscreen + "Nunchuk.Shake");
+                }
+                nunLastAccel = totalAccel;
             }
         }
 
