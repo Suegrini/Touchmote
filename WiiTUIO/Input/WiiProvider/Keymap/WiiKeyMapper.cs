@@ -123,6 +123,8 @@ namespace WiiTUIO.Provider
 
         private ButtonFlag PressedButtons;
 
+        private bool lastExt;
+
         private SystemProcessMonitor processMonitor;
         private CommandListener commandListener;
 
@@ -462,35 +464,49 @@ namespace WiiTUIO.Provider
             this.KeyMap.updateCursorPosition(cursorPos);
             this.KeyMap.updateAccelerometer(wiimoteState.AccelState);
 
-            if(wiimoteState.Extension && wiimoteState.ExtensionType == ExtensionType.Nunchuk)
+            if (wiimoteState.Extension)
             {
-                this.KeyMap.updateNunchuk(wiimoteState.NunchukState);
+                if (!lastExt)
+                {
+                    this.KeyMap.executeButtonDown("Extension");
+                    lastExt = true;
+                }
 
-                significant |= checkButtonState(wiimoteState.NunchukState.C, "Nunchuk.C");
-                significant |= checkButtonState(wiimoteState.NunchukState.Z, "Nunchuk.Z");
+                if (wiimoteState.ExtensionType == ExtensionType.Nunchuk)
+                {
+                    this.KeyMap.updateNunchuk(wiimoteState.NunchukState);
+
+                    significant |= checkButtonState(wiimoteState.NunchukState.C, "Nunchuk.C");
+                    significant |= checkButtonState(wiimoteState.NunchukState.Z, "Nunchuk.Z");
+                }
+
+                if (wiimoteState.ExtensionType == ExtensionType.ClassicController)
+                {
+                    this.KeyMap.updateClassicController(wiimoteState.ClassicControllerState);
+
+                    ClassicControllerButtonState classicButtonState = wiimoteState.ClassicControllerState.ButtonState;
+
+                    significant |= checkButtonState(classicButtonState.A, "Classic.A");
+                    significant |= checkButtonState(classicButtonState.B, "Classic.B");
+                    significant |= checkButtonState(classicButtonState.Down, "Classic.Down");
+                    significant |= checkButtonState(classicButtonState.Home, "Classic.Home");
+                    significant |= checkButtonState(classicButtonState.Left, "Classic.Left");
+                    significant |= checkButtonState(classicButtonState.Minus, "Classic.Minus");
+                    significant |= checkButtonState(classicButtonState.Plus, "Classic.Plus");
+                    significant |= checkButtonState(classicButtonState.Right, "Classic.Right");
+                    significant |= checkButtonState(classicButtonState.TriggerL, "Classic.L");
+                    significant |= checkButtonState(classicButtonState.TriggerR, "Classic.R");
+                    significant |= checkButtonState(classicButtonState.Up, "Classic.Up");
+                    significant |= checkButtonState(classicButtonState.X, "Classic.X");
+                    significant |= checkButtonState(classicButtonState.Y, "Classic.Y");
+                    significant |= checkButtonState(classicButtonState.ZL, "Classic.ZL");
+                    significant |= checkButtonState(classicButtonState.ZR, "Classic.ZR");
+                }
             }
-
-            if (wiimoteState.Extension && wiimoteState.ExtensionType == ExtensionType.ClassicController)
+            else if (lastExt)
             {
-                this.KeyMap.updateClassicController(wiimoteState.ClassicControllerState);
-
-                ClassicControllerButtonState classicButtonState = wiimoteState.ClassicControllerState.ButtonState;
-
-                significant |= checkButtonState(classicButtonState.A , "Classic.A");
-                significant |= checkButtonState(classicButtonState.B, "Classic.B");
-                significant |= checkButtonState(classicButtonState.Down, "Classic.Down");
-                significant |= checkButtonState(classicButtonState.Home, "Classic.Home");
-                significant |= checkButtonState(classicButtonState.Left, "Classic.Left");
-                significant |= checkButtonState(classicButtonState.Minus, "Classic.Minus");
-                significant |= checkButtonState(classicButtonState.Plus, "Classic.Plus");
-                significant |= checkButtonState(classicButtonState.Right, "Classic.Right");
-                significant |= checkButtonState(classicButtonState.TriggerL, "Classic.L");
-                significant |= checkButtonState(classicButtonState.TriggerR, "Classic.R");
-                significant |= checkButtonState(classicButtonState.Up, "Classic.Up");
-                significant |= checkButtonState(classicButtonState.X, "Classic.X");
-                significant |= checkButtonState(classicButtonState.Y, "Classic.Y");
-                significant |= checkButtonState(classicButtonState.ZL, "Classic.ZL");
-                significant |= checkButtonState(classicButtonState.ZR, "Classic.ZR");
+                this.KeyMap.executeButtonUp("Extension");
+                lastExt = false;
             }
 
             if (this.releaseHomeOnNextUpdate)
