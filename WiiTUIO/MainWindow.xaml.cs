@@ -607,6 +607,10 @@ namespace WiiTUIO
                 {
                     this.pWiiProvider.stop();
                     this.tryingToConnect = false;
+                    if (Settings.Default.completelyDisconnect)
+                    {
+                        completelyDisconnectAll();
+                    }
                 }
                 catch { }
 
@@ -664,17 +668,7 @@ namespace WiiTUIO
             //this.pWiiProvider = null;
             if (Settings.Default.completelyDisconnect)
             {
-                //Disable Wiimote in device manager to disconnect it from the computer (so it doesn't drain battery when not used)
-                Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
-                {
-                    Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
-                    {
-                        Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0330*\"", new Action(delegate ()
-                        {
-                            Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0330*\"", null);
-                        }));
-                    }));
-                }));
+                completelyDisconnectAll();
             }
         }
 
@@ -686,6 +680,21 @@ namespace WiiTUIO
             {
                 this.pWiiProvider.stop();
             }
+        }
+
+        private void completelyDisconnectAll()
+        {
+            //Disable Wiimote in device manager to disconnect it from the computer (so it doesn't drain battery when not used)
+            Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
+            {
+                Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
+                {
+                    Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0330*\"", new Action(delegate ()
+                    {
+                        Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0330*\"", null);
+                    }));
+                }));
+            }));
         }
         #endregion
 

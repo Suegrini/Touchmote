@@ -150,10 +150,6 @@ namespace WiiTUIO.Provider
             this.wiimoteConnectorTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
             this.teardownWiimoteConnections();
-            if (Settings.Default.completelyDisconnect)
-            {
-                this.completelyDisconnectAll();
-            }
 
             this.pWC.Clear();
 
@@ -346,7 +342,16 @@ namespace WiiTUIO.Provider
             if (Settings.Default.completelyDisconnect && this.pWiimoteMap.Count == 1) //If we want to completely disable the device
             {
                 teardownWiimoteConnection(control.Wiimote);
-                completelyDisconnectAll();
+                Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
+                {
+                    Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
+                    {
+                        Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0330*\"", new Action(delegate ()
+                        {
+                            Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0330*\"", null);
+                        }));
+                    }));
+                }));
             }
             else
             {
@@ -383,20 +388,6 @@ namespace WiiTUIO.Provider
             {
                 control.WiimoteMutex.ReleaseMutex();
             }
-        }
-
-        private void completelyDisconnectAll()
-        {
-            Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate()
-            {
-                Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
-                {
-                    Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0330*\"", new Action(delegate ()
-                    {
-                        Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0330*\"", null);
-                    }));
-                }));
-            }));
         }
 
         /// <summary>
