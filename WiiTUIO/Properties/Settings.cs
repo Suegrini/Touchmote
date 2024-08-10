@@ -676,7 +676,7 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private double _shake_threshold = 1.5;
+        private double _shake_threshold = 0.2;
         public double shake_threshold
         {
             get { return _shake_threshold; }
@@ -687,7 +687,7 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private double _shake_nunchukthreshold = 1;
+        private double _shake_nunchukthreshold = 0.2;
         public double shake_nunchukthreshold
         {
             get { return _shake_nunchukthreshold; }
