@@ -396,12 +396,12 @@ namespace WiiTUIO.Provider
                 if (Properties.Settings.Default.pointer_sensorBarPos == "top")
                 {
                     offsetY = -SBPositionOffset;
-                    marginOffsetY = -CalcMarginOffsetY;
+                    marginOffsetY = CalcMarginOffsetY;
                 }
                 else if (Properties.Settings.Default.pointer_sensorBarPos == "bottom")
                 {
                     offsetY = SBPositionOffset;
-                    marginOffsetY = CalcMarginOffsetY;
+                    marginOffsetY = -CalcMarginOffsetY;
                 }
 
                 if (Settings.Default.pointer_considerRotation)
