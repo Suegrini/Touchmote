@@ -805,9 +805,14 @@ namespace WiiTUIO.Provider
 
         private void InitializeCalibrationData()
         {
-            _calData = File.Exists(CALIBRATION_FILENAME)
-                ? JObject.Parse(File.ReadAllText(CALIBRATION_FILENAME))
-                : new JObject();
+            if(File.Exists(CALIBRATION_FILENAME))
+            {
+                string calText = File.ReadAllText(CALIBRATION_FILENAME);
+
+                _calData = !string.IsNullOrEmpty(calText)
+                    ? JObject.Parse(File.ReadAllText(CALIBRATION_FILENAME))
+                    : new JObject();
+            }
 
             if (_calData[_serial] == null)
             {
