@@ -101,19 +101,19 @@ namespace WiiTUIO.Provider
                         trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun1":
+                        case "test_btmRightGun1":
                         trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun1;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun2":
+                        case "test_btmRightGun2":
                         trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun2;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun3":
+                        case "test_btmRightGun3":
                         trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun3;
                         recalculateLightgunCoordBounds();
                         break;
-                    case "test_centerGun4":
+                        case "test_btmRightGun4":
                         trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun4;
                         recalculateLightgunCoordBounds();
                         break;
