@@ -150,9 +150,10 @@ namespace WiiTUIO.Provider
 
         public CalibrationSettings settings;
 
-        public WiiKeyMapper(int wiimoteID, string serial, HandlerFactory handlerFactory)
+        public WiiKeyMapper(int wiimoteID, HandlerFactory handlerFactory, string serial = null)
         {
             this.WiimoteID = wiimoteID;
+            serial = serial ?? this.WiimoteID.ToString();
             this.settings = new CalibrationSettings(serial);
             this.outputHandlers = handlerFactory.getOutputHandlers(this.WiimoteID);
             foreach (IOutputHandler handler in outputHandlers)
@@ -697,7 +698,7 @@ namespace WiiTUIO.Provider
             {
                 if (_Top == value) return;
                 _Top = value;
-                _calData[_serial]["Top"] = JToken.FromObject(value);
+                _calData[_id]["Top"] = JToken.FromObject(value);
                 OnPropertyChanged("Top");
             }
         }
@@ -710,12 +711,12 @@ namespace WiiTUIO.Provider
             {
                 if (_Bottom == value) return;
                 _Bottom = value;
-                _calData[_serial]["Bottom"] = JToken.FromObject(value);
+                _calData[_id]["Bottom"] = JToken.FromObject(value);
                 OnPropertyChanged("Bottom");
             }
         }
 
-        private float _Left = 0.1f;
+        private float _Left = Settings.Default.pointer_4IRMode ? 0.1f : 0.9f;
         public float Left
         {
             get => _Left;
@@ -723,12 +724,12 @@ namespace WiiTUIO.Provider
             {
                 if (_Left == value) return;
                 _Left = value;
-                _calData[_serial]["Left"] = JToken.FromObject(value);
+                _calData[_id]["Left"] = JToken.FromObject(value);
                 OnPropertyChanged("Left");
             }
         }
 
-        private float _Right = 0.9f;
+        private float _Right = Settings.Default.pointer_4IRMode ? 0.9f : 0.1f;
         public float Right
         {
             get => _Right;
@@ -736,7 +737,7 @@ namespace WiiTUIO.Provider
             {
                 if (_Right == value) return;
                 _Right = value;
-                _calData[_serial]["Right"] = JToken.FromObject(value);
+                _calData[_id]["Right"] = JToken.FromObject(value);
                 OnPropertyChanged("Right");
             }
         }
@@ -749,7 +750,7 @@ namespace WiiTUIO.Provider
             {
                 if (_CenterX == value) return;
                 _CenterX = (float)Math.Min(1.0, Math.Max(0.0, value));
-                _calData[_serial]["CenterX"] = JToken.FromObject(value);
+                _calData[_id]["CenterX"] = JToken.FromObject(value);
                 OnPropertyChanged("Center");
             }
         }
@@ -762,7 +763,7 @@ namespace WiiTUIO.Provider
             {
                 if (_CenterY == value) return;
                 _CenterY = (float)Math.Min(1.0, Math.Max(0.0, value));
-                _calData[_serial]["CenterY"] = JToken.FromObject(value);
+                _calData[_id]["CenterY"] = JToken.FromObject(value);
                 OnPropertyChanged("Center");
             }
         }
@@ -775,7 +776,7 @@ namespace WiiTUIO.Provider
             {
                 if (_TLled == value) return;
                 _TLled = value;
-                _calData[_serial]["TLled"] = JToken.FromObject(value);
+                _calData[_id]["TLled"] = JToken.FromObject(value);
                 OnPropertyChanged("TLled");
             }
         }
@@ -788,18 +789,24 @@ namespace WiiTUIO.Provider
             {
                 if (_TRled == value) return;
                 _TRled = value;
-                _calData[_serial]["TRled"] = JToken.FromObject(value);
+                _calData[_id]["TRled"] = JToken.FromObject(value);
                 OnPropertyChanged("TRled");
             }
         }
 
         private static string CALIBRATION_FILENAME = System.AppDomain.CurrentDomain.BaseDirectory + "CalibrationData.json";
         private static JObject _calData;
-        private string _serial;
+        private List<string> propertyList;
+        private string _id;
 
-        public CalibrationSettings(string serial)
+        public CalibrationSettings(string id)
         {
-            _serial = serial;
+            _id = id;
+
+            propertyList = Settings.Default.pointer_4IRMode 
+                ? new List<string> { "TRled", "TLled", "CenterX", "CenterY", "Right", "Left", "Bottom", "Top" }
+                : new List<string> { "Right", "Left", "Bottom", "Top" };
+
             InitializeCalibrationData();
         }
 
@@ -814,10 +821,7 @@ namespace WiiTUIO.Provider
                     : new JObject();
             }
 
-            if (_calData[_serial] == null)
-            {
-                _calData[_serial] = new JObject();
-            }
+            _calData[_id] = _calData[_id] ?? new JObject();
 
             LoadCalibrationValues();
             SaveCalibrationData();
@@ -827,19 +831,22 @@ namespace WiiTUIO.Provider
         {
             foreach (var property in GetType().GetProperties())
             {
-                if (_calData[_serial][property.Name] != null)
+                if (propertyList.Contains(property.Name))
                 {
-                    var value = _calData[_serial][property.Name].ToObject(property.PropertyType);
-                    property.SetValue(this, value);
-                }
-                else
-                {
-                    var value = property.GetValue(this);
-                    if (value == null && property.PropertyType.IsValueType)
+                    if (_calData[_id][property.Name] != null)
                     {
-                        value = Activator.CreateInstance(property.PropertyType);
+                        var value = _calData[_id][property.Name].ToObject(property.PropertyType);
+                        property.SetValue(this, value);
                     }
-                    _calData[_serial][property.Name] = JToken.FromObject(value);
+                    else
+                    {
+                        var value = property.GetValue(this);
+                        if (value == null && property.PropertyType.IsValueType)
+                        {
+                            value = Activator.CreateInstance(property.PropertyType);
+                        }
+                        _calData[_id][property.Name] = JToken.FromObject(value);
+                    }
                 }
             }
         }

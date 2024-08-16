@@ -123,59 +123,13 @@ namespace WiiTUIO.Provider
                 Console.WriteLine("Setting primary monitor for screen position calculator to " + this.primaryScreen.Bounds);
                 this.recalculateScreenBounds(this.primaryScreen);
             }
-            else
+            else if (e.PropertyName == "Left" || e.PropertyName == "Right" || e.PropertyName == "Top" || e.PropertyName == "Bottom")
             {
-                if (!Settings.Default.pointer_4IRMode)
-                {
-                    Console.WriteLine("Settings changed to " + e.PropertyName);
-                    switch (e.PropertyName)
-                    {
-                        case "test_topLeftGun1":
-                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        case "test_topLeftGun2":
-                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        case "test_topLeftGun3":
-                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        case "test_topLeftGun4":
-                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        case "test_btmRightGun1":
-                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun1;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        case "test_btmRightGun2":
-                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun2;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        case "test_btmRightGun3":
-                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun3;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        case "test_btmRightGun4":
-                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun4;
-                            recalculateLightgunCoordBounds();
-                            break;
-                        default: break;
-                    }
-                }
-                else
-                {
-                    if (e.PropertyName == "Left" || e.PropertyName == "Right" || e.PropertyName == "Top" || e.PropertyName == "Bottom")
-                    {
-                        trueTopLeftPt.X = topLeftPt.X = this.settings.Left;
-                        trueTopLeftPt.Y = topLeftPt.Y = this.settings.Top;
-                        trueBottomRightPt.X = bottomRightPt.X = this.settings.Right;
-                        trueBottomRightPt.Y = bottomRightPt.Y = this.settings.Bottom;
-                        recalculateLightgunCoordBounds();
-                    }
-                }
+                trueTopLeftPt.X = topLeftPt.X = this.settings.Left;
+                trueTopLeftPt.Y = topLeftPt.Y = this.settings.Top;
+                trueBottomRightPt.X = bottomRightPt.X = this.settings.Right;
+                trueBottomRightPt.Y = bottomRightPt.Y = this.settings.Bottom;
+                recalculateLightgunCoordBounds();
             }
         }
 
@@ -221,37 +175,10 @@ namespace WiiTUIO.Provider
             //topLeftPt = new PointF() { X = 0.15f, Y = 0.002f };
             //centerPt = new PointF() { X = 0.43f, Y = 0.205f };
 
-            if (!Settings.Default.pointer_4IRMode)
-            {
-                switch (this.wiimoteId)
-                {
-                    case 1:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun1;
-                        break;
-                    case 2:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun2;
-                        break;
-                    case 3:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun3;
-                        break;
-                    case 4:
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun4;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            else
-            {
-                trueTopLeftPt.X = topLeftPt.X = this.settings.Left;
-                trueTopLeftPt.Y = topLeftPt.Y = this.settings.Top;
-                trueBottomRightPt.X = bottomRightPt.X = this.settings.Right;
-                trueBottomRightPt.Y = bottomRightPt.Y = this.settings.Bottom;
-            }
+            trueTopLeftPt.X = topLeftPt.X = this.settings.Left;
+            trueTopLeftPt.Y = topLeftPt.Y = this.settings.Top;
+            trueBottomRightPt.X = bottomRightPt.X = this.settings.Right;
+            trueBottomRightPt.Y = bottomRightPt.Y = this.settings.Bottom;
 
             if (targetAspectRatio == 0.0)
             {
