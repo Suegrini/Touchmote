@@ -37,6 +37,23 @@ namespace WiiTUIO.Provider
         private PointF btmRightPointBak;
         private PointF topLeftPointBak;
 
+        private double topOffset;
+        private double bottomOffset;
+        private double leftOffset;
+        private double rightOffset;
+
+        private double topBackup;
+        private double bottomBackup;
+        private double leftBackup;
+        private double rightBackup;
+        private float tlBackup;
+        private float trBackup;
+        private float centerXBackup;
+        private float centerYBackup;
+
+        private double marginXBackup;
+        private double marginYBackup;
+
         /// <summary>
         /// An event which is raised once calibration is finished.
         /// </summary>
@@ -127,28 +144,6 @@ namespace WiiTUIO.Provider
                 this.keyMapper.OnButtonUp += keyMapper_OnButtonUp;
                 buttonTimer.Elapsed += buttonTimer_Elapsed;
 
-                switch (this.keyMapper.WiimoteID)
-                {
-                    case 1:
-                        btmRightPointBak = Settings.Default.test_btmRightGun1;
-                        topLeftPointBak = Settings.Default.test_topLeftGun1;
-                        break;
-                    case 2:
-                        btmRightPointBak = Settings.Default.test_btmRightGun2;
-                        topLeftPointBak = Settings.Default.test_topLeftGun2;
-                        break;
-                    case 3:
-                        btmRightPointBak = Settings.Default.test_btmRightGun3;
-                        topLeftPointBak = Settings.Default.test_topLeftGun3;
-                        break;
-                    case 4:
-                        btmRightPointBak = Settings.Default.test_btmRightGun4;
-                        topLeftPointBak = Settings.Default.test_topLeftGun4;
-                        break;
-                    default:
-                        throw new Exception("Unknown Wiimote ID");
-                }
-
                 previousForegroundWindow = UIHelpers.GetForegroundWindow();
                 if (previousForegroundWindow == null)
                 {
@@ -187,9 +182,64 @@ namespace WiiTUIO.Provider
                     this.CalibrationCanvas.BeginAnimation(FrameworkElement.OpacityProperty, animation, HandoffBehavior.SnapshotAndReplace);
                 }), null);
 
-                this.movePoint(1 - Settings.Default.CalibrationMarginX, 1 - Settings.Default.CalibrationMarginY);
+                marginXBackup = Settings.Default.CalibrationMarginX;
+                marginYBackup = Settings.Default.CalibrationMarginY;
 
-                step = 1;
+                if (!Settings.Default.pointer_4IRMode)
+                {
+                    switch (this.keyMapper.WiimoteID)
+                    {
+                        case 1:
+                            btmRightPointBak = Settings.Default.test_btmRightGun1;
+                            topLeftPointBak = Settings.Default.test_topLeftGun1;
+                            break;
+                        case 2:
+                            btmRightPointBak = Settings.Default.test_btmRightGun2;
+                            topLeftPointBak = Settings.Default.test_topLeftGun2;
+                            break;
+                        case 3:
+                            btmRightPointBak = Settings.Default.test_btmRightGun3;
+                            topLeftPointBak = Settings.Default.test_topLeftGun3;
+                            break;
+                        case 4:
+                            btmRightPointBak = Settings.Default.test_btmRightGun4;
+                            topLeftPointBak = Settings.Default.test_topLeftGun4;
+                            break;
+                        default:
+                            throw new Exception("Unknown Wiimote ID");
+                    }
+                    this.movePoint(1 - marginXBackup, 1 - marginYBackup);
+
+                    step = 1;
+                }
+                else
+                {
+                    Settings.Default.CalibrationMarginX = 0;
+                    Settings.Default.CalibrationMarginY = 0;
+
+                    topBackup = Settings.Default.Top;
+                    bottomBackup = Settings.Default.Bottom;
+                    leftBackup = Settings.Default.Left;
+                    rightBackup = Settings.Default.Right;
+                    centerXBackup = Settings.Default.CenterX;
+                    centerYBackup = Settings.Default.CenterY;
+                    tlBackup = Settings.Default.TLled;
+                    trBackup = Settings.Default.TRled;
+
+                    Settings.Default.Top = 0;
+                    Settings.Default.Bottom = 1;
+                    Settings.Default.Left = 0;
+                    Settings.Default.Right = 1;
+
+                    topOffset = 0;
+                    bottomOffset = 1;
+                    leftOffset = 0;
+                    rightOffset = 1;
+
+                    this.movePoint(0.5, 0.5);
+
+                    step = 0;
+                }
             }
         }
 
@@ -237,6 +287,16 @@ namespace WiiTUIO.Provider
 
         private void finishedCalibration()
         {
+            if (Settings.Default.pointer_4IRMode)
+            {
+                Settings.Default.Top = topOffset;
+                Settings.Default.Bottom = bottomOffset;
+                Settings.Default.Left = leftOffset;
+                Settings.Default.Right = rightOffset;
+                Settings.Default.CalibrationMarginX = marginXBackup;
+                Settings.Default.CalibrationMarginY = marginYBackup;
+            }
+
             Settings.Default.Save();
 
             this.HideOverlay();
@@ -244,27 +304,45 @@ namespace WiiTUIO.Provider
 
         public void CancelCalibration()
         {
-            switch (this.keyMapper.WiimoteID)
+            if (!Settings.Default.pointer_4IRMode)
             {
-                case 1:
-                    Settings.Default.test_btmRightGun1 = btmRightPointBak;
-                    Settings.Default.test_btmRightGun1 = topLeftPointBak;
-                    break;
-                case 2:
-                    Settings.Default.test_btmRightGun2 = btmRightPointBak;
-                    Settings.Default.test_btmRightGun2 = topLeftPointBak;
-                    break;
-                case 3:
-                    Settings.Default.test_btmRightGun3 = btmRightPointBak;
-                    Settings.Default.test_topLeftGun3 = topLeftPointBak;
-                    break;
-                case 4:
-                    Settings.Default.test_btmRightGun4 = btmRightPointBak;
-                    Settings.Default.test_topLeftGun4 = topLeftPointBak;
-                    break;
-                default:
-                    throw new Exception("Unknown Wiimote ID");
+                switch (this.keyMapper.WiimoteID)
+                {
+                    case 1:
+                        Settings.Default.test_btmRightGun1 = btmRightPointBak;
+                        Settings.Default.test_btmRightGun1 = topLeftPointBak;
+                        break;
+                    case 2:
+                        Settings.Default.test_btmRightGun2 = btmRightPointBak;
+                        Settings.Default.test_btmRightGun2 = topLeftPointBak;
+                        break;
+                    case 3:
+                        Settings.Default.test_btmRightGun3 = btmRightPointBak;
+                        Settings.Default.test_topLeftGun3 = topLeftPointBak;
+                        break;
+                    case 4:
+                        Settings.Default.test_btmRightGun4 = btmRightPointBak;
+                        Settings.Default.test_topLeftGun4 = topLeftPointBak;
+                        break;
+                    default:
+                        throw new Exception("Unknown Wiimote ID");
+                }
             }
+            else
+            {
+                Settings.Default.Top = topBackup;
+                Settings.Default.Bottom = bottomBackup;
+                Settings.Default.Left = leftBackup;
+                Settings.Default.Right = rightBackup;
+                Settings.Default.CenterX = centerXBackup;
+                Settings.Default.CenterY = centerYBackup;
+                Settings.Default.TLled = tlBackup;
+                Settings.Default.TRled = trBackup;
+
+                Settings.Default.CalibrationMarginX = marginXBackup;
+                Settings.Default.CalibrationMarginY = marginYBackup;
+            }
+
             Settings.Default.Save();
 
             this.HideOverlay();
@@ -291,8 +369,13 @@ namespace WiiTUIO.Provider
                 {
                     switch (step)
                     {
+                        case 0:
+                            this.movePoint(1 - marginXBackup, 1 - marginYBackup);
+
+                            step = 1;
+                            break;
                         case 1:
-                            this.movePoint(Settings.Default.CalibrationMarginX, Settings.Default.CalibrationMarginY);
+                            this.movePoint(marginXBackup, marginYBackup);
 
                             step = 2;
                             break;
@@ -383,42 +466,64 @@ namespace WiiTUIO.Provider
 
             switch (step)
             {
+                case 0:
+                    Settings.Default.CenterX = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) - (this.keyMapper.cursorPos.RelativeY - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + 2);
+                    Settings.Default.CenterY = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + (this.keyMapper.cursorPos.RelativeY - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) + 2);
+                    Settings.Default.TLled = (float)(0.5 - ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
+                    Settings.Default.TRled = (float)(0.5 + ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
+                    break;
                 case 1:
-                    switch (this.keyMapper.WiimoteID)
+                    if (!Settings.Default.pointer_4IRMode)
                     {
-                        case 1:
-                            Settings.Default.test_btmRightGun1 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        case 2:
-                            Settings.Default.test_btmRightGun2 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        case 3:
-                            Settings.Default.test_btmRightGun3 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        case 4:
-                            Settings.Default.test_btmRightGun4 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        default:
-                            throw new Exception("Unknown Wiimote ID");
+                        switch (this.keyMapper.WiimoteID)
+                        {
+                            case 1:
+                                Settings.Default.test_btmRightGun1 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            case 2:
+                                Settings.Default.test_btmRightGun2 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            case 3:
+                                Settings.Default.test_btmRightGun3 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            case 4:
+                                Settings.Default.test_btmRightGun4 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            default:
+                                throw new Exception("Unknown Wiimote ID");
+                        }
+                    }
+                    else
+                    {
+                        bottomOffset = this.keyMapper.cursorPos.LightbarY;
+                        rightOffset = this.keyMapper.cursorPos.LightbarX;
                     }
                     break;
                 case 2:
-                    switch (this.keyMapper.WiimoteID)
+                    if (!Settings.Default.pointer_4IRMode)
                     {
-                        case 1:
-                            Settings.Default.test_topLeftGun1 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        case 2:
-                            Settings.Default.test_topLeftGun2 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        case 3:
-                            Settings.Default.test_topLeftGun3 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        case 4:
-                            Settings.Default.test_topLeftGun4 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
-                            break;
-                        default:
-                            throw new Exception("Unknown Wiimote ID");
+                        switch (this.keyMapper.WiimoteID)
+                        {
+                            case 1:
+                                Settings.Default.test_topLeftGun1 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            case 2:
+                                Settings.Default.test_topLeftGun2 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            case 3:
+                                Settings.Default.test_topLeftGun3 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            case 4:
+                                Settings.Default.test_topLeftGun4 = new PointF() { X = (float)this.keyMapper.cursorPos.RelativeX, Y = (float)this.keyMapper.cursorPos.RelativeY };
+                                break;
+                            default:
+                                throw new Exception("Unknown Wiimote ID");
+                        }
+                    }
+                    else
+                    {
+                        topOffset = this.keyMapper.cursorPos.LightbarY;
+                        leftOffset = this.keyMapper.cursorPos.LightbarX;
                     }
                     break;
                 default: break;

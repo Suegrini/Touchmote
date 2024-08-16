@@ -20,6 +20,39 @@ namespace WiiTUIO.Provider
         private int maxXPos;
         private int maxWidth;
 
+        private uint[] see = new uint[4];
+        private float buff = 0.05f;
+
+        private PointF median;
+
+        private PointF[] finalPos = new PointF[4]
+        {
+            new PointF { X = 0.39f, Y = 0.26f },
+            new PointF { X = 0.61f, Y = 0.26f },
+            new PointF { X = 0.39f, Y = 0.74f },
+            new PointF { X = 0.61f, Y = 0.74f }
+        };
+        private PointF[] irPositionNew = new PointF[4];
+
+        private double mappedX;
+        private double mappedY;
+
+        private float xDistTop;
+        private float xDistBottom;
+        private float yDistLeft;
+        private float yDistRight;
+
+        float angleTop;
+        float angleBottom;
+        float angleLeft;
+        float angleRight;
+
+        double angle;
+        float height;
+        float width;
+
+        private float[] angleOffset = new float[4];
+
         private int minYPos;
         private int maxYPos;
         private int maxHeight;
@@ -40,10 +73,14 @@ namespace WiiTUIO.Provider
         // Use 0.0 to mean use full mapped range
         private double targetAspectRatio = 0.0;
 
-        private double smoothedX, smoothedZ, smoothedRotation;
+        private double smoothedX, smoothedZ;
         private int orientation;
 
         private int leftPoint = -1;
+
+        private bool start = false;
+
+        private Warper pWarper;
 
         private CursorPos lastPos;
 
@@ -58,6 +95,7 @@ namespace WiiTUIO.Provider
         public ScreenPositionCalculator(int id)
         {
             this.wiimoteId = id;
+            this.pWarper = new Warper();
             this.primaryScreen = DeviceUtils.DeviceUtil.GetScreen(Settings.Default.primaryMonitor);
             this.recalculateScreenBounds(this.primaryScreen);
 
@@ -83,41 +121,53 @@ namespace WiiTUIO.Provider
             }
             else
             {
-                switch (e.PropertyName)
+                if (!Settings.Default.pointer_4IRMode)
                 {
-                    case "test_topLeftGun1":
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
-                        recalculateLightgunCoordBounds();
-                        break;
-                    case "test_topLeftGun2":
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
-                        recalculateLightgunCoordBounds();
-                        break;
-                    case "test_topLeftGun3":
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
-                        recalculateLightgunCoordBounds();
-                        break;
-                    case "test_topLeftGun4":
-                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
-                        recalculateLightgunCoordBounds();
-                        break;
+                    Console.WriteLine("Settings changed to " + e.PropertyName);
+                    switch (e.PropertyName)
+                    {
+                        case "test_topLeftGun1":
+                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
+                            recalculateLightgunCoordBounds();
+                            break;
+                        case "test_topLeftGun2":
+                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
+                            recalculateLightgunCoordBounds();
+                            break;
+                        case "test_topLeftGun3":
+                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
+                            recalculateLightgunCoordBounds();
+                            break;
+                        case "test_topLeftGun4":
+                            trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
+                            recalculateLightgunCoordBounds();
+                            break;
                         case "test_btmRightGun1":
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun1;
-                        recalculateLightgunCoordBounds();
-                        break;
+                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun1;
+                            recalculateLightgunCoordBounds();
+                            break;
                         case "test_btmRightGun2":
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun2;
-                        recalculateLightgunCoordBounds();
-                        break;
+                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun2;
+                            recalculateLightgunCoordBounds();
+                            break;
                         case "test_btmRightGun3":
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun3;
-                        recalculateLightgunCoordBounds();
-                        break;
+                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun3;
+                            recalculateLightgunCoordBounds();
+                            break;
                         case "test_btmRightGun4":
-                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun4;
-                        recalculateLightgunCoordBounds();
-                        break;
-                    default: break;
+                            trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun4;
+                            recalculateLightgunCoordBounds();
+                            break;
+                        default: break;
+                    }
+                }
+                else
+                {
+                    trueTopLeftPt.X = topLeftPt.X = (float)Settings.Default.Left;
+                    trueTopLeftPt.Y = topLeftPt.Y = (float)Settings.Default.Top;
+                    trueBottomRightPt.X = bottomRightPt.X = (float)Settings.Default.Right;
+                    trueBottomRightPt.Y = bottomRightPt.Y = (float)Settings.Default.Bottom;
+                    recalculateLightgunCoordBounds();
                 }
             }
         }
@@ -164,26 +214,36 @@ namespace WiiTUIO.Provider
             //topLeftPt = new PointF() { X = 0.15f, Y = 0.002f };
             //centerPt = new PointF() { X = 0.43f, Y = 0.205f };
 
-            switch (this.wiimoteId)
+            if (!Settings.Default.pointer_4IRMode)
             {
-                case 1:
-                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
-                    trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun1;
-                    break;
-                case 2:
-                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
-                    trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun2;
-                    break;
-                case 3:
-                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
-                    trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun3;
-                    break;
-                case 4:
-                    trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
-                    trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun4;
-                    break;
-                default:
-                    break;
+                switch (this.wiimoteId)
+                {
+                    case 1:
+                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun1;
+                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun1;
+                        break;
+                    case 2:
+                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun2;
+                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun2;
+                        break;
+                    case 3:
+                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun3;
+                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun3;
+                        break;
+                    case 4:
+                        trueTopLeftPt = topLeftPt = Settings.Default.test_topLeftGun4;
+                        trueBottomRightPt = bottomRightPt = Settings.Default.test_btmRightGun4;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                trueTopLeftPt.X = topLeftPt.X = (float)Settings.Default.Left;
+                trueTopLeftPt.Y = topLeftPt.Y = (float)Settings.Default.Top;
+                trueBottomRightPt.X = bottomRightPt.X = (float)Settings.Default.Right;
+                trueBottomRightPt.Y = bottomRightPt.Y = (float)Settings.Default.Bottom;
             }
 
             if (targetAspectRatio == 0.0)
@@ -217,144 +277,420 @@ namespace WiiTUIO.Provider
 
         public CursorPos CalculateCursorPos(WiimoteState wiimoteState)
         {
-            int x;
-            int y;
+            int x = 0;
+            int y = 0;
             double marginX, marginY = 0.0;
             double lightbarX = 0.0;
             double lightbarY = 0.0;
+            int offsetY = 0;
+            double marginOffsetY = 0.0;
+            PointF resultPos = new PointF();
 
             IRState irState = wiimoteState.IRState;
 
-            PointF relativePosition = new PointF();
-
-            int irPoint1 = 0;
-            int irPoint2 = 0;
-            bool foundMidpoint = false;
-            // First check if previously found points are still detected.
-            // Prefer those points first
-            if (lastIrPoint1 != -1 && lastIrPoint2 != -1)
+            if (!Settings.Default.pointer_4IRMode)
             {
-                if (irState.IRSensors[lastIrPoint1].Found &&
-                    irState.IRSensors[lastIrPoint2].Found)
+                int irPoint1 = 0;
+                int irPoint2 = 0;
+                bool foundMidpoint = false;
+                // First check if previously found points are still detected.
+                // Prefer those points first
+                if (lastIrPoint1 != -1 && lastIrPoint2 != -1)
                 {
-                    foundMidpoint = true;
-                    irPoint1 = lastIrPoint1;
-                    irPoint2 = lastIrPoint2;
-                }
-            }
-
-            // If no midpoint found from previous points, check all available
-            // IR points for a possible midpoint
-            for (int i = 0; !foundMidpoint && i < irState.IRSensors.Count(); i++)
-            {
-                if (irState.IRSensors[i].Found)
-                {
-                    for (int j = i + 1; j < irState.IRSensors.Count() && !foundMidpoint; j++)
+                    if (irState.IRSensors[lastIrPoint1].Found &&
+                        irState.IRSensors[lastIrPoint2].Found)
                     {
-                        if (irState.IRSensors[j].Found)
-                        {
-                            foundMidpoint = true;
+                        foundMidpoint = true;
+                        irPoint1 = lastIrPoint1;
+                        irPoint2 = lastIrPoint2;
+                    }
+                }
 
-                            irPoint1 = i;
-                            irPoint2 = j;
+                // If no midpoint found from previous points, check all available
+                // IR points for a possible midpoint
+                for (int i = 0; !foundMidpoint && i < irState.IRSensors.Count(); i++)
+                {
+                    if (irState.IRSensors[i].Found)
+                    {
+                        for (int j = i + 1; j < irState.IRSensors.Count() && !foundMidpoint; j++)
+                        {
+                            if (irState.IRSensors[j].Found)
+                            {
+                                foundMidpoint = true;
+
+                                irPoint1 = i;
+                                irPoint2 = j;
+                            }
                         }
                     }
                 }
-            }
 
-            if (foundMidpoint)
-            {
-                int i = irPoint1;
-                int j = irPoint2;
-                relativePosition.X = (irState.IRSensors[i].Position.X + irState.IRSensors[j].Position.X) / 2.0f;
-                relativePosition.Y = (irState.IRSensors[i].Position.Y + irState.IRSensors[j].Position.Y) / 2.0f;
+                if (foundMidpoint)
+                {
+                    int i = irPoint1;
+                    int j = irPoint2;
+                    median.X = (irState.IRSensors[i].Position.X + irState.IRSensors[j].Position.X) / 2.0f;
+                    median.Y = (irState.IRSensors[i].Position.Y + irState.IRSensors[j].Position.Y) / 2.0f;
+
+                    if (Settings.Default.pointer_considerRotation)
+                    {
+                        smoothedX = smoothedX * 0.9f + wiimoteState.AccelState.RawValues.X * 0.1f;
+                        smoothedZ = smoothedZ * 0.9f + wiimoteState.AccelState.RawValues.Z * 0.1f;
+
+                        int l = leftPoint, r;
+                        if (leftPoint == -1)
+                        {
+                            double absx = Math.Abs(smoothedX - 128), absz = Math.Abs(smoothedZ - 128);
+
+                            if (orientation == 0 || orientation == 2) absx -= 5;
+                            if (orientation == 1 || orientation == 3) absz -= 5;
+
+                            if (absz >= absx)
+                            {
+                                if (absz > 5)
+                                    orientation = (smoothedZ > 128) ? 0 : 2;
+                            }
+                            else
+                            {
+                                if (absx > 5)
+                                    orientation = (smoothedX > 128) ? 3 : 1;
+                            }
+
+                            switch (orientation)
+                            {
+                                case 0: l = (irState.IRSensors[i].RawPosition.X < irState.IRSensors[j].RawPosition.X) ? i : j; break;
+                                case 1: l = (irState.IRSensors[i].RawPosition.Y > irState.IRSensors[j].RawPosition.Y) ? i : j; break;
+                                case 2: l = (irState.IRSensors[i].RawPosition.X > irState.IRSensors[j].RawPosition.X) ? i : j; break;
+                                case 3: l = (irState.IRSensors[i].RawPosition.Y < irState.IRSensors[j].RawPosition.Y) ? i : j; break;
+                            }
+                        }
+                        leftPoint = l;
+                        r = l == i ? j : i;
+
+                        double dx = irState.IRSensors[r].RawPosition.X - irState.IRSensors[l].RawPosition.X;
+                        double dy = irState.IRSensors[r].RawPosition.Y - irState.IRSensors[l].RawPosition.Y;
+
+                        double d = Math.Sqrt(dx * dx + dy * dy);
+
+                        dx /= d;
+                        dy /= d;
+
+                        angle = Math.Atan2(dy, dx);
+                    }
+
+                    lastIrPoint1 = irPoint1;
+                    lastIrPoint2 = irPoint2;
+                }
+                else if (!foundMidpoint)
+                {
+                    CursorPos err = lastPos;
+                    err.OutOfReach = true;
+                    err.OffScreen = true;
+                    leftPoint = -1;
+                    lastIrPoint1 = -1;
+                    lastIrPoint2 = -1;
+
+                    return err;
+                }
+
+                if (Properties.Settings.Default.pointer_sensorBarPos == "top")
+                {
+                    offsetY = -SBPositionOffset;
+                    marginOffsetY = -CalcMarginOffsetY;
+                }
+                else if (Properties.Settings.Default.pointer_sensorBarPos == "bottom")
+                {
+                    offsetY = SBPositionOffset;
+                    marginOffsetY = CalcMarginOffsetY;
+                }
 
                 if (Settings.Default.pointer_considerRotation)
                 {
-                    smoothedX = smoothedX * 0.9f + wiimoteState.AccelState.RawValues.X * 0.1f;
-                    smoothedZ = smoothedZ * 0.9f + wiimoteState.AccelState.RawValues.Z * 0.1f;
+                    median.X = median.X - 0.5F;
+                    median.Y = median.Y - 0.5F;
 
-                    int l = leftPoint, r;
-                    if (leftPoint == -1)
-                    {
-                        double absx = Math.Abs(smoothedX - 128), absz = Math.Abs(smoothedZ - 128);
+                    median = this.rotatePoint(median, angle);
 
-                        if (orientation == 0 || orientation == 2) absx -= 5;
-                        if (orientation == 1 || orientation == 3) absz -= 5;
-
-                        if (absz >= absx)
-                        {
-                            if (absz > 5)
-                                orientation = (smoothedZ > 128) ? 0 : 2;
-                        }
-                        else
-                        {
-                            if (absx > 5)
-                                orientation = (smoothedX > 128) ? 3 : 1;
-                        }
-
-                        switch (orientation)
-                        {
-                            case 0: l = (irState.IRSensors[i].RawPosition.X < irState.IRSensors[j].RawPosition.X) ? i : j; break;
-                            case 1: l = (irState.IRSensors[i].RawPosition.Y > irState.IRSensors[j].RawPosition.Y) ? i : j; break;
-                            case 2: l = (irState.IRSensors[i].RawPosition.X > irState.IRSensors[j].RawPosition.X) ? i : j; break;
-                            case 3: l = (irState.IRSensors[i].RawPosition.Y < irState.IRSensors[j].RawPosition.Y) ? i : j; break;
-                        }
-                    }
-                    leftPoint = l;
-                    r = l == i ? j : i;
-
-                    double dx = irState.IRSensors[r].RawPosition.X - irState.IRSensors[l].RawPosition.X;
-                    double dy = irState.IRSensors[r].RawPosition.Y - irState.IRSensors[l].RawPosition.Y;
-
-                    double d = Math.Sqrt(dx * dx + dy * dy);
-
-                    dx /= d;
-                    dy /= d;
-
-                    smoothedRotation = Math.Atan2(dy, dx);
+                    median.X = median.X + 0.5F;
+                    median.Y = median.Y + 0.5F;
                 }
 
-                lastIrPoint1 = irPoint1;
-                lastIrPoint2 = irPoint2;
+                resultPos = median;
             }
-            else if (!foundMidpoint)
+            else
             {
-                CursorPos err = lastPos;
-                err.OutOfReach = true;
-                err.OffScreen = true;
-                leftPoint = -1;
-                lastIrPoint1 = -1;
-                lastIrPoint2 = -1;
+                // Wait for all postions to be recognised before starting
+                if (irState.IRSensors[0].Found == true || irState.IRSensors[1].Found == true || irState.IRSensors[2].Found == true || irState.IRSensors[3].Found == true)
+                {
+                    start = true;
+                }
+                else if (start)
+                {
+                    // all positions not yet seen
+                    CursorPos err = lastPos;
+                    err.OutOfReach = true;
+                    err.OffScreen = true;
 
-                return err;
-            }
+                    return err;
+                }
+                for (int i = 0; i < 4; i++)
+                {
+                    // if LED not seen...
+                    if (irState.IRSensors[i].Found != true)
+                    {
+                        // if unseen make sure all quadrants have a value if missing apply value with buffer and set to unseen (this step is important for 1 LED usage)
+                        if (!(((irPositionNew[0].Y < median.Y) && (irPositionNew[0].X < median.X)) || ((irPositionNew[1].Y < median.Y) && (irPositionNew[1].X < median.X)) || ((irPositionNew[2].Y < median.Y) && (irPositionNew[2].X < median.X)) || ((irPositionNew[3].Y < median.Y) && (irPositionNew[3].X < median.X))))
+                        {
+                            irPositionNew[i].X = median.X + (median.X - finalPos[3].X) - buff;
+                            irPositionNew[i].Y = median.Y + (median.Y - finalPos[3].Y) - buff;
+                            see[0] = 0;
+                        }
+                        if (!(((irPositionNew[0].Y < median.Y) && (irPositionNew[0].X > median.X)) || ((irPositionNew[1].Y < median.Y) && (irPositionNew[1].X > median.X)) || ((irPositionNew[2].Y < median.Y) && (irPositionNew[2].X > median.X)) || ((irPositionNew[3].Y < median.Y) && (irPositionNew[3].X > median.X))))
+                        {
+                            irPositionNew[i].X = median.X + (median.X - finalPos[2].X) + buff;
+                            irPositionNew[i].Y = median.Y + (median.Y - finalPos[2].Y) - buff;
+                            see[1] = 0;
+                        }
+                        if (!(((irPositionNew[0].Y > median.Y) && (irPositionNew[0].X < median.X)) || ((irPositionNew[1].Y > median.Y) && (irPositionNew[1].X < median.X)) || ((irPositionNew[2].Y > median.Y) && (irPositionNew[2].X < median.X)) || ((irPositionNew[3].Y > median.Y) && (irPositionNew[3].X < median.X))))
+                        {
+                            irPositionNew[i].X = median.X + (median.X - finalPos[1].X) - buff;
+                            irPositionNew[i].Y = median.Y + (median.Y - finalPos[1].Y) + buff;
+                            see[2] = 0;
+                        }
+                        if (!(((irPositionNew[0].Y > median.Y) && (irPositionNew[0].X > median.X)) || ((irPositionNew[1].Y > median.Y) && (irPositionNew[1].X > median.X)) || ((irPositionNew[2].Y > median.Y) && (irPositionNew[2].X > median.X)) || ((irPositionNew[3].Y > median.Y) && (irPositionNew[3].X > median.X))))
+                        {
+                            irPositionNew[i].X = median.X + (median.X - finalPos[0].X) + buff;
+                            irPositionNew[i].Y = median.Y + (median.Y - finalPos[0].Y) + buff;
+                            see[3] = 0;
+                        }
 
-            int offsetY = 0;
-            double marginOffsetY = 0.0;
+                        // if all quadrants have a value apply value with buffer and set to see/unseen            
+                        if (irPositionNew[i].Y < median.Y)
+                        {
+                            if (irPositionNew[i].X < median.X)
+                            {
+                                irPositionNew[i].X = median.X + (median.X - finalPos[3].X) - buff;
+                                irPositionNew[i].Y = median.Y + (median.Y - finalPos[3].Y) - buff;
+                                see[0] = 0;
+                            }
+                            if (irPositionNew[i].X > median.X)
+                            {
+                                irPositionNew[i].X = median.X + (median.X - finalPos[2].X) + buff;
+                                irPositionNew[i].Y = median.Y + (median.Y - finalPos[2].Y) - buff;
+                                see[1] = 0;
+                            }
+                        }
+                        if (irPositionNew[i].Y > median.Y)
+                        {
+                            if (irPositionNew[i].X < median.X)
+                            {
+                                irPositionNew[i].X = median.X + (median.X - finalPos[1].X) - buff;
+                                irPositionNew[i].Y = median.Y + (median.Y - finalPos[1].Y) + buff;
+                                see[2] = 0;
+                            }
+                            if (irPositionNew[i].X > median.X)
+                            {
+                                irPositionNew[i].X = median.X + (median.X - finalPos[0].X) + buff;
+                                irPositionNew[i].Y = median.Y + (median.Y - finalPos[0].Y) + buff;
+                                see[3] = 0;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // If LEDS have been seen place in correct quadrant, apply buffer an set to seen.
+                        if (irState.IRSensors[i].Position.Y < median.Y)
+                        {
+                            if (irState.IRSensors[i].Position.X < median.X)
+                            {
+                                irPositionNew[i].X = irState.IRSensors[i].Position.X - buff;
+                                irPositionNew[i].Y = irState.IRSensors[i].Position.Y - buff;
+                                see[0] <<= 1;
+                                see[0] |= 1;
+                            }
+                            else if (irState.IRSensors[i].Position.X > median.X)
+                            {
+                                irPositionNew[i].X = irState.IRSensors[i].Position.X + buff;
+                                irPositionNew[i].Y = irState.IRSensors[i].Position.Y - buff;
+                                see[1] <<= 1;
+                                see[1] |= 1;
+                            }
+                        }
+                        else if (irState.IRSensors[i].Position.Y > median.Y)
+                        {
+                            if (irState.IRSensors[i].Position.X < median.X)
+                            {
+                                irPositionNew[i].X = irState.IRSensors[i].Position.X - buff;
+                                irPositionNew[i].Y = irState.IRSensors[i].Position.Y + buff;
+                                see[2] <<= 1;
+                                see[2] |= 1;
+                            }
+                            else if (irState.IRSensors[i].Position.X > median.X)
+                            {
+                                irPositionNew[i].X = irState.IRSensors[i].Position.X + buff;
+                                irPositionNew[i].Y = irState.IRSensors[i].Position.Y + buff;
+                                see[3] <<= 1;
+                                see[3] |= 1;
+                            }
+                        }
+                    }
 
-            if (Properties.Settings.Default.pointer_sensorBarPos == "top")
-            {
-                offsetY = -SBPositionOffset;
-                marginOffsetY = -CalcMarginOffsetY;
-            }
-            else if (Properties.Settings.Default.pointer_sensorBarPos == "bottom")
-            {
-                offsetY = SBPositionOffset;
-                marginOffsetY = CalcMarginOffsetY;
-            }
+                    // Arrange all values in to quadrants and remove buffer.
+                    // If LEDS have been seen use there value
+                    // If LEDS haven't been seen work out values form live positions
 
-            relativePosition.X = 1 - relativePosition.X;
+                    if (irPositionNew[i].Y < median.Y)
+                    {
+                        if (irPositionNew[i].X < median.X)
+                        {
+                            if ((see[0] & 0x02) != 0)
+                            {
+                                finalPos[0].X = irPositionNew[i].X + buff;
+                                finalPos[0].Y = irPositionNew[i].Y + buff;
+                            }
+                            else if (irPositionNew[i].Y < 0)
+                            {
+                                float f = angleBottom + angleOffset[2];
+                                finalPos[0].X = finalPos[2].X + yDistLeft * MathF.Cos(f);
+                                finalPos[0].Y = finalPos[2].Y + yDistLeft * -MathF.Sin(f);
+                            }
+                            else if (irPositionNew[i].X < 0)
+                            {
+                                float f = angleRight - angleOffset[1];
+                                finalPos[0].X = finalPos[1].X + xDistTop * -MathF.Cos(f);
+                                finalPos[0].Y = finalPos[1].Y + xDistTop * MathF.Sin(f);
+                            }
+                        }
+                        else if (irPositionNew[i].X > median.X)
+                        {
+                            if ((see[1] & 0x02) != 0)
+                            {
+                                finalPos[1].X = irPositionNew[i].X - buff;
+                                finalPos[1].Y = irPositionNew[i].Y + buff;
+                            }
+                            else if (irPositionNew[i].Y < 0)
+                            {
+                                float f = angleBottom - (angleOffset[3] - MathF.PI);
+                                finalPos[1].X = finalPos[3].X + yDistRight * MathF.Cos(f);
+                                finalPos[1].Y = finalPos[3].Y + yDistRight * -MathF.Sin(f);
+                            }
+                            else if (irPositionNew[i].X > 1)
+                            {
+                                float f = angleLeft + (angleOffset[0] - MathF.PI);
+                                finalPos[1].X = finalPos[0].X + xDistTop * MathF.Cos(f);
+                                finalPos[1].Y = finalPos[0].Y + xDistTop * -MathF.Sin(f);
+                            }
+                        }
+                    }
+                    else if (irPositionNew[i].Y > median.Y)
+                    {
+                        if (irPositionNew[i].X < median.X)
+                        {
+                            if ((see[2] & 0x02) != 0)
+                            {
+                                finalPos[2].X = irPositionNew[i].X + buff;
+                                finalPos[2].Y = irPositionNew[i].Y - buff;
+                            }
+                            else if (irPositionNew[i].Y > 1)
+                            {
+                                float f = angleTop - angleOffset[0];
+                                finalPos[2].X = finalPos[0].X + yDistLeft * MathF.Cos(f);
+                                finalPos[2].Y = finalPos[0].Y + yDistLeft * -MathF.Sin(f);
+                            }
+                            else if (irPositionNew[i].X < 0)
+                            {
+                                float f = angleRight + angleOffset[3];
+                                finalPos[2].X = finalPos[3].X + xDistBottom * MathF.Cos(f);
+                                finalPos[2].Y = finalPos[3].Y + xDistBottom * -MathF.Sin(f);
+                            }
+                        }
+                        else if (irPositionNew[i].X > median.X)
+                        {
+                            if ((see[3] & 0x02) != 0)
+                            {
+                                finalPos[3].X = irPositionNew[i].X - buff;
+                                finalPos[3].Y = irPositionNew[i].Y - buff;
+                            }
+                            else if (irPositionNew[i].Y > 1)
+                            {
+                                float f = angleTop + (angleOffset[1] - MathF.PI);
+                                finalPos[3].X = finalPos[1].X + yDistRight * MathF.Cos(f);
+                                finalPos[3].Y = finalPos[1].Y + yDistRight * -MathF.Sin(f);
+                            }
+                            else if (irPositionNew[i].X > 1)
+                            {
+                                float f = angleLeft - (angleOffset[2] - MathF.PI);
+                                finalPos[3].X = finalPos[2].X + xDistBottom * -MathF.Cos(f);
+                                finalPos[3].Y = finalPos[2].Y + xDistBottom * MathF.Sin(f);
+                            }
+                        }
+                    }
+                }
 
-            if (Settings.Default.pointer_considerRotation)
-            {
-                relativePosition.X = relativePosition.X - 0.5F;
-                relativePosition.Y = relativePosition.Y - 0.5F;
+                pWarper.setSource(finalPos[0].X, finalPos[0].Y, finalPos[1].X, finalPos[1].Y, finalPos[2].X, finalPos[2].Y, finalPos[3].X, finalPos[3].Y);
+                float[] fWarped = pWarper.warp();
+                resultPos.X = fWarped[0];
+                resultPos.Y = fWarped[1];
 
-                relativePosition = this.rotatePoint(relativePosition, smoothedRotation);
+                if (irState.IRSensors[0].Found == true && irState.IRSensors[1].Found == true && irState.IRSensors[2].Found == true && irState.IRSensors[3].Found == true)
+                {
+                    median.Y = (irPositionNew[0].Y + irPositionNew[1].Y + irPositionNew[2].Y + irPositionNew[3].Y + 0.002f) / 4;
+                    median.X = (irPositionNew[0].X + irPositionNew[1].X + irPositionNew[2].X + irPositionNew[3].X + 0.002f) / 4;
+                }
+                else
+                {
+                    median.Y = (finalPos[0].Y + finalPos[1].Y + finalPos[2].Y + finalPos[3].Y + 0.002f) / 4;
+                    median.X = (finalPos[0].X + finalPos[1].X + finalPos[2].X + finalPos[3].X + 0.002f) / 4;
+                }
+                // If 4 LEDS can be seen and loop has run through 5 times update offsets and height      
 
-                relativePosition.X = relativePosition.X + 0.5F;
-                relativePosition.Y = relativePosition.Y + 0.5F;
+                if (((1 << 5) & see[0] & see[1] & see[2] & see[3]) != 0)
+                {
+                    angleOffset[0] = angleTop - (angleLeft - MathF.PI);
+                    angleOffset[1] = -(angleTop - angleRight);
+                    angleOffset[2] = -(angleBottom - angleLeft);
+                    angleOffset[3] = angleBottom - (angleRight - MathF.PI);
+                    height = (yDistLeft + yDistRight) / 2.0f;
+                    width = (xDistTop + xDistBottom) / 2.0f;
+                }
+
+                // If 2 LEDS can be seen and loop has run through 5 times update angle and distances
+
+                if (((1 << 5) & see[0] & see[2]) != 0)
+                {
+                    angleLeft = MathF.Atan2(finalPos[2].Y - finalPos[0].Y, finalPos[0].X - finalPos[2].X);
+                    yDistLeft = MathF.Hypot((finalPos[0].Y - finalPos[2].Y), (finalPos[0].X - finalPos[2].X));
+                }
+
+                if (((1 << 5) & see[3] & see[1]) != 0)
+                {
+                    angleRight = MathF.Atan2(finalPos[3].Y - finalPos[1].Y, finalPos[1].X - finalPos[3].X);
+                    yDistRight = MathF.Hypot((finalPos[3].Y - finalPos[1].Y), (finalPos[3].X - finalPos[1].X));
+                }
+
+                if (((1 << 5) & see[0] & see[1]) != 0)
+                {
+                    angleTop = MathF.Atan2(finalPos[0].Y - finalPos[1].Y, finalPos[1].X - finalPos[0].X);
+                    xDistTop = MathF.Hypot((finalPos[0].Y - finalPos[1].Y), (finalPos[0].X - finalPos[1].X));
+                }
+
+                if (((1 << 5) & see[3] & see[2]) != 0)
+                {
+                    angleBottom = MathF.Atan2(finalPos[2].Y - finalPos[3].Y, finalPos[3].X - finalPos[2].X);
+                    xDistBottom = MathF.Hypot((finalPos[2].Y - finalPos[3].Y), (finalPos[2].X - finalPos[3].X));
+                }
+
+                // Add tilt correction
+                angle = (MathF.Atan2(finalPos[0].Y - finalPos[1].Y, finalPos[1].X - finalPos[0].X) + MathF.Atan2(finalPos[2].Y - finalPos[3].Y, finalPos[3].X - finalPos[2].X)) / 2;
+
+                if (see.Count(seen => seen == 0) >= 2 || Double.IsNaN(resultPos.X) || Double.IsNaN(resultPos.Y))
+                {
+                    CursorPos err = lastPos;
+                    err.OutOfReach = true;
+                    err.OffScreen = true;
+
+                    return err;
+                }
             }
 
             /*System.Windows.Point filteredPoint = coordFilter.AddGetFilteredCoord(new System.Windows.Point(relativePosition.X, relativePosition.Y), 1.0, 1.0);
@@ -368,8 +704,8 @@ namespace WiiTUIO.Provider
 
             //x = Convert.ToInt32((float)maxWidth * smoothedPoint.X + minXPos);
             //y = Convert.ToInt32((float)maxHeight * smoothedPoint.Y + minYPos) + offsetY;
-            x = Convert.ToInt32((float)maxWidth * relativePosition.X + minXPos);
-            y = Convert.ToInt32((float)maxHeight * relativePosition.Y + minYPos) + offsetY;
+            x = Convert.ToInt32((float)maxWidth * (1 - median.X) + minXPos);
+            y = Convert.ToInt32((float)maxHeight * median.Y + minYPos) + offsetY;
             //x = Convert.ToInt32((float)3902 * relativePosition.X + (-1170)); // input: [0.3, 0.65]
             //y = Convert.ToInt32((float)2191 * relativePosition.Y + (-657)) + offsetY; // Input: [0.3, 0.65]
 
@@ -377,13 +713,12 @@ namespace WiiTUIO.Provider
             //marginX = Math.Min(1.0, Math.Max(0.0, 2.8571428571428568 * relativePosition.X - 0.857142857142857));
             //// input: [0.3, 0.65]
             //marginY = Math.Min(1.0, Math.Max(0.0, 2.8571428571428568 * relativePosition.Y + (marginOffsetY - 0.857142857142857)));
-            marginX = Math.Min(1.0, Math.Max(0.0, (relativePosition.X - midMarginX) * marginBoundsX));
-            marginY = Math.Min(1.0, Math.Max(0.0, (relativePosition.Y - (marginOffsetY + midMarginX)) * marginBoundsY));
+            marginX = Math.Min(1.0, Math.Max(0.0, (1 - median.X - midMarginX) * marginBoundsX));
+            marginY = Math.Min(1.0, Math.Max(0.0, (median.Y - (marginOffsetY + midMarginX)) * marginBoundsY));
 
             //System.Diagnostics.Trace.WriteLine($"{marginY} | {relativePosition.Y}");
-
-            lightbarX = (relativePosition.X - topLeftPt.X) * boundsX + Settings.Default.CalibrationMarginX;
-            lightbarY = (relativePosition.Y - topLeftPt.Y) * boundsY + Settings.Default.CalibrationMarginY;
+            lightbarX = (resultPos.X - topLeftPt.X) * boundsX + Settings.Default.CalibrationMarginX;
+            lightbarY = (resultPos.Y - topLeftPt.Y) * boundsY + Settings.Default.CalibrationMarginY;
 
             //System.Diagnostics.Trace.WriteLine($"X {lightbarX} | {relativePosition.X}");
             //System.Diagnostics.Trace.WriteLine($"Y {lightbarY} | {relativePosition.Y}");
@@ -408,8 +743,8 @@ namespace WiiTUIO.Provider
             //Console.WriteLine("{0} {1} {2}", relativePosition.X, marginX, x / (double)primaryScreen.Bounds.Width);
 
             //CursorPos result = new CursorPos(x, y, smoothedPoint.X, smoothedPoint.Y, smoothedRotation);
-            CursorPos result = new CursorPos(x, y, relativePosition.X, relativePosition.Y, smoothedRotation,
-                marginX, marginY, lightbarX, lightbarY);
+            CursorPos result = new CursorPos(x, y, median.X, median.Y, angle,
+                marginX, marginY, lightbarX, lightbarY, width, height);
 
             if (lightbarX < 0.0 || lightbarX > 1.0 || lightbarY < 0.0 || lightbarY > 1.0)
             {
@@ -484,5 +819,18 @@ namespace WiiTUIO.Provider
 
             recalculateLightgunCoordBounds();
         }
+    }
+
+    public static class MathF
+    {
+        public const float PI = (float)Math.PI;
+        public static float Atan2(float y, float x) => (float)Math.Atan2(y, x);
+        public static float Cos(float d) => (float)Math.Cos(d);
+        public static float Round(float a) => (float)Math.Round(a);
+        public static float Sin(float a) => (float)Math.Sin(a);
+        public static float Hypot(float p, float b) => (float)Math.Sqrt(Math.Pow(p, 2) + Math.Pow(b, 2));
+        public static float Sqrt(float d) => (float)Math.Sqrt(d);
+        public static float Max(float val1, float val2) => (float)Math.Max(val1, val2);
+        public static float Min(float val1, float val2) => (float)Math.Min(val1, val2);
     }
 }

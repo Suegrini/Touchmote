@@ -437,7 +437,7 @@ namespace WiiTUIO.Provider
                     if (TransformResults)
                     {
                         // Transform the coordinates with the warper.
-                        pWarper.warp(x, y, ref fWarpedX, ref fWarpedY);
+                        //pWarper.warp(x, y, ref fWarpedX, ref fWarpedY);
                     }
 
                     // Make it into an input.
