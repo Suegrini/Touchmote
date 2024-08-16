@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using HidLibrary;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,7 +44,11 @@ namespace WiiTUIO.Provider
 
             this.handlerFactory = new HandlerFactory();
 
-            this.keyMapper = new WiiKeyMapper(id,handlerFactory);
+            HidDevice hidDevice = HidDevices.GetDevice(this.Wiimote.HIDDevicePath);
+            hidDevice.ReadSerialNumber(out byte[] data);
+            string serialNumber = System.Text.Encoding.Unicode.GetString(data, 0, 24);
+
+            this.keyMapper = new WiiKeyMapper(id, serialNumber, handlerFactory);
             this.arcadeHook = new OutputProvider(id);
 
             this.keyMapper.OnButtonDown += WiiButton_Down;

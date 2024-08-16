@@ -37,15 +37,15 @@ namespace WiiTUIO.Provider
         private PointF btmRightPointBak;
         private PointF topLeftPointBak;
 
-        private double topOffset;
-        private double bottomOffset;
-        private double leftOffset;
-        private double rightOffset;
+        private float topOffset;
+        private float bottomOffset;
+        private float leftOffset;
+        private float rightOffset;
 
-        private double topBackup;
-        private double bottomBackup;
-        private double leftBackup;
-        private double rightBackup;
+        private float topBackup;
+        private float bottomBackup;
+        private float leftBackup;
+        private float rightBackup;
         private float tlBackup;
         private float trBackup;
         private float centerXBackup;
@@ -217,19 +217,19 @@ namespace WiiTUIO.Provider
                     Settings.Default.CalibrationMarginX = 0;
                     Settings.Default.CalibrationMarginY = 0;
 
-                    topBackup = Settings.Default.Top;
-                    bottomBackup = Settings.Default.Bottom;
-                    leftBackup = Settings.Default.Left;
-                    rightBackup = Settings.Default.Right;
-                    centerXBackup = Settings.Default.CenterX;
-                    centerYBackup = Settings.Default.CenterY;
-                    tlBackup = Settings.Default.TLled;
-                    trBackup = Settings.Default.TRled;
+                    topBackup = this.keyMapper.settings.Top;
+                    bottomBackup = this.keyMapper.settings.Bottom;
+                    leftBackup = this.keyMapper.settings.Left;
+                    rightBackup = this.keyMapper.settings.Right;
+                    centerXBackup = this.keyMapper.settings.CenterX;
+                    centerYBackup = this.keyMapper.settings.CenterY;
+                    tlBackup = this.keyMapper.settings.TLled;
+                    trBackup = this.keyMapper.settings.TRled;
 
-                    Settings.Default.Top = 0;
-                    Settings.Default.Bottom = 1;
-                    Settings.Default.Left = 0;
-                    Settings.Default.Right = 1;
+                    this.keyMapper.settings.Top = 0;
+                    this.keyMapper.settings.Bottom = 1;
+                    this.keyMapper.settings.Left = 0;
+                    this.keyMapper.settings.Right = 1;
 
                     topOffset = 0;
                     bottomOffset = 1;
@@ -289,15 +289,16 @@ namespace WiiTUIO.Provider
         {
             if (Settings.Default.pointer_4IRMode)
             {
-                Settings.Default.Top = topOffset;
-                Settings.Default.Bottom = bottomOffset;
-                Settings.Default.Left = leftOffset;
-                Settings.Default.Right = rightOffset;
+                this.keyMapper.settings.Top = topOffset;
+                this.keyMapper.settings.Bottom = bottomOffset;
+                this.keyMapper.settings.Left = leftOffset;
+                this.keyMapper.settings.Right = rightOffset;
                 Settings.Default.CalibrationMarginX = marginXBackup;
                 Settings.Default.CalibrationMarginY = marginYBackup;
             }
 
             Settings.Default.Save();
+            this.keyMapper.settings.SaveCalibrationData();
 
             this.HideOverlay();
         }
@@ -330,20 +331,21 @@ namespace WiiTUIO.Provider
             }
             else
             {
-                Settings.Default.Top = topBackup;
-                Settings.Default.Bottom = bottomBackup;
-                Settings.Default.Left = leftBackup;
-                Settings.Default.Right = rightBackup;
-                Settings.Default.CenterX = centerXBackup;
-                Settings.Default.CenterY = centerYBackup;
-                Settings.Default.TLled = tlBackup;
-                Settings.Default.TRled = trBackup;
+                this.keyMapper.settings.Top = topBackup;
+                this.keyMapper.settings.Bottom = bottomBackup;
+                this.keyMapper.settings.Left = leftBackup;
+                this.keyMapper.settings.Right = rightBackup;
+                this.keyMapper.settings.CenterX = centerXBackup;
+                this.keyMapper.settings.CenterY = centerYBackup;
+                this.keyMapper.settings.TLled = tlBackup;
+                this.keyMapper.settings.TRled = trBackup;
 
                 Settings.Default.CalibrationMarginX = marginXBackup;
                 Settings.Default.CalibrationMarginY = marginYBackup;
             }
 
             Settings.Default.Save();
+            this.keyMapper.settings.SaveCalibrationData();
 
             this.HideOverlay();
         }
@@ -467,10 +469,10 @@ namespace WiiTUIO.Provider
             switch (step)
             {
                 case 0:
-                    Settings.Default.CenterX = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) - (this.keyMapper.cursorPos.RelativeY - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + 2);
-                    Settings.Default.CenterY = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + (this.keyMapper.cursorPos.RelativeY - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) + 2);
-                    Settings.Default.TLled = (float)(0.5 - ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
-                    Settings.Default.TRled = (float)(0.5 + ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
+                    this.keyMapper.settings.CenterX = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) - (this.keyMapper.cursorPos.RelativeY - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + 2);
+                    this.keyMapper.settings.CenterY = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + (this.keyMapper.cursorPos.RelativeY - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) + 2);
+                    this.keyMapper.settings.TLled = (float)(0.5 - ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
+                    this.keyMapper.settings.TRled = (float)(0.5 + ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
                     break;
                 case 1:
                     if (!Settings.Default.pointer_4IRMode)
@@ -495,8 +497,8 @@ namespace WiiTUIO.Provider
                     }
                     else
                     {
-                        bottomOffset = this.keyMapper.cursorPos.LightbarY;
-                        rightOffset = this.keyMapper.cursorPos.LightbarX;
+                        bottomOffset = (float)this.keyMapper.cursorPos.LightbarY;
+                        rightOffset = (float)this.keyMapper.cursorPos.LightbarX;
                     }
                     break;
                 case 2:
@@ -522,8 +524,8 @@ namespace WiiTUIO.Provider
                     }
                     else
                     {
-                        topOffset = this.keyMapper.cursorPos.LightbarY;
-                        leftOffset = this.keyMapper.cursorPos.LightbarX;
+                        topOffset = (float)this.keyMapper.cursorPos.LightbarY;
+                        leftOffset = (float)this.keyMapper.cursorPos.LightbarX;
                     }
                     break;
                 default: break;

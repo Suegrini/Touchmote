@@ -69,7 +69,7 @@ namespace WiiTUIO.WinTouch
             this.pDevice = devices.FirstOrDefault();
             if (this.pDevice == null)
                 throw new InvalidOperationException("Universal Software HID driver was not found. Please ensure that it is installed.");
-            this.pDevice.OpenDevice(HidDevice.DeviceMode.Overlapped, HidDevice.DeviceMode.NonOverlapped);
+            this.pDevice.OpenDevice();
             OnConnect();
         }
 

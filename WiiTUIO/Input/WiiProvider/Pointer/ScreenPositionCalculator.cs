@@ -92,15 +92,19 @@ namespace WiiTUIO.Provider
         private int lastIrPoint1 = -1;
         private int lastIrPoint2 = -1;
 
-        public ScreenPositionCalculator(int id)
+        public CalibrationSettings settings;
+
+        public ScreenPositionCalculator(int id, CalibrationSettings settings)
         {
             this.wiimoteId = id;
-            this.pWarper = new Warper();
+            this.settings = settings;
+            this.pWarper = new Warper(this.settings);
             this.primaryScreen = DeviceUtils.DeviceUtil.GetScreen(Settings.Default.primaryMonitor);
             this.recalculateScreenBounds(this.primaryScreen);
 
             Settings.Default.PropertyChanged += SettingsChanged;
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+            this.settings.PropertyChanged += SettingsChanged;
 
             lastPos = new CursorPos(0, 0, 0, 0, 0);
 
@@ -163,11 +167,14 @@ namespace WiiTUIO.Provider
                 }
                 else
                 {
-                    trueTopLeftPt.X = topLeftPt.X = (float)Settings.Default.Left;
-                    trueTopLeftPt.Y = topLeftPt.Y = (float)Settings.Default.Top;
-                    trueBottomRightPt.X = bottomRightPt.X = (float)Settings.Default.Right;
-                    trueBottomRightPt.Y = bottomRightPt.Y = (float)Settings.Default.Bottom;
-                    recalculateLightgunCoordBounds();
+                    if (e.PropertyName == "Left" || e.PropertyName == "Right" || e.PropertyName == "Top" || e.PropertyName == "Bottom")
+                    {
+                        trueTopLeftPt.X = topLeftPt.X = this.settings.Left;
+                        trueTopLeftPt.Y = topLeftPt.Y = this.settings.Top;
+                        trueBottomRightPt.X = bottomRightPt.X = this.settings.Right;
+                        trueBottomRightPt.Y = bottomRightPt.Y = this.settings.Bottom;
+                        recalculateLightgunCoordBounds();
+                    }
                 }
             }
         }
@@ -240,10 +247,10 @@ namespace WiiTUIO.Provider
             }
             else
             {
-                trueTopLeftPt.X = topLeftPt.X = (float)Settings.Default.Left;
-                trueTopLeftPt.Y = topLeftPt.Y = (float)Settings.Default.Top;
-                trueBottomRightPt.X = bottomRightPt.X = (float)Settings.Default.Right;
-                trueBottomRightPt.Y = bottomRightPt.Y = (float)Settings.Default.Bottom;
+                trueTopLeftPt.X = topLeftPt.X = this.settings.Left;
+                trueTopLeftPt.Y = topLeftPt.Y = this.settings.Top;
+                trueBottomRightPt.X = bottomRightPt.X = this.settings.Right;
+                trueBottomRightPt.Y = bottomRightPt.Y = this.settings.Bottom;
             }
 
             if (targetAspectRatio == 0.0)

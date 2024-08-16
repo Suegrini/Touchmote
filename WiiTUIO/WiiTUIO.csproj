@@ -131,6 +131,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HidLibrary, Version=3.2.49.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\hidlibrary.3.3.40\lib\net45\HidLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=0.13.0.13, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MahApps.Metro.0.13.0.13-ALPHA\lib\net45\MahApps.Metro.dll</HintPath>
@@ -483,10 +486,6 @@
     <Resource Include="Resources\checkmark-big.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HidLibrary\HidLibrary.csproj">
-      <Project>{9e8f1d50-74ea-4c60-bd5c-ab2c5b53bc66}</Project>
-      <Name>HidLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\OSC.NET\OSC.NET.csproj">
       <Project>{14bd1d44-261d-4fc2-a7dd-a3cda413d790}</Project>
       <Name>OSC.NET</Name>

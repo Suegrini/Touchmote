@@ -20,20 +20,23 @@ namespace WiiTUIO.Provider
         private float[] center = new float[2];
         private bool dirty;
 
+        public CalibrationSettings settings;
+
         /// <summary>
         /// Construct a new warper class.
         /// </summary>
-        public Warper()
+        public Warper(CalibrationSettings settings)
         {
-            Settings.Default.PropertyChanged += SettingsChanged;
+            this.settings = settings;
+            this.settings.PropertyChanged += SettingsChanged;
             setIdentity();
         }
 
         public void setIdentity()
         {
-            center[0] = (float)Settings.Default.CenterX;
-            center[1] = (float)Settings.Default.CenterY;
-            setDestination(Settings.Default.TLled, 0.0f, Settings.Default.TRled, 0.0f, Settings.Default.TLled, 1.0f, Settings.Default.TRled, 1.0f);
+            center[0] = (float)this.settings.CenterX;
+            center[1] = (float)this.settings.CenterY;
+            setDestination(this.settings.TLled, 0.0f, this.settings.TRled, 0.0f, this.settings.TLled, 1.0f, this.settings.TRled, 1.0f);
         }
 
         private void SettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -180,8 +180,8 @@ namespace WiiTUIO.Provider
             this.InputClassifier.OnEnd += new SpatioTemporalClassifier.TrackerEventHandler(handleInputClassifier_OnEnd);
 
             // Set default source and destination rectangles.
-            this.pWarper = new Warper();
-            this.setCalibrationData(new CalibrationRectangle(), new CalibrationRectangle(), new Vector(1.0, 1.0));
+            //this.pWarper = new Warper();
+            //this.setCalibrationData(new CalibrationRectangle(), new CalibrationRectangle(), new Vector(1.0, 1.0));
 
             // Enable the calibration.
             this.TransformResults = true;
