@@ -54,10 +54,10 @@ namespace WiiTUIO.Provider
         {
             {"OnScreen",false},
             {"OffScreen",false},
-            {"CursorX+",false},
-            {"CursorX-",false},
-            {"CursorY+",false},
-            {"CursorY-",false},
+            {"PointerX+",false},
+            {"PointerX-",false},
+            {"PointerY+",false},
+            {"PointerY-",false},
             {"AccelX+",false},
             {"AccelX-",false},
             {"AccelY+",false},
@@ -230,113 +230,92 @@ namespace WiiTUIO.Provider
 
             string offscreen = prevOffScreen ? "OffScreen." : null;
 
-            if (this.config.TryGetValue(offscreen + "CursorX+", out outConfig))
+            if (this.config.TryGetValue(offscreen + "PointerX+", out outConfig))
             {
-                if (cursorPosition.LightbarX > 1 - outConfig.Deadzone * 0.5)
+                if (cursorPosition.LightbarX > 0.5)
                 {
-                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
-                    {
-                        Deadzone = 0,
-                        Scale = outConfig.Scale
-                    };
-
-                    updateStickHandlers(stickConfig, (cursorPosition.LightbarX + (outConfig.Deadzone * 0.5) - 1) / (outConfig.Deadzone * 0.5));
+                    updateStickHandlers(outConfig, (cursorPosition.LightbarX - 0.5) * 2);
                 }
-                else if (cursorPosition.LightbarX < 1 - outConfig.Deadzone * 0.5 && cursorPosition.LightbarX > 0.5)
+                else if (cursorPosition.LightbarX == 0.5)
                 {
                     updateStickHandlers(outConfig, 0);
                 }
 
-                if (cursorPosition.LightbarX > 0.5 + outConfig.Threshold * 0.5 && !PressedButtons["CursorX+"])
+                if (cursorPosition.LightbarX > 0.5 + outConfig.Threshold * 0.5 && !PressedButtons["PointerX+"])
                 {
-                    PressedButtons["CursorX+"] = true;
-                    this.executeButtonDown(offscreen + "CursorX+");
+                    PressedButtons["PointerX+"] = true;
+                    this.executeButtonDown(offscreen + "PointerX+");
                 }
-                else if (cursorPosition.LightbarX < 0.5 + outConfig.Threshold * 0.5 && PressedButtons["CursorX+"])
+                else if (cursorPosition.LightbarX < 0.5 + outConfig.Threshold * 0.5 && PressedButtons["PointerX+"])
                 {
-                    PressedButtons["CursorX+"] = false;
-                    this.executeButtonUp(offscreen + "CursorX+");
+                    PressedButtons["PointerX+"] = false;
+                    this.executeButtonUp(offscreen + "PointerX+");
                 }
             }
-            if (this.config.TryGetValue(offscreen + "CursorX-", out outConfig))
+            if (this.config.TryGetValue(offscreen + "PointerX-", out outConfig))
             {
-                if (cursorPosition.LightbarX < outConfig.Deadzone * 0.5)
+                if (cursorPosition.LightbarX < 0.5)
                 {
-                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
-                    {
-                        Deadzone = 0,
-                        Scale = outConfig.Scale
-                    };
-                    updateStickHandlers(stickConfig, (cursorPosition.LightbarX - outConfig.Deadzone * 0.5) / (outConfig.Deadzone * -0.5));
+                    updateStickHandlers(outConfig, 1 - cursorPosition.LightbarX * 2);
                 }
-                else if (cursorPosition.LightbarX > outConfig.Deadzone * 0.5 && cursorPosition.LightbarX < 0.5)
+                else if (cursorPosition.LightbarX == 0.5)
                 {
                     updateStickHandlers(outConfig, 0);
                 }
 
-                if (cursorPosition.LightbarX < (1 - outConfig.Threshold) * 0.5 && !PressedButtons["CursorX-"])
+                if (cursorPosition.LightbarX < 0.5 - outConfig.Threshold * 0.5 && !PressedButtons["PointerX-"])
                 {
-                    PressedButtons["CursorX-"] = true;
-                    this.executeButtonDown(offscreen + "CursorX-");
+                    PressedButtons["PointerX-"] = true;
+                    this.executeButtonDown(offscreen + "PointerX-");
                 }
-                else if (cursorPosition.LightbarX > (1 - outConfig.Threshold) * 0.5 && PressedButtons["CursorX-"])
+                else if (cursorPosition.LightbarX > 0.5 - outConfig.Threshold * 0.5 && PressedButtons["PointerX-"])
                 {
-                    PressedButtons["CursorX-"] = false;
-                    this.executeButtonUp(offscreen + "CursorX-");
+                    PressedButtons["PointerX-"] = false;
+                    this.executeButtonUp(offscreen + "PointerX-");
                 }
             }
-            if (this.config.TryGetValue(offscreen + "CursorY+", out outConfig))
+            if (this.config.TryGetValue(offscreen + "PointerY+", out outConfig))
             {
-                if (cursorPosition.LightbarY > 1 - outConfig.Deadzone * 0.5)
+                if (cursorPosition.LightbarY > 0.5)
                 {
-                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
-                    {
-                        Deadzone = 0,
-                        Scale = outConfig.Scale
-                    };
-                    updateStickHandlers(stickConfig, (cursorPosition.LightbarY + (outConfig.Deadzone * 0.5) - 1) / (outConfig.Deadzone * 0.5));
+                    updateStickHandlers(outConfig, (cursorPosition.LightbarY - 0.5) * 2);
                 }
-                else if (cursorPosition.LightbarY < 1 - outConfig.Deadzone * 0.5 && cursorPosition.LightbarY > 0.5)
+                else if (cursorPosition.LightbarY == 0.5)
                 {
                     updateStickHandlers(outConfig, 0);
                 }
 
-                if (cursorPosition.LightbarY > 0.5 + outConfig.Threshold * 0.5 && !PressedButtons["CursorY+"])
+                if (cursorPosition.LightbarY > 0.5 + outConfig.Threshold * 0.5 && !PressedButtons["PointerY+"])
                 {
-                    PressedButtons["CursorY+"] = true;
-                    this.executeButtonDown(offscreen + "CursorY+");
+                    PressedButtons["PointerY+"] = true;
+                    this.executeButtonDown(offscreen + "PointerY+");
                 }
-                else if (cursorPosition.LightbarY > 0.5 + outConfig.Threshold * 0.5 && PressedButtons["CursorY+"])
+                else if (cursorPosition.LightbarY < 0.5 + outConfig.Threshold * 0.5 && PressedButtons["PointerY+"])
                 {
-                    PressedButtons["CursorY+"] = false;
-                    this.executeButtonUp(offscreen + "CursorY+");
+                    PressedButtons["PointerY+"] = false;
+                    this.executeButtonUp(offscreen + "PointerY+");
                 }
             }
-            if (this.config.TryGetValue(offscreen + "CursorY-", out outConfig))
+            if (this.config.TryGetValue(offscreen + "PointerY-", out outConfig))
             {
-                if (cursorPosition.LightbarY < outConfig.Deadzone * 0.5)
+                if (cursorPosition.LightbarY < 0.5)
                 {
-                    KeymapOutConfig stickConfig = new KeymapOutConfig(outConfig.Stack, outConfig.Inherited)
-                    {
-                        Deadzone = 0,
-                        Scale = outConfig.Scale
-                    };
-                    updateStickHandlers(stickConfig, (cursorPosition.LightbarY - outConfig.Deadzone * 0.5) / (outConfig.Deadzone * -0.5));
+                    updateStickHandlers(outConfig, 1 - cursorPosition.LightbarY * 2);
                 }
-                else if (cursorPosition.LightbarY > outConfig.Deadzone * 0.5 && cursorPosition.LightbarY < 0.5)
+                else if (cursorPosition.LightbarY == 0.5)
                 {
                     updateStickHandlers(outConfig, 0);
                 }
 
-                if (cursorPosition.LightbarY < (1 - outConfig.Threshold) * 0.5 && !PressedButtons["CursorY-"])
+                if (cursorPosition.LightbarY < 0.5 - outConfig.Threshold * 0.5 && !PressedButtons["PointerY-"])
                 {
-                    PressedButtons["CursorY-"] = true;
-                    this.executeButtonDown(offscreen + "CursorY-");
+                    PressedButtons["PointerY-"] = true;
+                    this.executeButtonDown(offscreen + "PointerY-");
                 }
-                else if (cursorPosition.LightbarY > (1 - outConfig.Threshold) * 0.5 && PressedButtons["CursorY-"])
+                else if (cursorPosition.LightbarY > 0.5 - outConfig.Threshold * 0.5 && PressedButtons["PointerY-"])
                 {
-                    PressedButtons["CursorY-"] = false;
-                    this.executeButtonUp(offscreen + "CursorY-");
+                    PressedButtons["PointerY-"] = false;
+                    this.executeButtonUp(offscreen + "PointerY-");
                 }
             }
         }
