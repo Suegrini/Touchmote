@@ -131,6 +131,10 @@ namespace WiiTUIO.Provider
                 trueBottomRightPt.Y = bottomRightPt.Y = this.settings.Bottom;
                 recalculateLightgunCoordBounds();
             }
+            else if (e.PropertyName == "CalibrationMarginX" || e.PropertyName == "CalibrationMarginY")
+            {
+                recalculateLightgunCoordBounds();
+            }
         }
 
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)

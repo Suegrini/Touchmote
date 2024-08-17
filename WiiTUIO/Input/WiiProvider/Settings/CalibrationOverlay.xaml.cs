@@ -266,15 +266,9 @@ namespace WiiTUIO.Provider
         {
             if (Settings.Default.pointer_4IRMode)
             {
-                this.keyMapper.settings.Top = topOffset;
-                this.keyMapper.settings.Bottom = bottomOffset;
-                this.keyMapper.settings.Left = leftOffset;
-                this.keyMapper.settings.Right = rightOffset;
-                Settings.Default.CalibrationMarginX = marginXBackup;
-                Settings.Default.CalibrationMarginY = marginYBackup;
+                Settings.Default.Save();
             }
 
-            Settings.Default.Save();
             this.keyMapper.settings.SaveCalibrationData();
 
             this.HideOverlay();
@@ -338,6 +332,17 @@ namespace WiiTUIO.Provider
                             break;
 
                         case 2:
+                            if (Settings.Default.pointer_4IRMode)
+                            {
+                                this.keyMapper.settings.Top = topOffset;
+                                this.keyMapper.settings.Bottom = bottomOffset;
+                                this.keyMapper.settings.Left = leftOffset;
+                                this.keyMapper.settings.Right = rightOffset;
+
+                                Settings.Default.CalibrationMarginX = marginXBackup;
+                                Settings.Default.CalibrationMarginY = marginYBackup;
+                            }
+
                             Dispatcher.BeginInvoke(new Action(delegate ()
                             {
                                 this.CalibrationPoint.Visibility = Visibility.Hidden;
