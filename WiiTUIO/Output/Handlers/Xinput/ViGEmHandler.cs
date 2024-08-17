@@ -399,6 +399,34 @@ namespace WiiTUIO.Output.Handlers.Xinput
                         device.Cont.SetAxisValue(Xbox360Axis.RightThumbY,
                             AxisScale(0.5 * value + 0.5, true));
                         break;
+                    case "up":
+                        device.Cont.SetButtonState(Xbox360Button.Down, false);
+                        if (value > 0)
+                            device.Cont.SetButtonState(Xbox360Button.Up, true);
+                        else
+                            device.Cont.SetButtonState(Xbox360Button.Up, false);
+                        break;
+                    case "down":
+                        device.Cont.SetButtonState(Xbox360Button.Up, false);
+                        if (value > 0)
+                            device.Cont.SetButtonState(Xbox360Button.Down, true);
+                        else
+                            device.Cont.SetButtonState(Xbox360Button.Down, false);
+                        break;
+                    case "left":
+                        device.Cont.SetButtonState(Xbox360Button.Right, false);
+                        if (value > 0)
+                            device.Cont.SetButtonState(Xbox360Button.Left, true);
+                        else
+                            device.Cont.SetButtonState(Xbox360Button.Left, false);
+                        break;
+                    case "right":
+                        device.Cont.SetButtonState(Xbox360Button.Left, false);
+                        if (value > 0) 
+                            device.Cont.SetButtonState(Xbox360Button.Right, true);
+                        else 
+                            device.Cont.SetButtonState(Xbox360Button.Right, false);
+                        break;
                     case "triggerr":
                         device.Cont.RightTrigger = (byte)(value * 255);
                         break;
