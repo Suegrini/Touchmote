@@ -303,17 +303,6 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private bool _pointer_considerRotation = true;
-        public bool pointer_considerRotation
-        {
-            get { return _pointer_considerRotation; }
-            set
-            {
-                _pointer_considerRotation = value;
-                OnPropertyChanged("pointer_considerRotation");
-            }
-        }
-
         private bool _pointer_customCursor = true;
         public bool pointer_customCursor
         {

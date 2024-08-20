@@ -270,51 +270,56 @@ namespace WiiTUIO.Provider
                     median.X = (irState.IRSensors[i].Position.X + irState.IRSensors[j].Position.X) / 2.0f;
                     median.Y = (irState.IRSensors[i].Position.Y + irState.IRSensors[j].Position.Y) / 2.0f;
 
-                    if (Settings.Default.pointer_considerRotation)
+                    smoothedX = smoothedX * 0.9f + wiimoteState.AccelState.RawValues.X * 0.1f;
+                    smoothedZ = smoothedZ * 0.9f + wiimoteState.AccelState.RawValues.Z * 0.1f;
+
+                    int l = leftPoint, r;
+                    if (leftPoint == -1)
                     {
-                        smoothedX = smoothedX * 0.9f + wiimoteState.AccelState.RawValues.X * 0.1f;
-                        smoothedZ = smoothedZ * 0.9f + wiimoteState.AccelState.RawValues.Z * 0.1f;
+                        double absx = Math.Abs(smoothedX - 128), absz = Math.Abs(smoothedZ - 128);
 
-                        int l = leftPoint, r;
-                        if (leftPoint == -1)
+                        if (orientation == 0 || orientation == 2) absx -= 5;
+                        if (orientation == 1 || orientation == 3) absz -= 5;
+
+                        if (absz >= absx)
                         {
-                            double absx = Math.Abs(smoothedX - 128), absz = Math.Abs(smoothedZ - 128);
-
-                            if (orientation == 0 || orientation == 2) absx -= 5;
-                            if (orientation == 1 || orientation == 3) absz -= 5;
-
-                            if (absz >= absx)
-                            {
-                                if (absz > 5)
-                                    orientation = (smoothedZ > 128) ? 0 : 2;
-                            }
-                            else
-                            {
-                                if (absx > 5)
-                                    orientation = (smoothedX > 128) ? 3 : 1;
-                            }
-
-                            switch (orientation)
-                            {
-                                case 0: l = (irState.IRSensors[i].RawPosition.X < irState.IRSensors[j].RawPosition.X) ? i : j; break;
-                                case 1: l = (irState.IRSensors[i].RawPosition.Y > irState.IRSensors[j].RawPosition.Y) ? i : j; break;
-                                case 2: l = (irState.IRSensors[i].RawPosition.X > irState.IRSensors[j].RawPosition.X) ? i : j; break;
-                                case 3: l = (irState.IRSensors[i].RawPosition.Y < irState.IRSensors[j].RawPosition.Y) ? i : j; break;
-                            }
+                            if (absz > 5)
+                                orientation = (smoothedZ > 128) ? 0 : 2;
                         }
-                        leftPoint = l;
-                        r = l == i ? j : i;
+                        else
+                        {
+                            if (absx > 5)
+                                orientation = (smoothedX > 128) ? 3 : 1;
+                        }
 
-                        double dx = irState.IRSensors[r].RawPosition.X - irState.IRSensors[l].RawPosition.X;
-                        double dy = irState.IRSensors[r].RawPosition.Y - irState.IRSensors[l].RawPosition.Y;
-
-                        double d = Math.Sqrt(dx * dx + dy * dy);
-
-                        dx /= d;
-                        dy /= d;
-
-                        angle = Math.Atan2(dy, dx);
+                        switch (orientation)
+                        {
+                            case 0: l = (irState.IRSensors[i].RawPosition.X < irState.IRSensors[j].RawPosition.X) ? i : j; break;
+                            case 1: l = (irState.IRSensors[i].RawPosition.Y > irState.IRSensors[j].RawPosition.Y) ? i : j; break;
+                            case 2: l = (irState.IRSensors[i].RawPosition.X > irState.IRSensors[j].RawPosition.X) ? i : j; break;
+                            case 3: l = (irState.IRSensors[i].RawPosition.Y < irState.IRSensors[j].RawPosition.Y) ? i : j; break;
+                        }
                     }
+                    leftPoint = l;
+                    r = l == i ? j : i;
+
+                    double dx = irState.IRSensors[r].RawPosition.X - irState.IRSensors[l].RawPosition.X;
+                    double dy = irState.IRSensors[r].RawPosition.Y - irState.IRSensors[l].RawPosition.Y;
+
+                    double d = Math.Sqrt(dx * dx + dy * dy);
+
+                    dx /= d;
+                    dy /= d;
+
+                    angle = Math.Atan2(dy, dx);
+
+                    median.X = median.X - 0.5F;
+                    median.Y = median.Y - 0.5F;
+
+                    median = this.rotatePoint(median, angle);
+
+                    median.X = median.X + 0.5F;
+                    median.Y = median.Y + 0.5F;
 
                     lastIrPoint1 = irPoint1;
                     lastIrPoint2 = irPoint2;
@@ -340,17 +345,6 @@ namespace WiiTUIO.Provider
                 {
                     offsetY = SBPositionOffset;
                     marginOffsetY = -CalcMarginOffsetY;
-                }
-
-                if (Settings.Default.pointer_considerRotation)
-                {
-                    median.X = median.X - 0.5F;
-                    median.Y = median.Y - 0.5F;
-
-                    median = this.rotatePoint(median, angle);
-
-                    median.X = median.X + 0.5F;
-                    median.Y = median.Y + 0.5F;
                 }
 
                 resultPos = median;
@@ -699,8 +693,8 @@ namespace WiiTUIO.Provider
 
         private PointF rotatePoint(PointF point, double angle)
         {
-            double sin = Math.Sin(angle);
-            double cos = Math.Cos(angle);
+            double sin = Math.Sin(angle * -1);
+            double cos = Math.Cos(angle * -1);
 
             double xnew = point.X * cos - point.Y * sin;
             double ynew = point.X * sin + point.Y * cos;
