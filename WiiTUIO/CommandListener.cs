@@ -57,7 +57,10 @@ namespace WiiTUIO
         {
             if (command == "exit")
             {
-                Application.Current.Dispatcher.InvokeShutdown();
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Application.Current.Shutdown();
+                });
             }
             else if (command == "keymap")
             {
