@@ -221,7 +221,10 @@ namespace WiiTUIO.Output.Handlers
                 if (!cursorPos.OutOfReach)
                 {
                     Point smoothedPos = cursorPositionHelper.getRelativePosition(new Point(cursorPos.X, cursorPos.Y));
-                    this.inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
+                    if(Settings.Default.mouse_multiScreen)
+                        this.inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
+                    else
+                        this.inputSimulator.Mouse.MoveMouseTo((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
                     return true;
                 }
             }
@@ -915,8 +918,7 @@ namespace WiiTUIO.Output.Handlers
                     // Need to double check if sync would happen if (0,0).
                     if (mouseX != 0.0 || mouseY != 0.0)
                     {
-                        DS4Windows.InputMethods.MoveCursorBy((int)mouseX, (int)mouseY);
-                        //this.inputSimulator.Mouse.MoveMouseBy((int)mouseX, (int)mouseY);
+                        this.inputSimulator.Mouse.MoveMouseBy((int)mouseX, (int)mouseY);
                     }
 
                     return true;
@@ -1042,7 +1044,10 @@ namespace WiiTUIO.Output.Handlers
                     {
                         //Trace.WriteLine("MOVE CURSOR");
 
-                        DS4Windows.InputMethods.MoveAbsoluteMouse(smoothedPos.X, smoothedPos.Y);
+                        if (Settings.Default.mouse_multiScreen)
+                            this.inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
+                        else
+                            this.inputSimulator.Mouse.MoveMouseTo((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
 
                         // Save current IR position
                         previousLightCursorCoorPoint = new Point(cursorPos.LightbarX, cursorPos.LightbarY);

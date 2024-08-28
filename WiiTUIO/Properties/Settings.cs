@@ -596,6 +596,17 @@ namespace WiiTUIO.Properties
             }
         }
 
+        private bool _mouse_multiScreen = false;
+        public bool mouse_multiScreen
+        {
+            get { return _mouse_multiScreen; }
+            set
+            {
+                _mouse_multiScreen = value;
+                OnPropertyChanged("mouse_multiScreen");
+            }
+        }
+
         private double _shake_threshold = 0.2;
         public double shake_threshold
         {
