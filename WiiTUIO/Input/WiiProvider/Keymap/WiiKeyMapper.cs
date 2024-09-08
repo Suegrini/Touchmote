@@ -820,6 +820,10 @@ namespace WiiTUIO.Provider
                     ? JObject.Parse(File.ReadAllText(CALIBRATION_FILENAME))
                     : new JObject();
             }
+            else
+            {
+                _calData = new JObject();
+            }
 
             _calData[_id] = _calData[_id] ?? new JObject();
 
