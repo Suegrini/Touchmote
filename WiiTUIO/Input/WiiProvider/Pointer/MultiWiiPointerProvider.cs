@@ -339,35 +339,18 @@ namespace WiiTUIO.Provider
 
         private void putToPowerSave(WiimoteControl control)
         {
-            if (Settings.Default.completelyDisconnect && this.pWiimoteMap.Count == 1) //If we want to completely disable the device
+            control.WiimoteMutex.WaitOne();
+            try
             {
-                teardownWiimoteConnection(control.Wiimote);
-                Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
-                {
-                    Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0306*\"", new Action(delegate ()
-                    {
-                        Launcher.Launch("Driver", "devcon", " disable \"BTHENUM*_VID*57e*_PID&0330*\"", new Action(delegate ()
-                        {
-                            Launcher.Launch("Driver", "devcon", " enable \"BTHENUM*_VID*57e*_PID&0330*\"", null);
-                        }));
-                    }));
-                }));
+                control.Wiimote.SetReportType(InputReport.Buttons, false);
+                control.Status.InPowerSave = true;
+                control.Wiimote.SetLEDs(false, false, false, false);
+                control.Wiimote.SetRumble(false);
             }
-            else
+            catch { }
+            finally
             {
-                control.WiimoteMutex.WaitOne();
-                try
-                {
-                    control.Wiimote.SetReportType(InputReport.Buttons, false);
-                    control.Status.InPowerSave = true;
-                    control.Wiimote.SetLEDs(false, false, false, false);
-                    control.Wiimote.SetRumble(false);
-                }
-                catch { }
-                finally
-                {
-                    control.WiimoteMutex.ReleaseMutex();
-                }
+                control.WiimoteMutex.ReleaseMutex();
             }
         }
 
