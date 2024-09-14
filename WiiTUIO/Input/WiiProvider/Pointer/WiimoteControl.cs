@@ -68,23 +68,27 @@ namespace WiiTUIO.Provider
 
         private void ArcadeHook_OnOutput(string key, int value)
         {
-            switch (key)
+            try
             {
-                case "rumble":
-                    WiiKeyMap_OnRumble(value > 0);
-                    break;
-                case "LED":
-                    WiimoteMutex.WaitOne();
-                    this.Wiimote.SetLEDs(value >= 1, value >= 2, value >= 3, value >= 4);
-                    WiimoteMutex.ReleaseMutex();
-                    break;
-                case "MameStop":
-                    WiiKeyMap_OnRumble(false);
-                    WiimoteMutex.WaitOne();
-                    this.Wiimote.SetLEDs(this.Status.ID == 1, this.Status.ID == 2, this.Status.ID == 3, this.Status.ID == 4);
-                    WiimoteMutex.ReleaseMutex();
-                    break;
+                switch (key)
+                {
+                    case "rumble":
+                        WiiKeyMap_OnRumble(value > 0);
+                        break;
+                    case "LED":
+                        WiimoteMutex.WaitOne();
+                        this.Wiimote.SetLEDs(value >= 1, value >= 2, value >= 3, value >= 4);
+                        WiimoteMutex.ReleaseMutex();
+                        break;
+                    case "MameStop":
+                        WiiKeyMap_OnRumble(false);
+                        WiimoteMutex.WaitOne();
+                        this.Wiimote.SetLEDs(this.Status.ID == 1, this.Status.ID == 2, this.Status.ID == 3, this.Status.ID == 4);
+                        WiimoteMutex.ReleaseMutex();
+                        break;
+                }
             }
+            catch { }
         }
 
 
