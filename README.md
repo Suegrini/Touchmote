@@ -46,6 +46,7 @@ Scarlet.Crush Xinput wrapper:   http://forums.pcsx2.net/Thread-XInput-Wrapper-fo
 WiiPair:  				http://www.richlynch.com/code/wiipair<br />
 EcoTUIOdriver:    https://github.com/ecologylab/EcoTUIODriver<br />
 MultiTouchVista:  http://multitouchvista.codeplex.com<br />
+OpenFIRE:  https://github.com/TeamOpenFIRE/OpenFIRE-Firmware<br />
 
 Release History
 ==============
