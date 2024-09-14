@@ -17,6 +17,7 @@ namespace WiiTUIO.ArcadeHook
         private string gameName;
         private bool isRunning = true;
         public event Action<string, int, int> OnExecute;
+        string pattern = @"^wii [1-4] [0-5] (?:\d+|%s%)$";
 
         public ArcadeHookMain()
         {
@@ -142,7 +143,6 @@ namespace WiiTUIO.ArcadeHook
 
         private void ProcessIniCommand(string key, int recValue)
         {
-            string pattern = @"^wii [1-4] [1-5] (0|1|%s%)$";
             string iniCommand = IniFileHandler.ReadFromIniFile(gameName, key);
             if (!string.IsNullOrEmpty(iniCommand))
             {
@@ -175,12 +175,14 @@ namespace WiiTUIO.ArcadeHook
             if (player >= 1 && player <= 4)
             {
                 if (action == 5)
-                    OnExecute?.Invoke("rumble", newValue, player);
+                    OnExecute?.Invoke("Rumble", newValue, player);
                 else if (action >= 1 && action <= 4)
                     OnExecute?.Invoke("LED", newValue, player);
                 else if (action == 0)
                 {
-                    OnExecute?.Invoke("LED", recValue / 4 * newValue, player);
+                    double fillResult = (double)recValue / newValue * 4;
+                    Console.WriteLine($"{fillResult}");
+                    OnExecute?.Invoke("LEDFill", (int)Math.Round(fillResult), player);
                 }
             }
         }

@@ -72,10 +72,15 @@ namespace WiiTUIO.Provider
             {
                 switch (key)
                 {
-                    case "rumble":
+                    case "Rumble":
                         WiiKeyMap_OnRumble(value > 0);
                         break;
                     case "LED":
+                        WiimoteMutex.WaitOne();
+                        this.Wiimote.SetLEDs(value == 1, value == 2, value == 3, value == 4);
+                        WiimoteMutex.ReleaseMutex();
+                        break;
+                    case "LEDFill":
                         WiimoteMutex.WaitOne();
                         this.Wiimote.SetLEDs(value >= 1, value >= 2, value >= 3, value >= 4);
                         WiimoteMutex.ReleaseMutex();
