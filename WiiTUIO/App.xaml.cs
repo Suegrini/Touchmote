@@ -28,7 +28,7 @@ namespace WiiTUIO
         protected override void OnStartup(StartupEventArgs e)
         {
             Process thisProc = Process.GetCurrentProcess();
-            if (isAnotherInstanceRunning(thisProc))
+            if (isAnotherInstanceRunning(thisProc) || e.Args.Length != 0)
             {
                 if (e.Args.Length != 0)
                 {
