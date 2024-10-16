@@ -305,7 +305,7 @@ namespace WiiTUIO.Provider
             }
             else
             {
-                finalPos[0].X = finalPos[1].X = finalPos[2].X = finalPos[3].X = -1;
+                byte seenFlags = 0;
                 double RawRoll = Math.Atan2(wiimoteState.AccelState.Values.X, wiimoteState.AccelState.Values.Z);
                 for (int i = 0; i < 4; i++)
                 {
@@ -314,99 +314,97 @@ namespace WiiTUIO.Provider
                         double point_angle = Math.Atan2(irState.IRSensors[i].Position.Y - median.Y, irState.IRSensors[i].Position.X - median.X) - RawRoll;
                         if (point_angle < 0) point_angle += 2 * Math.PI;
 
-                        if (0 <= point_angle && point_angle < Math.PI / 2)
-                        {
-                            finalPos[3] = irState.IRSensors[i].Position;
-                            see[3] <<= 1;
-                            see[3] |= 1;
-                        }
-                        else if (Math.PI / 2 <= point_angle && point_angle < Math.PI)
-                        {
-                            finalPos[2] = irState.IRSensors[i].Position;
-                            see[2] <<= 1;
-                            see[2] |= 1;
-                        }
-                        else if (Math.PI <= point_angle && point_angle < 3 * Math.PI / 2)
-                        {
-                            finalPos[0] = irState.IRSensors[i].Position;
-                            see[0] <<= 1;
-                            see[0] |= 1;
-                        }
-                        else
-                        {
-                            finalPos[1] = irState.IRSensors[i].Position;
-                            see[1] <<= 1;
-                            see[1] |= 1;
-                        }
-                    }
-                }
-                if (finalPos[0].X == -1)
-                {
-                    see[0] = 0;
-                    if (finalPos[2].X != -1)
-                    {
-                        float f = angleBottom + angleOffset[2];
-                        finalPos[0].X = finalPos[2].X + yDistLeft * MathF.Cos(f);
-                        finalPos[0].Y = finalPos[2].Y + yDistLeft * -MathF.Sin(f);
-                    }
-                    else if (finalPos[1].X != -1)
-                    {
-                        float f = angleRight - angleOffset[1];
-                        finalPos[0].X = finalPos[1].X + xDistTop * -MathF.Cos(f);
-                        finalPos[0].Y = finalPos[1].Y + xDistTop * MathF.Sin(f);
-                    }
-                }
-                if (finalPos[1].X == -1)
-                {
-                    see[1] = 0;
-                    if (finalPos[3].X != -1)
-                    {
-                        float f = angleBottom - (angleOffset[3] - MathF.PI);
-                        finalPos[1].X = finalPos[3].X + yDistRight * MathF.Cos(f);
-                        finalPos[1].Y = finalPos[3].Y + yDistRight * -MathF.Sin(f);
-                    }
-                    else if (finalPos[0].X != -1)
-                    {
-                        float f = angleLeft + (angleOffset[0] - MathF.PI);
-                        finalPos[1].X = finalPos[0].X + xDistTop * MathF.Cos(f);
-                        finalPos[1].Y = finalPos[0].Y + xDistTop * -MathF.Sin(f);
-                    }
-                }
-                if (finalPos[2].X == -1)
-                {
-                    see[2] = 0;
-                    if (finalPos[0].X != -1)
-                    {
-                        float f = angleTop - angleOffset[0];
-                        finalPos[2].X = finalPos[0].X + yDistLeft * MathF.Cos(f);
-                        finalPos[2].Y = finalPos[0].Y + yDistLeft * -MathF.Sin(f);
-                    }
-                    else if (finalPos[3].X != -1)
-                    {
-                        float f = angleRight + angleOffset[3];
-                        finalPos[2].X = finalPos[3].X + xDistBottom * MathF.Cos(f);
-                        finalPos[2].Y = finalPos[3].Y + xDistBottom * -MathF.Sin(f);
+                        int index = (int)(point_angle / (Math.PI / 2));
 
+                        finalPos[index] = irState.IRSensors[i].Position;
+                        see[index] = (see[index] << 1) | 1;
+                        seenFlags |= (byte)(1 << index);
                     }
+                    else
+                        see[i] = 0;
                 }
-                if (finalPos[3].X == -1)
+
+                while ((seenFlags & 15) != 0 && (seenFlags & 15) != 15)
                 {
-                    see[3] = 0;
-                    if (finalPos[1].X != -1)
+                    for (int i = 0; i < 4; i++)
                     {
-                        float f = angleTop + (angleOffset[1] - MathF.PI);
-                        finalPos[3].X = finalPos[1].X + yDistRight * MathF.Cos(f);
-                        finalPos[3].Y = finalPos[1].Y + yDistRight * -MathF.Sin(f);
+                        if ((seenFlags & (1 << i)) == 0)
+                        {
+                            see[i] = 0;
+                            int[] neighbors;
+                            switch (i)
+                            {
+                                case 0:
+                                    neighbors = new[] { 2, 1 };
+                                    break;
+                                case 1:
+                                    neighbors = new[] { 3, 0 };
+                                    break;
+                                case 2:
+                                    neighbors = new[] { 0, 3 };
+                                    break;
+                                case 3:
+                                    neighbors = new[] { 1, 2 };
+                                    break;
+                                default:
+                                    neighbors = Array.Empty<int>();
+                                    break;
+                            }
+
+                            foreach (int neighbor in neighbors)
+                            {
+                                float f = 0;
+                                if ((seenFlags & (1 << neighbor)) != 0) // Check if the bit for the neighbor is set
+                                {
+                                    switch (i)
+                                    {
+                                        case 0:
+                                            f = angleBottom + angleOffset[neighbor];
+                                            break;
+                                        case 1:
+                                            f = angleBottom - (angleOffset[neighbor] - MathF.PI);
+                                            break;
+                                        case 2:
+                                            f = angleTop - angleOffset[neighbor];
+                                            break;
+                                        case 3:
+                                            f = angleTop + (angleOffset[neighbor] - MathF.PI);
+                                            break;
+                                    }
+                                }
+
+                                float distance = 0;
+                                switch (i)
+                                {
+                                    case 0:
+                                        distance = (neighbor == 2) ? yDistLeft : xDistTop;
+                                        break;
+                                    case 1:
+                                        distance = (neighbor == 3) ? yDistRight : xDistTop;
+                                        break;
+                                    case 2:
+                                        distance = (neighbor == 0) ? yDistLeft : xDistBottom;
+                                        break;
+                                    case 3:
+                                        distance = (neighbor == 1) ? yDistRight : xDistBottom;
+                                        break;
+                                }
+
+                                finalPos[i].X = finalPos[neighbor].X + distance * MathF.Cos(f);
+                                finalPos[i].Y = finalPos[neighbor].Y + distance * -MathF.Sin(f);
+                                seenFlags |= (byte)(1 << i);
+                                break;
+                            }
+                        }
                     }
-                    else if (finalPos[2].X != -1)
+
+                    if ((seenFlags & 15) == 15)
                     {
-                        float f = angleLeft - (angleOffset[2] - MathF.PI);
-                        finalPos[3].X = finalPos[2].X + xDistBottom * -MathF.Cos(f);
-                        finalPos[3].Y = finalPos[2].Y + xDistBottom * MathF.Sin(f);
+                        break;
                     }
                 }
 
-                pWarper.setSource(finalPos[0].X, finalPos[0].Y, finalPos[1].X, finalPos[1].Y, finalPos[2].X, finalPos[2].Y, finalPos[3].X, finalPos[3].Y);
+                pWarper.setSource(finalPos[2].X, finalPos[2].Y, finalPos[3].X, finalPos[3].Y, finalPos[1].X, finalPos[1].Y, finalPos[0].X, finalPos[0].Y);
                 float[] fWarped = pWarper.warp();
                 resultPos.X = fWarped[0];
                 resultPos.Y = fWarped[1];
@@ -462,7 +460,7 @@ namespace WiiTUIO.Provider
                 angle = -(MathF.Atan2(finalPos[0].Y - finalPos[1].Y, finalPos[1].X - finalPos[0].X) + MathF.Atan2(finalPos[2].Y - finalPos[3].Y, finalPos[3].X - finalPos[2].X)) / 2;
                 if (angle < 0) angle += MathF.PI * 2;
 
-                if (see.Count(seen => seen == 0) >= 2 || Double.IsNaN(resultPos.X) || Double.IsNaN(resultPos.Y))
+                if (see.Count(seen => seen == 0) >= 4 || Double.IsNaN(resultPos.X) || Double.IsNaN(resultPos.Y))
                 {
                     CursorPos err = lastPos;
                     err.OutOfReach = true;
