@@ -460,7 +460,7 @@ namespace WiiTUIO.Provider
                 angle = -(MathF.Atan2(finalPos[0].Y - finalPos[1].Y, finalPos[1].X - finalPos[0].X) + MathF.Atan2(finalPos[2].Y - finalPos[3].Y, finalPos[3].X - finalPos[2].X)) / 2;
                 if (angle < 0) angle += MathF.PI * 2;
 
-                if (see.Count(seen => seen == 0) >= 4 || Double.IsNaN(resultPos.X) || Double.IsNaN(resultPos.Y))
+                if (see.Count(seen => seen == 0) >= 3 || Double.IsNaN(resultPos.X) || Double.IsNaN(resultPos.Y))
                 {
                     CursorPos err = lastPos;
                     err.OutOfReach = true;
