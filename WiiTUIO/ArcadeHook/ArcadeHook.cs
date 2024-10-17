@@ -4,6 +4,7 @@ using System.Threading;
 using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace WiiTUIO.ArcadeHook
 {
@@ -21,22 +22,24 @@ namespace WiiTUIO.ArcadeHook
 
         public ArcadeHookMain()
         {
-            Console.WriteLine("ArcadeHookMain started.");
+            Debug.WriteLine("ArcadeHookMain started.");
             tcpClient = new TcpClient();
         }
 
         public void ConnectToServer()
         {
-            Console.WriteLine("Waiting for the server to be available...");
+            Debug.WriteLine("Waiting for the server to be available...");
             while (isRunning)
             {
                 if (!tcpClient.Connected)
                 {
-                    gameName = null;
+                    if (gameName != null)
+                        GameEnded();
+
                     try
                     {
                         tcpClient.Connect(Hostname, Port);
-                        Console.WriteLine("Connected to output server instance!");
+                        Debug.WriteLine("Connected to output server instance!");
                         stream = tcpClient.GetStream();
                     }
                     catch
@@ -67,7 +70,8 @@ namespace WiiTUIO.ArcadeHook
                     if (line.key == "MameStart")
                     {
                         gameName = line.value;
-                        Console.WriteLine($"Game: {gameName}");
+                        ProcessIniCommand(line.key, 1);
+                        Debug.WriteLine($"Game: {gameName}");
                         break;
                     }
                 }
@@ -81,11 +85,12 @@ namespace WiiTUIO.ArcadeHook
             {
                 foreach (var line in valueList)
                 {
-                    Console.WriteLine($"Received key: {line.key} and received value {line.value}");
+                    Debug.WriteLine($"Received key: {line.key} and received value {line.value}");
                     if (int.TryParse(line.value, out int intValue))
                         ProcessIniCommand(line.key, intValue);
                     if (line.key == "MameStop")
                     {
+                        ProcessIniCommand(line.key, 1);
                         GameEnded();
                         break;
                     }
@@ -143,46 +148,53 @@ namespace WiiTUIO.ArcadeHook
 
         private void ProcessIniCommand(string key, int recValue)
         {
-            string iniCommand = IniFileHandler.ReadFromIniFile(gameName, key);
-            if (!string.IsNullOrEmpty(iniCommand))
+            string iniCommands = IniFileHandler.ReadFromIniFile(gameName, key);
+            if (!string.IsNullOrEmpty(iniCommands))
             {
-                if (Regex.IsMatch(iniCommand, pattern, RegexOptions.Compiled))
+                string[] commands = iniCommands.Split('&');
+                foreach (string command in commands)
                 {
-                    iniCommand = iniCommand.Replace("wii", "").Trim();
-                    string[] readValues = iniCommand.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (int.TryParse(readValues[0], out int player) && int.TryParse(readValues[1], out int action))
+                    string trimmedCommand = command.Trim();
+                    if (Regex.IsMatch(trimmedCommand, pattern, RegexOptions.Compiled))
                     {
-                        string value = readValues[2];
-                        ExecuteAction(recValue, player, action, value);
+                        string[] readValues = trimmedCommand.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (int.TryParse(readValues[1], out int player))
+                        {
+                            string device = readValues[0];
+                            string action = readValues[2];
+                            int value = readValues[3] == "%s%" ? recValue : int.Parse(readValues[3]);
+                            ExecuteAction(device, player, action, value, recValue);
+                        }
                     }
                 }
-                else
-                    Console.WriteLine($"{iniCommand} Unsupported command");
             }
         }
 
-        private void ExecuteAction(int recValue, int player, int action, string value)
+        private void ExecuteAction(string device, int player, string action, int value, int recValue)
         {
-            int newValue;
-            if (value != "%s%")
-            {
-                if (!int.TryParse(value, out newValue))
-                    return;
-            }
-            else
-                newValue = recValue;
-
             if (player >= 1 && player <= 4)
             {
-                if (action == 5)
-                    OnExecute?.Invoke("Rumble", newValue, player);
-                else if (action >= 1 && action <= 4)
-                    OnExecute?.Invoke("LED", newValue, player);
-                else if (action == 0)
+                switch (device)
                 {
-                    double fillResult = (double)recValue / newValue * 4;
-                    Console.WriteLine($"{fillResult}");
-                    OnExecute?.Invoke("LEDFill", (int)Math.Round(fillResult), player);
+                    case "wii":
+                        switch (action)
+                        {
+                            case "0":
+                                double fillResult = (double)recValue / value * 4;
+                                OnExecute?.Invoke("LEDFill", (int)Math.Round(fillResult), player);
+                                break;
+                            case "1":
+                            case "2":
+                            case "3":
+                            case "4":
+                                OnExecute?.Invoke("LED", int.Parse(action), player);
+                                break;
+                            case "5":
+                                OnExecute?.Invoke("Rumble", value, player);
+                                break;
+                        }
+                        break;
                 }
             }
         }
@@ -192,7 +204,7 @@ namespace WiiTUIO.ArcadeHook
             for (int i = 1; i < 5; i++)
                 OnExecute?.Invoke("MameStop", 0, i);
             gameName = null;
-            Console.WriteLine("Game ended");
+            Debug.WriteLine("Game ended");
             tcpClient.Close();
             tcpClient.Dispose();
             tcpClient = new TcpClient();
