@@ -224,6 +224,7 @@
     <Compile Include="Input\WiiProvider\Settings\CalibrationOverlay.xaml.cs">
       <DependentUpon>CalibrationOverlay.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Input\WiiProvider\Settings\CalibrationSettings.cs" />
     <Compile Include="Output\CursorPositionHelper.cs" />
     <Compile Include="Output\Handlers\HandlerFactory.cs" />
     <Compile Include="Output\Handlers\ICursorHandler.cs" />

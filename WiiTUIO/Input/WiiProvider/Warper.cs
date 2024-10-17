@@ -36,7 +36,7 @@ namespace WiiTUIO.Provider
         {
             center[0] = (float)this.settings.CenterX;
             center[1] = (float)this.settings.CenterY;
-            setDestination(this.settings.TLled, 0.0f, this.settings.TRled, 0.0f, this.settings.TLled, 1.0f, this.settings.TRled, 1.0f);
+            setDestination(this.settings.TRled, 1.0f, this.settings.TLled, 1.0f, this.settings.TLled, 0.0f, this.settings.TRled, 0.0f);
         }
 
         private void SettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

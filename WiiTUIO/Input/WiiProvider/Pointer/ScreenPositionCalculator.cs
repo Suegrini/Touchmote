@@ -306,12 +306,12 @@ namespace WiiTUIO.Provider
             else
             {
                 byte seenFlags = 0;
-                double RawRoll = Math.Atan2(wiimoteState.AccelState.Values.X, wiimoteState.AccelState.Values.Z);
+                double Roll = Math.Atan2(wiimoteState.AccelState.Values.X, wiimoteState.AccelState.Values.Z);
                 for (int i = 0; i < 4; i++)
                 {
                     if (irState.IRSensors[i].Found)
                     {
-                        double point_angle = Math.Atan2(irState.IRSensors[i].Position.Y - median.Y, irState.IRSensors[i].Position.X - median.X) - RawRoll;
+                        double point_angle = Math.Atan2(irState.IRSensors[i].Position.Y - median.Y, irState.IRSensors[i].Position.X - median.X) - Roll;
                         if (point_angle < 0) point_angle += 2 * Math.PI;
 
                         int index = (int)(point_angle / (Math.PI / 2));
@@ -335,16 +335,16 @@ namespace WiiTUIO.Provider
                             switch (i)
                             {
                                 case 0:
-                                    neighbors = new[] { 2, 1 };
+                                    neighbors = new[] { 3, 1 };
                                     break;
                                 case 1:
-                                    neighbors = new[] { 3, 0 };
+                                    neighbors = new[] { 2, 0 };
                                     break;
                                 case 2:
-                                    neighbors = new[] { 0, 3 };
+                                    neighbors = new[] { 1, 3 };
                                     break;
                                 case 3:
-                                    neighbors = new[] { 1, 2 };
+                                    neighbors = new[] { 0, 2 };
                                     break;
                                 default:
                                     neighbors = Array.Empty<int>();
@@ -359,16 +359,16 @@ namespace WiiTUIO.Provider
                                     switch (i)
                                     {
                                         case 0:
-                                            f = angleBottom + angleOffset[neighbor];
+                                            f = angleBottom - angleOffset[neighbor];
                                             break;
                                         case 1:
-                                            f = angleBottom - (angleOffset[neighbor] - MathF.PI);
+                                            f = angleBottom + (angleOffset[neighbor] - MathF.PI);
                                             break;
                                         case 2:
-                                            f = angleTop - angleOffset[neighbor];
+                                            f = angleTop + angleOffset[neighbor];
                                             break;
                                         case 3:
-                                            f = angleTop + (angleOffset[neighbor] - MathF.PI);
+                                            f = angleTop - (angleOffset[neighbor] - MathF.PI);
                                             break;
                                     }
                                 }
@@ -377,16 +377,16 @@ namespace WiiTUIO.Provider
                                 switch (i)
                                 {
                                     case 0:
-                                        distance = (neighbor == 2) ? yDistLeft : xDistTop;
+                                        distance = (neighbor == 3) ? yDistRight : xDistBottom;
                                         break;
                                     case 1:
-                                        distance = (neighbor == 3) ? yDistRight : xDistTop;
+                                        distance = (neighbor == 2) ? yDistLeft : xDistBottom;
                                         break;
                                     case 2:
-                                        distance = (neighbor == 0) ? yDistLeft : xDistBottom;
+                                        distance = (neighbor == 1) ? yDistLeft : xDistTop;
                                         break;
                                     case 3:
-                                        distance = (neighbor == 1) ? yDistRight : xDistBottom;
+                                        distance = (neighbor == 0) ? yDistRight : xDistTop;
                                         break;
                                 }
 
@@ -397,14 +397,10 @@ namespace WiiTUIO.Provider
                             }
                         }
                     }
-
-                    if ((seenFlags & 15) == 15)
-                    {
-                        break;
-                    }
+                    if ((seenFlags & 15) == 15) break;
                 }
 
-                pWarper.setSource(finalPos[2].X, finalPos[2].Y, finalPos[3].X, finalPos[3].Y, finalPos[1].X, finalPos[1].Y, finalPos[0].X, finalPos[0].Y);
+                pWarper.setSource(finalPos[0].X, finalPos[0].Y, finalPos[1].X, finalPos[1].Y, finalPos[2].X, finalPos[2].Y, finalPos[3].X, finalPos[3].Y);
                 float[] fWarped = pWarper.warp();
                 resultPos.X = fWarped[0];
                 resultPos.Y = fWarped[1];
@@ -432,28 +428,28 @@ namespace WiiTUIO.Provider
                 }
 
                 // If 2 LEDS can be seen and loop has run through 5 times update angle and distances
-                if (((1 << 5) & see[0] & see[2]) != 0)
+                if (((1 << 5) & see[2] & see[1]) != 0)
                 {
-                    angleLeft = MathF.Atan2(finalPos[2].Y - finalPos[0].Y, finalPos[0].X - finalPos[2].X);
-                    yDistLeft = MathF.Hypot((finalPos[0].Y - finalPos[2].Y), (finalPos[0].X - finalPos[2].X));
+                    angleLeft = MathF.Atan2(finalPos[1].Y - finalPos[2].Y, finalPos[2].X - finalPos[1].X);
+                    yDistLeft = MathF.Hypot((finalPos[2].Y - finalPos[1].Y), (finalPos[2].X - finalPos[1].X));
                 }
 
-                if (((1 << 5) & see[3] & see[1]) != 0)
+                if (((1 << 5) & see[0] & see[3]) != 0)
                 {
-                    angleRight = MathF.Atan2(finalPos[3].Y - finalPos[1].Y, finalPos[1].X - finalPos[3].X);
-                    yDistRight = MathF.Hypot((finalPos[3].Y - finalPos[1].Y), (finalPos[3].X - finalPos[1].X));
+                    angleRight = MathF.Atan2(finalPos[0].Y - finalPos[3].Y, finalPos[3].X - finalPos[0].X);
+                    yDistRight = MathF.Hypot((finalPos[0].Y - finalPos[3].Y), (finalPos[0].X - finalPos[3].X));
+                }
+
+                if (((1 << 5) & see[2] & see[3]) != 0)
+                {
+                    angleTop = MathF.Atan2(finalPos[2].Y - finalPos[3].Y, finalPos[3].X - finalPos[2].X);
+                    xDistTop = MathF.Hypot((finalPos[2].Y - finalPos[3].Y), (finalPos[2].X - finalPos[3].X));
                 }
 
                 if (((1 << 5) & see[0] & see[1]) != 0)
                 {
-                    angleTop = MathF.Atan2(finalPos[0].Y - finalPos[1].Y, finalPos[1].X - finalPos[0].X);
-                    xDistTop = MathF.Hypot((finalPos[0].Y - finalPos[1].Y), (finalPos[0].X - finalPos[1].X));
-                }
-
-                if (((1 << 5) & see[3] & see[2]) != 0)
-                {
-                    angleBottom = MathF.Atan2(finalPos[2].Y - finalPos[3].Y, finalPos[3].X - finalPos[2].X);
-                    xDistBottom = MathF.Hypot((finalPos[2].Y - finalPos[3].Y), (finalPos[2].X - finalPos[3].X));
+                    angleBottom = MathF.Atan2(finalPos[1].Y - finalPos[0].Y, finalPos[0].X - finalPos[1].X);
+                    xDistBottom = MathF.Hypot((finalPos[1].Y - finalPos[0].Y), (finalPos[1].X - finalPos[0].X));
                 }
 
                 // Add tilt correction
