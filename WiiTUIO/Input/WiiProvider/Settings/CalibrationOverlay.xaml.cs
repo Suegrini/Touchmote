@@ -377,8 +377,16 @@ namespace WiiTUIO.Provider
                 }
                 else if (e.Button.ToLower().Equals("b"))
                 {
-                    this.movePoint(0.5, 0.5);
-                    step = 1;
+                    if (!Settings.Default.pointer_4IRMode)
+                    {
+                        this.movePoint(1 - marginXBackup, 1 - marginYBackup);
+                        step = 1;
+                    }
+                    else
+                    {
+                        this.movePoint(0.5, 0.5);
+                        step = 0;
+                    }
                 }
             }
             else if (e.Button.ToLower().Equals("a") || e.Button.ToLower().Equals("b"))
