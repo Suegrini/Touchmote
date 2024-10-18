@@ -54,45 +54,25 @@ namespace WiiTUIO.ArcadeHook
 
         private void ReadData()
         {
-            if (gameName == null || gameName == "___empty")
-                InitializeGame();
-            else
-                ProcessValues();
-        }
-
-        private void InitializeGame()
-        {
-            List<(string key, string value)> valueList = ReadFromServer();
-            if (valueList != null)
-            {
-                foreach (var line in valueList)
-                {
-                    if (line.key == "MameStart")
-                    {
-                        gameName = line.value;
-                        ProcessIniCommand(line.key, 1);
-                        Debug.WriteLine($"Game: {gameName}");
-                        break;
-                    }
-                }
-            }
-        }
-
-        private void ProcessValues()
-        {
             List<(string key, string value)> valueList = ReadFromServer();
             if (valueList != null)
             {
                 foreach (var line in valueList)
                 {
                     Debug.WriteLine($"Received key: {line.key} and received value {line.value}");
+                    if (line.key == "MameStart" || line.key == "game")
+                    {
+                        gameName = line.value;
+                        if (gameName != "___empty") Debug.WriteLine($"Game started with name {gameName}");
+                    }
+
+                    if (gameName != null && gameName != "___empty")
+                    { 
                     if (int.TryParse(line.value, out int intValue))
                         ProcessIniCommand(line.key, intValue);
+
                     if (line.key == "MameStop")
-                    {
-                        ProcessIniCommand(line.key, 1);
                         GameEnded();
-                        break;
                     }
                 }
             }
