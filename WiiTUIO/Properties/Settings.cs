@@ -359,6 +359,17 @@ namespace WiiTUIO.Properties
             }
         }
 
+        private bool _pointer_4IRMode_diamond = false;
+        public bool pointer_4IRMode_diamond
+        {
+            get { return _pointer_4IRMode_diamond; }
+            set
+            {
+                _pointer_4IRMode_diamond = value;
+                OnPropertyChanged("pointer_4IRMode_diamond");
+            }
+        }
+
         private int _pointer_FPS = 100;
         public int pointer_FPS
         {

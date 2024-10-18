@@ -36,7 +36,10 @@ namespace WiiTUIO.Provider
         {
             center[0] = (float)this.settings.CenterX;
             center[1] = (float)this.settings.CenterY;
-            setDestination(this.settings.TRled, 1.0f, this.settings.TLled, 1.0f, this.settings.TLled, 0.0f, this.settings.TRled, 0.0f);
+            if (!Settings.Default.pointer_4IRMode_diamond)
+                setDestination(this.settings.TRled, 1.0f, this.settings.TLled, 1.0f, this.settings.TLled, 0.0f, this.settings.TRled, 0.0f);
+            else
+                setDestination(1.0f, 0.5f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 0.0f);
         }
 
         private void SettingsChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
