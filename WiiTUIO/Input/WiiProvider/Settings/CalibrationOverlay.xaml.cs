@@ -430,7 +430,7 @@ namespace WiiTUIO.Provider
             {
                 case 0:
                     this.keyMapper.settings.CenterX = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) - (this.keyMapper.cursorPos.RelativeY - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + 2);
-                    this.keyMapper.settings.CenterY = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Sin(this.keyMapper.cursorPos.Rotation) + (this.keyMapper.cursorPos.RelativeY - 2) * Math.Cos(this.keyMapper.cursorPos.Rotation) + 2);
+                    this.keyMapper.settings.CenterY = (float)((this.keyMapper.cursorPos.RelativeX - 2) * Math.Sin(-this.keyMapper.cursorPos.Rotation) + (this.keyMapper.cursorPos.RelativeY - 2) * Math.Cos(-this.keyMapper.cursorPos.Rotation) + 2);
                     this.keyMapper.settings.TLled = (float)(0.5 - ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
                     this.keyMapper.settings.TRled = (float)(0.5 + ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
                     break;
