@@ -124,7 +124,7 @@ namespace WiiTUIO.Provider
 
         private ButtonFlag PressedButtons;
 
-        private bool lastExt;
+        private ExtensionType lastExtension;
 
         private SystemProcessMonitor processMonitor;
         private CommandListener commandListener;
@@ -150,7 +150,7 @@ namespace WiiTUIO.Provider
 
         public CalibrationSettings settings;
 
-        public WiiKeyMapper(int wiimoteID, HandlerFactory handlerFactory, string serial = null)
+        public WiiKeyMapper(Wiimote wiimote, int wiimoteID, HandlerFactory handlerFactory, string serial = null)
         {
             this.WiimoteID = wiimoteID;
             serial = serial ?? this.WiimoteID.ToString();
@@ -186,6 +186,7 @@ namespace WiiTUIO.Provider
             homeButtonTimer.Elapsed += homeButtonTimer_Elapsed;
 
             KeymapConfigWindow.Instance.OnConfigChanged += keymapConfigWindow_OnConfigChanged;
+            wiimote.WiimoteExtensionChanged += OnExtensionChanged;
         }
 
         private void initialize(bool callConfigChangedEvt=true)
@@ -471,12 +472,6 @@ namespace WiiTUIO.Provider
 
             if (wiimoteState.Extension)
             {
-                if (!lastExt)
-                {
-                    this.KeyMap.executeButtonDown("Extension");
-                    lastExt = true;
-                }
-
                 if (wiimoteState.ExtensionType == ExtensionType.Nunchuk)
                 {
                     this.KeyMap.updateNunchuk(wiimoteState.NunchukState);
@@ -507,11 +502,6 @@ namespace WiiTUIO.Provider
                     significant |= checkButtonState(classicButtonState.ZL, "Classic.ZL");
                     significant |= checkButtonState(classicButtonState.ZR, "Classic.ZR");
                 }
-            }
-            else if (lastExt)
-            {
-                this.KeyMap.executeButtonUp("Extension");
-                lastExt = false;
             }
 
             if (this.releaseHomeOnNextUpdate)
@@ -683,6 +673,24 @@ namespace WiiTUIO.Provider
             }
 
             return significant;
+        }
+
+        private void OnExtensionChanged(object sender, WiimoteExtensionChangedEventArgs e)
+        {
+            if (e.Inserted)
+            {
+                lastExtension = e.ExtensionType;
+                this.KeyMap.executeButtonDown("Extension");
+            }
+            else
+            {
+                this.KeyMap.executeButtonUp("Extension");
+
+                WiimoteState ws = new WiimoteState();
+                ws.Extension = true;
+                ws.ExtensionType = lastExtension;
+                this.processWiimoteState(ws);
+            }
         }
     }
 }
