@@ -65,6 +65,8 @@ namespace WiiTUIO
 
         private CommandListener commandListener;
 
+        private IntPtr previousForegroundWindow = IntPtr.Zero;
+
         /// <summary>
         /// A reference to the WiiProvider we want to use to get/forward input.
         /// </summary>
@@ -167,6 +169,7 @@ namespace WiiTUIO
 
             overlayUIThread = new Thread(() =>
             {
+                previousForegroundWindow = UIHelpers.GetForegroundWindow();
                 OverlayWindow.Current.Show();
                 CalibrationOverlay.Current.Show();
 
@@ -177,6 +180,9 @@ namespace WiiTUIO
                         D3DCursorWindow.Current.Start((new WindowInteropHelper(OverlayWindow.Current)).Handle);
                     }));
                 }
+
+                if (previousForegroundWindow != IntPtr.Zero && Settings.Default.minimizeOnStart)
+                    UIHelpers.SetForegroundWindow(previousForegroundWindow);
 
                 // Grab dispatcher for current thread
                 overlayDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
