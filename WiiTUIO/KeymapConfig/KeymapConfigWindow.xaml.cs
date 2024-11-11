@@ -217,10 +217,6 @@ namespace WiiTUIO
                 {
                     this.selectedOutput = KeymapOutputType.KEYBOARD;
                 }
-                else if (cbItem == cbiTouch)
-                {
-                    this.selectedOutput = KeymapOutputType.TOUCH;
-                }
                 else if (cbItem == cbiMouse)
                 {
                     this.selectedOutput = KeymapOutputType.MOUSE;
