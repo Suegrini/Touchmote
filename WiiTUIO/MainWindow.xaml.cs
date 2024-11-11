@@ -15,10 +15,7 @@ using System.Windows.Navigation;
 using System.Threading;
 using System.Threading.Tasks;
 
-using OSC.NET;
-using WiiTUIO.WinTouch;
 using WiiTUIO.Provider;
-using WiiTUIO.Input;
 using WiiTUIO.Properties;
 using System.Windows.Input;
 using WiiTUIO.Output;
@@ -27,7 +24,6 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using MahApps.Metro.Controls;
 using System.Windows.Interop;
-using WiiTUIO.Output.Handlers.Touch;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using WiiTUIO.DeviceUtils;
@@ -108,40 +104,7 @@ namespace WiiTUIO
                 this.WindowState = System.Windows.WindowState.Minimized;
             }
 
-            string currentVmultiMonitor = VmultiUtil.getCurrentMonitorDevicePath();
-            IEnumerable<MonitorInfo> monInfos = DeviceUtil.GetMonitorList();
-
-            if (VmultiDevice.Current.isAvailable())
-            {
-                //See if the selected monitor is still connected to the computer
-                if (currentVmultiMonitor != null)
-                {
-                    string primaryMonitor = null;
-                    foreach (MonitorInfo monInfo in monInfos)
-                    {
-                        if (monInfo.DevicePath == currentVmultiMonitor)
-                        {
-                            primaryMonitor = currentVmultiMonitor;
-                        }
-                    }
-                    if (primaryMonitor != null) //The vmulti monitor is still connected.
-                    {
-                        Settings.Default.primaryMonitor = primaryMonitor; //Make sure the same value is in settings.
-                    }
-                    else //The selected monitor is not connected
-                    {
-                        VmultiUtil.setCurrentMonitor(monInfos.First()); //Use the first monitor in the list.
-                    }
-                }
-                else
-                {
-                    VmultiUtil.setCurrentMonitor(monInfos.First()); //No setting found, default to first found monitor.
-                }
-            }
-            else
-            {
-                Settings.Default.primaryMonitor = "";
-            }
+            Settings.Default.primaryMonitor = "";
 
             defaultInstance = this;
 
@@ -636,8 +599,7 @@ namespace WiiTUIO
             try
             {
                 // Connect a Wiimote, hook events then start.
-                this.pWiiProvider = InputFactory.createInputProvider(Settings.Default.input);
-                //this.pWiiProvider.OnNewFrame += new EventHandler<FrameEventArgs>(pWiiProvider_OnNewFrame);
+                this.pWiiProvider = new MultiWiiPointerProvider();
                 this.pWiiProvider.OnStatusUpdate += new Action<WiimoteStatus>(pWiiProvider_OnStatusUpdate);
                 this.pWiiProvider.OnConnect += new Action<int,int>(pWiiProvider_OnConnect);
                 this.pWiiProvider.OnDisconnect += new Action<int,int>(pWiiProvider_OnDisconnect);

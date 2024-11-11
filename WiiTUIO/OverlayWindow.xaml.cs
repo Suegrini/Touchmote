@@ -17,7 +17,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WiiTUIO.DeviceUtils;
-using WiiTUIO.Output.Handlers.Touch;
+using WiiTUIO.Output;
 using WiiTUIO.Properties;
 using WiiTUIO.Provider;
 
@@ -77,7 +77,7 @@ namespace WiiTUIO
                 //Prevent OverlayWindow from showing up in alt+tab menu.
                 UIHelpers.HideFromAltTab(this);
             };
-            
+
         }
 
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)

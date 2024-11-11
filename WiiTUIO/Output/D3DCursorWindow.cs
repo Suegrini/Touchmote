@@ -12,7 +12,7 @@ using WiiCPP;
 using WiiTUIO.DeviceUtils;
 using WiiTUIO.Properties;
 
-namespace WiiTUIO.Output.Handlers.Touch
+namespace WiiTUIO.Output
 {
     public class D3DCursorWindow
     {

@@ -15,7 +15,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WiiCPP;
 using WiiTUIO.DeviceUtils;
-using WiiTUIO.Input;
 using WiiTUIO.Output;
 using WiiTUIO.Properties;
 using WiiTUIO.Provider;
@@ -50,18 +49,6 @@ namespace WiiTUIO
             this.cbMinimizeToTray.IsChecked = Settings.Default.minimizeToTray;
             this.cbPairOnStart.IsChecked = Settings.Default.pairOnStart;
             this.cbUseCustomCursor.IsChecked = Settings.Default.pointer_customCursor;
-
-            InputFactory.InputType inputType = InputFactory.getType(Settings.Default.input);
-
-            switch (inputType)
-            {
-                case InputFactory.InputType.POINTER:
-                    this.cbiPointer.IsSelected = true;
-                    break;
-                case InputFactory.InputType.PEN:
-                    this.cbiPen.IsSelected = true;
-                    break;
-            }
             this.providerSettingsContent.Children.Clear();
             this.providerSettingsContent.Children.Add(MultiWiiPointerProvider.getSettingsControl());
 
@@ -91,22 +78,6 @@ namespace WiiTUIO
             if (this.OnClose != null)
             {
                 this.OnClose();
-            }
-        }
-
-        private void ComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
-        {
-            if (ModeComboBox.SelectedItem != null && ((ComboBoxItem)ModeComboBox.SelectedItem).Content != null)
-            {
-                ComboBoxItem cbItem = (ComboBoxItem)ModeComboBox.SelectedItem;
-                if (cbItem == cbiPointer)
-                {
-                    Settings.Default.input = InputFactory.getType(InputFactory.InputType.POINTER);
-                }
-                else if (cbItem == cbiPen)
-                {
-                    Settings.Default.input = InputFactory.getType(InputFactory.InputType.PEN);
-                }
             }
         }
 

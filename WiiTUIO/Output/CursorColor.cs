@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace WiiTUIO.Output.Handlers.Touch
+namespace WiiTUIO.Output
 {
     class CursorColor
     {

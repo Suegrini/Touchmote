@@ -12,7 +12,6 @@ using WindowsInput;
 using WiiTUIO.Properties;
 using System.Windows.Controls;
 using System.Threading;
-using WiiTUIO.Output.Handlers.Touch;
 using WiiTUIO.Output;
 
 namespace WiiTUIO.Provider
@@ -61,19 +60,9 @@ namespace WiiTUIO.Provider
         private bool bRunning = false;
 
         /// <summary>
-        /// An input classifier which we will use to organise points.
-        /// </summary>
-        public SpatioTemporalClassifier InputClassifier { get; protected set; }
-
-        /// <summary>
         /// A property to determine if this input provider is running (and thus generating events).
         /// </summary>
         public bool IsRunning { get { return this.bRunning; } }
-
-        /// <summary>
-        /// This defines an event which is raised when a new frame of touch events is prepared and ready to be dispatched by this provider.
-        /// </summary>
-        public event EventHandler<FrameEventArgs> OnNewFrame;
 
         #region Battery State
         /// <summary>
@@ -116,7 +105,6 @@ namespace WiiTUIO.Provider
         public void start()
         {
             Console.WriteLine("Start");
-            TouchOutputFactory.getCurrentProviderHandler().connect();
             this.bRunning = true;
             wiimoteConnectorTimer.Change(0, Timeout.Infinite);
         }
@@ -152,9 +140,6 @@ namespace WiiTUIO.Provider
             this.teardownWiimoteConnections();
 
             this.pWC.Clear();
-
-            TouchOutputFactory.getCurrentProviderHandler().disconnect();
-
         }
         #endregion
 
@@ -497,8 +482,6 @@ namespace WiiTUIO.Provider
 
                     try
                     {
-                        Queue<WiiContact> allContacts = new Queue<WiiContact>();
-
                         foreach (WiimoteControl control in pWiimoteMap.Values)
                         {
                             if (eventBuffer.ContainsKey(control.Wiimote.HIDDevicePath))
@@ -517,8 +500,6 @@ namespace WiiTUIO.Provider
                                 
                             }
                         }
-
-                        TouchOutputFactory.getCurrentProviderHandler().processEventFrame();
 
                         if (Settings.Default.pointer_customCursor)
                         {

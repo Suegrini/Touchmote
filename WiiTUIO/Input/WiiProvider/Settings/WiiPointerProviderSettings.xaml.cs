@@ -46,7 +46,7 @@ namespace WiiTUIO.Provider
             }
             else
             {
-                switch (Settings.Default.pointer_4IRMode) 
+                switch (Settings.Default.pointer_4IRMode)
                 {
                     case "square":
                         this.cbiSquare.IsSelected = true;
@@ -59,37 +59,6 @@ namespace WiiTUIO.Provider
                         break;
                 }
             }
-
-            if(VmultiDevice.Current.isAvailable())
-            {
-                string currentMonitor = VmultiUtil.getCurrentMonitorDevicePath();
-
-                IEnumerable<MonitorInfo> monInfos = DeviceUtil.GetMonitorList();
-
-                foreach (MonitorInfo monInfo in monInfos)
-                {
-                    ComboBoxItem cbItem = new ComboBoxItem();
-                    cbItem.Content = monInfo.FriendlyName;
-                    cbItem.DataContext = monInfo;
-                    this.MonitorComboBox.Items.Add(cbItem);
-
-                    if (monInfo.DevicePath == currentMonitor)
-                    {
-                        this.MonitorComboBox.SelectedItem = cbItem;
-                    }
-                }
-                this.initializing = false;
-            }
-            else
-            {
-                ComboBoxItem cbItem = new ComboBoxItem();
-                cbItem.Content = "Requires driver";
-                this.MonitorComboBox.Items.Add(cbItem);
-                this.MonitorComboBox.IsEnabled = false;
-                this.MonitorComboBox.SelectedIndex = 0;
-                this.initializing = false;
-            }
-
         }
 
         private void SBPositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -123,17 +92,6 @@ namespace WiiTUIO.Provider
             }
         }
 
-        private void MonitorComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!this.initializing)
-            {
-                MonitorInfo monInfo = ((ComboBoxItem)this.MonitorComboBox.SelectedItem).DataContext as MonitorInfo;
-                if(monInfo != null)
-                {
-                    VmultiUtil.setCurrentMonitor(monInfo);
-                }
-            }
-        }
         /*
         private void systemCursor_Checked(object sender, RoutedEventArgs e)
         {

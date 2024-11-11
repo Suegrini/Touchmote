@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 
-namespace WiiTUIO.Output.Handlers.Touch
+namespace WiiTUIO.Output
 {
     public class D3DCursor
     {
         public int X, Y, ID;
-        public double Rotation;
         public bool Hidden, Pressed;
         public Color Color;
 
@@ -21,7 +20,6 @@ namespace WiiTUIO.Output.Handlers.Touch
             ID = id;
             X = 0;
             Y = 0;
-            Rotation = 0;
             Hidden = false;
             Pressed = false;
         }
@@ -50,11 +48,6 @@ namespace WiiTUIO.Output.Handlers.Touch
         public void SetPressed()
         {
             this.Pressed = true;
-        }
-
-        public void SetRotation(double rotation)
-        {
-            this.Rotation = rotation;
         }
     }
 }

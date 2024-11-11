@@ -10,7 +10,7 @@ using System.Timers;
 using WiiTUIO.DeviceUtils;
 using WiiTUIO.Properties;
 using PointF = WiimoteLib.PointF;
-using WiiTUIO.Output.Handlers.Touch;
+using WiiTUIO.Output;
 using System.Diagnostics;
 using WiiTUIO.Filters;
 

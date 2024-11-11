@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WiiTUIO.Input;
 using PointF = WiimoteLib.PointF;
 
 namespace WiiTUIO.Properties
@@ -16,28 +15,6 @@ namespace WiiTUIO.Properties
     {
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private string _input = "multipointer";
-        public string input
-        {
-            get { return _input; }
-            set
-            {
-                _input = value;
-                OnPropertyChanged("input");
-            }
-        }
-
-        private string _output = "touch";
-        public string output
-        {
-            get { return _output; }
-            set
-            {
-                _output = value;
-                OnPropertyChanged("output");
-            }
-        }
 
         private bool _pairOnStart = false;
         public bool pairOnStart
@@ -201,28 +178,6 @@ namespace WiiTUIO.Properties
             {
                 _dolphin_path = value;
                 OnPropertyChanged("dolphin_path");
-            }
-        }
-
-        private string _tuio_IP = "127.0.0.1";
-        public string tuio_IP
-        {
-            get { return _tuio_IP; }
-            set
-            {
-                _tuio_IP = value;
-                OnPropertyChanged("tuio_IP");
-            }
-        }
-
-        private int _tuio_port = 3333;
-        public int tuio_port
-        {
-            get { return _tuio_port; }
-            set
-            {
-                _tuio_port = value;
-                OnPropertyChanged("tuio_port");
             }
         }
 
@@ -648,39 +603,6 @@ namespace WiiTUIO.Properties
             {
                 _shake_pressedTime = value;
                 OnPropertyChanged("shake_pressedTime");
-            }
-        }
-
-        private int _touch_touchTapThreshold = 40;
-        public int touch_touchTapThreshold
-        {
-            get { return _touch_touchTapThreshold; }
-            set
-            {
-                _touch_touchTapThreshold = value;
-                OnPropertyChanged("touch_touchTapThreshold");
-            }
-        }
-
-        private int _touch_edgeGestureHelperMargins = 30;
-        public int touch_edgeGestureHelperMargins
-        {
-            get { return _touch_edgeGestureHelperMargins; }
-            set
-            {
-                _touch_edgeGestureHelperMargins = value;
-                OnPropertyChanged("touch_edgeGestureHelperMargins");
-            }
-        }
-
-        private int _touch_edgeGestureHelperRelease = 60;
-        public int touch_edgeGestureHelperRelease
-        {
-            get { return _touch_edgeGestureHelperRelease; }
-            set
-            {
-                _touch_edgeGestureHelperRelease = value;
-                OnPropertyChanged("touch_edgeGestureHelperRelease");
             }
         }
 

@@ -214,7 +214,6 @@
     <Compile Include="ArcadeHook\OutputProvider.cs" />
     <Compile Include="Autostart.cs" />
     <Compile Include="CommandListener.cs" />
-    <Compile Include="DeviceUtils\VmultiUtil.cs" />
     <Compile Include="DeviceUtils\DeviceUtil.cs" />
     <Compile Include="Filters\CircularBuffer.cs" />
     <Compile Include="Filters\CoordFilter.cs" />
@@ -233,16 +232,15 @@
     <Compile Include="Output\Handlers\IRumbleFeedback.cs" />
     <Compile Include="Output\Handlers\IStickHandler.cs" />
     <Compile Include="Output\Handlers\VmultiKeyboardHandler.cs" />
-    <Compile Include="Output\Handlers\Touch\CursorColor.cs" />
+    <Compile Include="Output\CursorColor.cs" />
     <Compile Include="Output\Handlers\IButtonHandler.cs" />
     <Compile Include="Output\Handlers\KeyboardHandler.cs" />
     <Compile Include="Input\WiiProvider\Pointer\CursorPos.cs" />
-    <Compile Include="Output\Handlers\Touch\D3DCursor.cs" />
-    <Compile Include="Output\Handlers\Touch\D3DCursorWindow.cs" />
+    <Compile Include="Output\D3DCursor.cs" />
+    <Compile Include="Output\D3DCursorWindow.cs" />
     <Compile Include="Input\WiiProvider\Pointer\WiimoteStatus.cs" />
     <Compile Include="Input\WiiProvider\Keymap\WiiKeyMap.cs" />
     <Compile Include="Output\Handlers\MouseHandler.cs" />
-    <Compile Include="Output\Handlers\Touch\TouchHandler.cs" />
     <Compile Include="Output\Handlers\Xinput\ViGEmBus360Device.cs" />
     <Compile Include="Output\Handlers\Xinput\ViGEmBusClient.cs" />
     <Compile Include="Output\Handlers\Xinput\ViGEmBusClientSingleton.cs" />
@@ -274,7 +272,6 @@
     </Compile>
     <Compile Include="MinimizeToTray.cs" />
     <Compile Include="Output\VmultiDevice.cs" />
-    <Compile Include="Output\VmultiProviderHandler.cs" />
     <Compile Include="OverlayNotice.xaml.cs">
       <DependentUpon>OverlayNotice.xaml</DependentUpon>
     </Compile>
@@ -330,31 +327,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Input\WiiProvider\Settings\Calibrate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Input\WiiProvider\Settings\CalibrationWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Input\WiiProvider\Settings\WiiPointerProviderSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Input\WiiProvider\Settings\WiiProviderSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Output\Settings\TUIOSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -376,26 +353,8 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Input\InputFactory.cs" />
-    <Compile Include="Output\Handlers\Touch\DuoTouch.cs" />
-    <Compile Include="Input\WiiProvider\Settings\Calibrate.xaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>Calibrate.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Input\WiiProvider\Settings\CalibrationWindow.xaml.cs">
-      <DependentUpon>CalibrationWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Input\WiiProvider\Keymap\WiiKeyMapper.cs" />
     <Compile Include="Launcher.cs" />
-    <Compile Include="Output\DrawingProviderHandler.cs" />
-    <Compile Include="Output\ITouchProviderHandler.cs" />
-    <Compile Include="Output\TouchOutputFactory.cs" />
-    <Compile Include="Output\Settings\TUIOSettings.xaml.cs">
-      <DependentUpon>TUIOSettings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\TouchInjectProviderHandler.cs" />
-    <Compile Include="Output\TUIOVmultiProviderHandler.cs" />
-    <Compile Include="Output\TUIOProviderHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -408,20 +367,10 @@
     <Compile Include="Input\WiiProvider\Pointer\MouseSimulator.cs" />
     <Compile Include="Input\WiiProvider\Pointer\ScreenPositionCalculator.cs" />
     <Compile Include="Input\WiiProvider\Pointer\MultiWiiPointerProvider.cs" />
-    <Compile Include="Input\WiiProvider\ContactType.cs" />
-    <Compile Include="Input\WiiProvider\FrameEventArgs.cs" />
     <Compile Include="Input\WiiProvider\Settings\WiiPointerProviderSettings.xaml.cs">
       <DependentUpon>WiiPointerProviderSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Input\WiiProvider\SpatiotemporalClassifier.cs" />
     <Compile Include="Input\WiiProvider\Warper.cs" />
-    <Compile Include="Input\WiiProvider\WiiContact.cs" />
-    <Compile Include="Input\WiiProvider\WiiProvider.cs" />
-    <Compile Include="Input\WiiProvider\Settings\WiiProviderSettings.xaml.cs">
-      <DependentUpon>WiiProviderSettings.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Output\WinTouch\HumanInterfaceDevice.cs" />
-    <Compile Include="Output\WinTouch\MTVProviderHandler.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -487,10 +436,6 @@
     <Resource Include="Resources\checkmark-big.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OSC.NET\OSC.NET.csproj">
-      <Project>{14bd1d44-261d-4fc2-a7dd-a3cda413d790}</Project>
-      <Name>OSC.NET</Name>
-    </ProjectReference>
     <ProjectReference Include="..\WiiCPP\WiiCPP.vcxproj">
       <Project>{78eb9de8-b6fc-47f3-970f-0b4fcb0f38a8}</Project>
       <Name>WiiCPP</Name>
@@ -505,6 +450,7 @@
   <ItemGroup>
     <Resource Include="Resources\openhand.cur" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>GOTO END

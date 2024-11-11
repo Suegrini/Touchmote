@@ -179,14 +179,6 @@ namespace WiiTUIO
             allInputs.Add(new KeymapInput(KeymapInputSource.CLASSIC, "ZR", "OffScreen.Classic.ZR", false));
 
             allOutputs = new List<KeymapOutput>();
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.TOUCH, "Touch Cursor", "touch", false, false, true, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.TOUCH, "Touch Cursor Left", "touchx-", false, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.TOUCH, "Touch Cursor Right", "touchx+", false, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.TOUCH, "Touch Cursor Up", "touchy+", false, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.TOUCH, "Touch Cursor Down", "touchy-", false, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.TOUCH, "Touch Main", "touchmaster"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.TOUCH, "Touch Slave", "touchslave"));
-
             allOutputs.Add(new KeymapOutput(KeymapOutputType.MOUSE, "Mouse Cursor", "mouse", false, false, true, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.MOUSE, "Mouse Camera/View", "fpsmouse", false, false, true, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.MOUSE, "Lightbar mouse", "lightgunmouse", false, false, true, false));
@@ -828,7 +820,6 @@ namespace WiiTUIO
     public enum KeymapOutputType
     {
         ALL, //Only used in search
-        TOUCH,
         MOUSE,
         XINPUT,
         KEYBOARD,
