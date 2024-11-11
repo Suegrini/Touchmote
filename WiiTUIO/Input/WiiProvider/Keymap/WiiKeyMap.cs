@@ -802,12 +802,12 @@ namespace WiiTUIO.Provider
 
                 if (!PressedButtons["Nunchuk.Shake"])
                 {
-                    if (Math.Abs(delta) > Settings.Default.shake_nunchukthreshold)
+                    if (Math.Abs(delta) > Settings.Default.shake_threshold)
                     {
                         if ((now - nunLastShakeTime).TotalMilliseconds < Settings.Default.shake_maxTimeInBetween)
                         {
                             nunShakeCounter++;
-                            if (nunShakeCounter >= Settings.Default.shake_nunchukcount)
+                            if (nunShakeCounter >= Settings.Default.shake_count)
                             {
                                 PressedButtons["Nunchuk.Shake"] = true;
                                 this.executeButtonDown(offscreen + "Nunchuk.Shake");

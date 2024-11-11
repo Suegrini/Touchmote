@@ -629,17 +629,6 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private double _shake_nunchukthreshold = 0.2;
-        public double shake_nunchukthreshold
-        {
-            get { return _shake_nunchukthreshold; }
-            set
-            {
-                _shake_nunchukthreshold = value;
-                OnPropertyChanged("shake_nunchukthreshold");
-            }
-        }
-
         private int _shake_count = 2;
         public int shake_count
         {
@@ -648,17 +637,6 @@ namespace WiiTUIO.Properties
             {
                 _shake_count = value;
                 OnPropertyChanged("shake_count");
-            }
-        }
-
-        private int _shake_nunchukcount = 2;
-        public int shake_nunchukcount
-        {
-            get { return _shake_nunchukcount; }
-            set
-            {
-                _shake_nunchukcount = value;
-                OnPropertyChanged("shake_nunchukcount");
             }
         }
 
