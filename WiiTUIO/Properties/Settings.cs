@@ -348,25 +348,14 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private bool _pointer_4IRMode = false;
-        public bool pointer_4IRMode
+        private string _pointer_4IRMode = "none";
+        public string pointer_4IRMode
         {
             get { return _pointer_4IRMode; }
             set
             {
                 _pointer_4IRMode = value;
                 OnPropertyChanged("pointer_4IRMode");
-            }
-        }
-
-        private bool _pointer_4IRMode_diamond = false;
-        public bool pointer_4IRMode_diamond
-        {
-            get { return _pointer_4IRMode_diamond; }
-            set
-            {
-                _pointer_4IRMode_diamond = value;
-                OnPropertyChanged("pointer_4IRMode_diamond");
             }
         }
 

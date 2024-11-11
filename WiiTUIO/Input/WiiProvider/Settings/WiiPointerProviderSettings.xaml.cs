@@ -29,19 +29,35 @@ namespace WiiTUIO.Provider
         {
             InitializeComponent();
 
-            //this.cbSystemCursor.IsChecked = Settings.Default.pointer_changeSystemCursor;
-            //this.cbMoveCursor.IsChecked = Settings.Default.pointer_moveCursor;
-            if (Settings.Default.pointer_sensorBarPos == "top")
+            if (Settings.Default.pointer_4IRMode == "none")
             {
-                this.cbiTop.IsSelected = true;
-            }
-            else if (Settings.Default.pointer_sensorBarPos == "bottom")
-            {
-                this.cbiBottom.IsSelected = true;
+                switch (Settings.Default.pointer_sensorBarPos)
+                {
+                    case "top":
+                        this.cbiTop.IsSelected = true;
+                        break;
+                    case "bottom":
+                        this.cbiBottom.IsSelected = true;
+                        break;
+                    default:
+                        this.cbiCenter.IsSelected = true;
+                        break;
+                }
             }
             else
             {
-                this.cbiCenter.IsSelected = true;
+                switch (Settings.Default.pointer_4IRMode) 
+                {
+                    case "square":
+                        this.cbiSquare.IsSelected = true;
+                        break;
+                    case "diamond":
+                        this.cbiDiamond.IsSelected = true;
+                        break;
+                    default:
+                        this.cbiCenter.IsSelected = true;
+                        break;
+                }
             }
 
             if(VmultiDevice.Current.isAvailable())
@@ -82,15 +98,27 @@ namespace WiiTUIO.Provider
             {
                 if (this.cbiTop.IsSelected)
                 {
+                    Settings.Default.pointer_4IRMode = "none";
                     Settings.Default.pointer_sensorBarPos = "top";
                 }
                 else if (this.cbiBottom.IsSelected)
                 {
+                    Settings.Default.pointer_4IRMode = "none";
                     Settings.Default.pointer_sensorBarPos = "bottom";
                 }
-                else
+                else if (this.cbiCenter.IsSelected)
                 {
+                    Settings.Default.pointer_4IRMode = "none";
                     Settings.Default.pointer_sensorBarPos = "center";
+                }
+                else if (this.cbiSquare.IsSelected)
+                {
+                    Settings.Default.pointer_4IRMode = "square";
+                }
+            
+                else if (this.cbiDiamond.IsSelected)
+                {
+                    Settings.Default.pointer_4IRMode = "diamond";
                 }
             }
         }

@@ -37,7 +37,7 @@ namespace WiiTUIO.Provider
             }
         }
 
-        private float _Left = Settings.Default.pointer_4IRMode ? 0.1f : 0.9f;
+        private float _Left = Settings.Default.pointer_4IRMode != "none" ? 0.1f : 0.9f;
         public float Left
         {
             get => _Left;
@@ -50,7 +50,7 @@ namespace WiiTUIO.Provider
             }
         }
 
-        private float _Right = Settings.Default.pointer_4IRMode ? 0.9f : 0.1f;
+        private float _Right = Settings.Default.pointer_4IRMode != "none" ? 0.9f : 0.1f;
         public float Right
         {
             get => _Right;
@@ -124,7 +124,7 @@ namespace WiiTUIO.Provider
         {
             _id = id;
 
-            propertyList = Settings.Default.pointer_4IRMode
+            propertyList = Settings.Default.pointer_4IRMode != "none"
                 ? new List<string> { "TRled", "TLled", "CenterX", "CenterY", "Right", "Left", "Bottom", "Top" }
                 : new List<string> { "Right", "Left", "Bottom", "Top" };
 

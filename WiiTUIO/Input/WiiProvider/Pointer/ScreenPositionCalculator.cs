@@ -180,7 +180,7 @@ namespace WiiTUIO.Provider
 
             IRState irState = wiimoteState.IRState;
 
-            if (!Settings.Default.pointer_4IRMode)
+            if (Settings.Default.pointer_4IRMode == "none")
             {
                 int irPoint1 = 0;
                 int irPoint2 = 0;

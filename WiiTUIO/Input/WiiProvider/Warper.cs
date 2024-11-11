@@ -36,9 +36,9 @@ namespace WiiTUIO.Provider
         {
             center[0] = (float)this.settings.CenterX;
             center[1] = (float)this.settings.CenterY;
-            if (!Settings.Default.pointer_4IRMode_diamond)
+            if (Settings.Default.pointer_4IRMode == "square")
                 setDestination(this.settings.TRled, 1.0f, this.settings.TLled, 1.0f, this.settings.TLled, 0.0f, this.settings.TRled, 0.0f);
-            else
+            else if (Settings.Default.pointer_4IRMode == "diamond")
                 setDestination(1.0f, 0.5f, 0.5f, 1.0f, 0.0f, 0.5f, 0.5f, 0.0f);
         }
 

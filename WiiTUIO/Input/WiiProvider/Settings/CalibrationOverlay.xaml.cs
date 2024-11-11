@@ -187,7 +187,7 @@ namespace WiiTUIO.Provider
                 leftBackup = this.keyMapper.settings.Left;
                 rightBackup = this.keyMapper.settings.Right;
 
-                if (!Settings.Default.pointer_4IRMode)
+                if (Settings.Default.pointer_4IRMode == "none")
                 {
                     this.movePoint(1 - marginXBackup, 1 - marginYBackup);
 
@@ -264,7 +264,7 @@ namespace WiiTUIO.Provider
 
         private void finishedCalibration()
         {
-            if (Settings.Default.pointer_4IRMode)
+            if (Settings.Default.pointer_4IRMode != "none")
             {
                 Settings.Default.Save();
             }
@@ -281,7 +281,7 @@ namespace WiiTUIO.Provider
             this.keyMapper.settings.Left = leftBackup;
             this.keyMapper.settings.Right = rightBackup;
 
-            if (Settings.Default.pointer_4IRMode)
+            if (Settings.Default.pointer_4IRMode != "none")
             {
                 this.keyMapper.settings.CenterX = centerXBackup;
                 this.keyMapper.settings.CenterY = centerYBackup;
@@ -332,7 +332,7 @@ namespace WiiTUIO.Provider
                             break;
 
                         case 2:
-                            if (Settings.Default.pointer_4IRMode)
+                            if (Settings.Default.pointer_4IRMode != "none")
                             {
                                 this.keyMapper.settings.Top = topOffset;
                                 this.keyMapper.settings.Bottom = bottomOffset;
@@ -377,7 +377,7 @@ namespace WiiTUIO.Provider
                 }
                 else if (e.Button.ToLower().Equals("b"))
                 {
-                    if (!Settings.Default.pointer_4IRMode)
+                     if (Settings.Default.pointer_4IRMode == "none")
                     {
                         this.movePoint(1 - marginXBackup, 1 - marginYBackup);
                         step = 1;
@@ -443,7 +443,7 @@ namespace WiiTUIO.Provider
                     this.keyMapper.settings.TRled = (float)(0.5 + ((this.keyMapper.cursorPos.Width / this.keyMapper.cursorPos.Height) / 4));
                     break;
                 case 1:
-                    if (!Settings.Default.pointer_4IRMode)
+                    if (Settings.Default.pointer_4IRMode == "none")
                     {
                         this.keyMapper.settings.Bottom = (float)this.keyMapper.cursorPos.RelativeY;
                         this.keyMapper.settings.Right = (float)this.keyMapper.cursorPos.RelativeX;
@@ -455,7 +455,7 @@ namespace WiiTUIO.Provider
                     }
                     break;
                 case 2:
-                    if (!Settings.Default.pointer_4IRMode)
+                    if (Settings.Default.pointer_4IRMode == "none")
                     {
                         this.keyMapper.settings.Top = (float)this.keyMapper.cursorPos.RelativeY;
                         this.keyMapper.settings.Left = (float)this.keyMapper.cursorPos.RelativeX;

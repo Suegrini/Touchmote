@@ -46,7 +46,7 @@ namespace WiiTUIO.Provider
 
             HidDevice hidDevice = HidDevices.GetDevice(this.Wiimote.HIDDevicePath);
             hidDevice.ReadSerialNumber(out byte[] data);
-            string serialNumber = Settings.Default.pointer_4IRMode ? System.Text.Encoding.Unicode.GetString(data, 0, 24) : null;
+            string serialNumber = Settings.Default.pointer_4IRMode != "none" ? System.Text.Encoding.Unicode.GetString(data, 0, 24) : null;
 
             this.keyMapper = new WiiKeyMapper(wiimote, id, handlerFactory, serialNumber);
             this.arcadeHook = new OutputProvider(id);
