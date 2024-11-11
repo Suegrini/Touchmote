@@ -45,6 +45,7 @@ namespace WiiTUIO.Output.Handlers.Xinput
         private ViGEmBus360Device device;
         private long id;
         private CursorPositionHelper cursorPositionHelper;
+        public bool isAvailable => viGEmClient.VigemTestClient != null;
 
         private StickLightData leftStickLight = new StickLightData();
         private StickLightData rightStickLight = new StickLightData();
@@ -56,8 +57,11 @@ namespace WiiTUIO.Output.Handlers.Xinput
             this.id = id;
             viGEmClient = ViGEmBusClientSingleton.Default;
             cursorPositionHelper = new CursorPositionHelper();
-            device = new ViGEmBus360Device(viGEmClient.VigemTestClient);
-            device.OnRumble += Device_OnRumble;
+            if (isAvailable)
+            {
+                device = new ViGEmBus360Device(viGEmClient.VigemTestClient);
+                device.OnRumble += Device_OnRumble;
+            }
         }
 
         private void Device_OnRumble(byte arg1, byte arg2)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nefarius.ViGEm.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,8 @@ namespace WiiTUIO.Output.Handlers
             IOutputHandler keyboardHandler = VmultiDevice.Current.isAvailable() ? (IOutputHandler)(VmultiKeyboardHandler.Default) : (IOutputHandler)(new KeyboardHandler());
             all.Add(keyboardHandler);
             all.Add(new MouseHandler());
-            all.Add(new ViGEmHandler(id));
+            ViGEmHandler gamepadHandler = new ViGEmHandler(id);
+            if (gamepadHandler.isAvailable) all.Add(gamepadHandler);
             return all;
         }
 
