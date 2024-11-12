@@ -11,25 +11,13 @@ namespace WiiTUIO.Output.Handlers
 {
     public class VmultiKeyboardHandler : IButtonHandler
     {
+        private VMulti vmulti;
         private InputSimulator inputSimulator;
         private KeyboardReport report;
 
-        private static VmultiKeyboardHandler defaultInstance;
-
-        public static VmultiKeyboardHandler Default
+        public VmultiKeyboardHandler(VMulti vmulti)
         {
-            get
-            {
-                if (defaultInstance == null)
-                {
-                    defaultInstance = new VmultiKeyboardHandler();
-                }
-                return defaultInstance;
-            }
-        }
-
-        private VmultiKeyboardHandler()
-        {
+            this.vmulti = vmulti;
             this.report = new KeyboardReport();
             this.inputSimulator = new InputSimulator();
         }
@@ -141,8 +129,8 @@ namespace WiiTUIO.Output.Handlers
 
         public bool disconnect()
         {
-            VmultiDevice.Current.updateKeyboard(new KeyboardReport()); //Sets all keys to up state.
-            //VmultiDevice.Current.disconnect();
+            vmulti.updateKeyboard(new KeyboardReport()); //Sets all keys to up state.
+            vmulti.Dispose();
             return true;
         }
 
@@ -153,7 +141,7 @@ namespace WiiTUIO.Output.Handlers
 
         public bool endUpdate()
         {
-            return VmultiDevice.Current.updateKeyboard(report);
+            return vmulti.updateKeyboard(report);
         }
     }
 

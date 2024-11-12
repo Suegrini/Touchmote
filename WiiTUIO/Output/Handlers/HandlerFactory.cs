@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WiiTUIO.Output;
 using WiiTUIO.Output.Handlers.Xinput;
+using VMultiDllWrapper;
 
 namespace WiiTUIO.Output.Handlers
 {
@@ -20,8 +21,14 @@ namespace WiiTUIO.Output.Handlers
 
         private List<IOutputHandler> createOutputHandlers(long id)
         {
+            VMulti vmulti = new VMulti();
             List<IOutputHandler> all = new List<IOutputHandler>();
-            IOutputHandler keyboardHandler = VmultiDevice.Current.isAvailable() ? (IOutputHandler)(VmultiKeyboardHandler.Default) : (IOutputHandler)(new KeyboardHandler());
+            IOutputHandler keyboardHandler = new KeyboardHandler();
+            if (vmulti.connect((int)id))
+            {
+                keyboardHandler = new VmultiKeyboardHandler(vmulti);
+                all.Add(new VmultiMouseHandler(vmulti));
+            }
             all.Add(keyboardHandler);
             all.Add(new MouseHandler());
             ViGEmHandler gamepadHandler = new ViGEmHandler(id);
