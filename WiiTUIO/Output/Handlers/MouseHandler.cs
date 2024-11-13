@@ -221,10 +221,7 @@ namespace WiiTUIO.Output.Handlers
                 if (!cursorPos.OutOfReach)
                 {
                     Point smoothedPos = cursorPositionHelper.getRelativePosition(new Point(cursorPos.X, cursorPos.Y));
-                    if(Settings.Default.mouse_multiScreen)
-                        this.inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
-                    else
-                        this.inputSimulator.Mouse.MoveMouseTo((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
+                    this.inputSimulator.Mouse.MoveMouseTo((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
                     return true;
                 }
             }
@@ -1044,10 +1041,7 @@ namespace WiiTUIO.Output.Handlers
                     {
                         //Trace.WriteLine("MOVE CURSOR");
 
-                        if (Settings.Default.mouse_multiScreen)
-                            this.inputSimulator.Mouse.MoveMouseToPositionOnVirtualDesktop((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
-                        else
-                            this.inputSimulator.Mouse.MoveMouseTo((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
+                        this.inputSimulator.Mouse.MoveMouseTo((65535 * smoothedPos.X), (65535 * smoothedPos.Y));
 
                         // Save current IR position
                         previousLightCursorCoorPoint = new Point(cursorPos.LightbarX, cursorPos.LightbarY);
