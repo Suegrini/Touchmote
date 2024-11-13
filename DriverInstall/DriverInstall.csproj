@@ -130,6 +130,9 @@
     <None Include="app.manifest">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Driver\EcoTUIODriver.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Driver\vmultia.sys">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
