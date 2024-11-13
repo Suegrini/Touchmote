@@ -119,29 +119,29 @@ namespace WiiTUIO.Output.Handlers
                 VMultiDllWrapper.MouseButton mouseButton;
                 switch (mouseCode)
                 {
-                    case VmultiMouseCode.RAWMOUSELEFT:
+                    case VmultiMouseCode.MOUSELEFT:
                         mouseButton = VMultiDllWrapper.MouseButton.LeftButton;
                         report.ButtonDown(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSEMIDDLE:
+                    case VmultiMouseCode.MOUSEMIDDLE:
                         mouseButton = VMultiDllWrapper.MouseButton.MiddleButton;
                         report.ButtonDown(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSERIGHT:
+                    case VmultiMouseCode.MOUSERIGHT:
                         mouseButton = VMultiDllWrapper.MouseButton.RightButton;
                         report.ButtonDown(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSEWHEELDOWN:
+                    case VmultiMouseCode.MOUSEWHEELDOWN:
                         report.VerticalScroll(-1);
                         break;
-                    case VmultiMouseCode.RAWMOUSEWHEELUP:
+                    case VmultiMouseCode.MOUSEWHEELUP:
                         report.VerticalScroll(1);
                         break;
-                    case VmultiMouseCode.RAWMOUSEXBUTTON1:
+                    case VmultiMouseCode.MOUSEXBUTTON1:
                         mouseButton = VMultiDllWrapper.MouseButton.X1Button;
                         report.ButtonDown(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSEXBUTTON2:
+                    case VmultiMouseCode.MOUSEXBUTTON2:
                         mouseButton = VMultiDllWrapper.MouseButton.X2Button;
                         report.ButtonDown(mouseButton);
                         break;
@@ -161,23 +161,23 @@ namespace WiiTUIO.Output.Handlers
                 VMultiDllWrapper.MouseButton mouseButton;
                 switch (mouseCode)
                 {
-                    case VmultiMouseCode.RAWMOUSELEFT:
+                    case VmultiMouseCode.MOUSELEFT:
                         mouseButton = VMultiDllWrapper.MouseButton.LeftButton;
                         report.ButtonUp(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSEMIDDLE:
+                    case VmultiMouseCode.MOUSEMIDDLE:
                         mouseButton = VMultiDllWrapper.MouseButton.MiddleButton;
                         report.ButtonUp(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSERIGHT:
+                    case VmultiMouseCode.MOUSERIGHT:
                         mouseButton = VMultiDllWrapper.MouseButton.RightButton;
                         report.ButtonUp(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSEXBUTTON1:
+                    case VmultiMouseCode.MOUSEXBUTTON1:
                         mouseButton = VMultiDllWrapper.MouseButton.X1Button;
                         report.ButtonUp(mouseButton);
                         break;
-                    case VmultiMouseCode.RAWMOUSEXBUTTON2:
+                    case VmultiMouseCode.MOUSEXBUTTON2:
                         mouseButton = VMultiDllWrapper.MouseButton.X2Button;
                         report.ButtonUp(mouseButton);
                         break;
@@ -193,7 +193,7 @@ namespace WiiTUIO.Output.Handlers
         {
             key = key.ToLower();
 
-            if (key.Equals("rawmouse"))
+            if (key.Equals("mouse"))
             {
                 if (!cursorPos.OutOfReach)
                 {
@@ -203,7 +203,7 @@ namespace WiiTUIO.Output.Handlers
                 }
             }
 
-            else if (key.Equals("rawfpsmouse"))
+            else if (key.Equals("fpsmouse"))
             {
                 bool shouldMoveFPSCursor = !outOfReachStatus;
                 initialMouseMove = false;
@@ -671,7 +671,7 @@ namespace WiiTUIO.Output.Handlers
                 }
             }
 
-            else if (key.Equals("rawlightgunmouse"))
+            else if (key.Equals("lightgunmouse"))
             {
                 long currentTime = Stopwatch.GetTimestamp();
                 long timeElapsed = currentTime - previousLightTime;
@@ -744,16 +744,16 @@ namespace WiiTUIO.Output.Handlers
             key = key.ToLower();
             switch (key)
             {
-                case "rawmousey+":
+                case "mousey+":
                     deltaY = (int)(-30 * value + 0.5);
                     break;
-                case "rawmousey-":
+                case "mousey-":
                     deltaY = (int)(30 * value + 0.5);
                     break;
-                case "rawmousex+":
+                case "mousex+":
                     deltaX = (int)(30 * value + 0.5);
                     break;
-                case "rawmousex-":
+                case "mousex-":
                     deltaX = (int)(-30 * value + 0.5);
                     break;
                 default:
@@ -781,38 +781,47 @@ namespace WiiTUIO.Output.Handlers
 
         public bool endUpdate()
         {
-            if (report.Buttons != lastReport.Buttons || report.MouseX != lastReport.MouseX || report.MouseY != lastReport.MouseY || deltaX != 0 || deltaY != 0 || report.WheelPosition != 0)
+            if (report.MouseX == lastReport.MouseX && report.MouseY == lastReport.MouseY)
+                report.SetPosition(0, 0);
+
+            if (deltaX != 0 || deltaY != 0)
             {
-                if (deltaX != 0 || deltaY != 0)
+                if (report.MouseX == 0 && report.MouseY == 0)
+                {
+                    report.MouseX = (ushort)Math.Max(0, Math.Min(32767, lastReport.MouseX + (deltaX * scalingFactorX)));
+                    report.MouseY = (ushort)Math.Max(0, Math.Min(32767, lastReport.MouseY + (deltaY * scalingFactorY)));
+                }
+                else
                 {
                     report.MouseX = (ushort)Math.Max(0, Math.Min(32767, report.MouseX + (deltaX * scalingFactorX)));
                     report.MouseY = (ushort)Math.Max(0, Math.Min(32767, report.MouseY + (deltaY * scalingFactorY)));
-
-                    deltaX = 0;
-                    deltaY = 0;
                 }
 
+                deltaX = 0;
+                deltaY = 0;
+            }
+
+            if (report.MouseX != 0 && report.MouseY != 0)
+            {
                 lastReport = new MouseReport
                 {
                     MouseX = report.MouseX,
                     MouseY = report.MouseY,
                 };
-                lastReport.SetButtons(report.Buttons);
-
-                return vmulti.updateMouse(report);
             }
-            return true;
+
+            return vmulti.updateMouse(report);
         }
     }
 
     public enum VmultiMouseCode
     {
-        RAWMOUSELEFT,
-        RAWMOUSEMIDDLE,
-        RAWMOUSERIGHT,
-        RAWMOUSEWHEELUP,
-        RAWMOUSEWHEELDOWN,
-        RAWMOUSEXBUTTON1,
-        RAWMOUSEXBUTTON2,
+        MOUSELEFT,
+        MOUSEMIDDLE,
+        MOUSERIGHT,
+        MOUSEWHEELUP,
+        MOUSEWHEELDOWN,
+        MOUSEXBUTTON1,
+        MOUSEXBUTTON2,
     }
 }

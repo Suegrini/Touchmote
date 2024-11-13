@@ -195,21 +195,6 @@ namespace WiiTUIO
             allOutputs.Add(new KeymapOutput(KeymapOutputType.MOUSE, "Mouse Extra 1", "mousexbutton1"));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.MOUSE, "Mouse Extra 2", "mousexbutton2"));
 
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Cursor", "rawmouse", false, false, true, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Camera", "rawfpsmouse", false, false, true, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "Lightbar RawMouse", "rawlightgunmouse", false, false, true, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Left", "rawmouseleft"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Middle", "rawmousemiddle"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Right", "rawmouseright"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Wheel Up", "rawmousewheelup"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Wheel Down", "rawmousewheeldown"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Move Right", "rawmousex+", true, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Move Up", "rawmousey+", true, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Move Left", "rawmousex-", true, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Move Down", "rawmousey-", true, true, false, false));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Extra 1", "rawmousexbutton1"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.RAWMOUSE, "RawMouse Extra 2", "rawmousexbutton2"));
-
 
             allOutputs.Add(new KeymapOutput(KeymapOutputType.KEYBOARD, "Tab", "tab"));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.KEYBOARD, "Backspace", "back"));
@@ -835,7 +820,6 @@ namespace WiiTUIO
     {
         ALL, //Only used in search
         MOUSE,
-        RAWMOUSE,
         XINPUT,
         KEYBOARD,
         DISABLE

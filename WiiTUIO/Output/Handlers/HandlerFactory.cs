@@ -22,17 +22,22 @@ namespace WiiTUIO.Output.Handlers
         private List<IOutputHandler> createOutputHandlers(long id)
         {
             VMulti vmulti = new VMulti();
+
             List<IOutputHandler> all = new List<IOutputHandler>();
+
             IOutputHandler keyboardHandler = new KeyboardHandler();
+            IOutputHandler mouseHandler = new MouseHandler();
             if (vmulti.connect((int)id))
             {
                 keyboardHandler = new VmultiKeyboardHandler(vmulti);
-                all.Add(new VmultiMouseHandler(vmulti));
+                mouseHandler = new VmultiMouseHandler(vmulti);
             }
+
             all.Add(keyboardHandler);
-            all.Add(new MouseHandler());
+            all.Add(mouseHandler);
             ViGEmHandler gamepadHandler = new ViGEmHandler(id);
             if (gamepadHandler.isAvailable) all.Add(gamepadHandler);
+
             return all;
         }
 

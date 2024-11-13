@@ -18,8 +18,6 @@ namespace WiiTUIO
                     return Colors.Orange;
                 case KeymapOutputType.MOUSE:
                     return Colors.OrangeRed;
-                case KeymapOutputType.RAWMOUSE:
-                    return Colors.Red;
                 case KeymapOutputType.XINPUT:
                     return Colors.Green;
                 case KeymapOutputType.DISABLE:

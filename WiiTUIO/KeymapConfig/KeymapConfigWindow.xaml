@@ -134,7 +134,6 @@
                     <ComboBoxItem IsSelected="True" Name="cbiAll">All</ComboBoxItem>
                     <ComboBoxItem Name="cbiKeyboard">Keyboard</ComboBoxItem>
                     <ComboBoxItem Name="cbiMouse">Mouse</ComboBoxItem>
-                    <ComboBoxItem Name="cbiRawMouse">RawMouse</ComboBoxItem>
                     <ComboBoxItem Name="cbi360">360 Controller</ComboBoxItem>
                     <ComboBoxItem Name="cbiOther">Other</ComboBoxItem>
                 </ComboBox>

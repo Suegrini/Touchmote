@@ -221,10 +221,6 @@ namespace WiiTUIO
                 {
                     this.selectedOutput = KeymapOutputType.MOUSE;
                 }
-                else if (cbItem == cbiRawMouse)
-                {
-                    this.selectedOutput = KeymapOutputType.RAWMOUSE;
-                }
                 else if (cbItem == cbi360)
                 {
                     this.selectedOutput = KeymapOutputType.XINPUT;
