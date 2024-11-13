@@ -796,18 +796,18 @@ namespace WiiTUIO.Output.Handlers
                     report.MouseX = (ushort)Math.Max(0, Math.Min(32767, report.MouseX + (deltaX * scalingFactorX)));
                     report.MouseY = (ushort)Math.Max(0, Math.Min(32767, report.MouseY + (deltaY * scalingFactorY)));
                 }
-
-                deltaX = 0;
-                deltaY = 0;
             }
 
-            if (report.MouseX != 0 && report.MouseY != 0)
+            if ((report.MouseX != 0 && report.MouseY != 0) || (deltaX != 0 || deltaY != 0))
             {
                 lastReport = new MouseReport
                 {
                     MouseX = report.MouseX,
                     MouseY = report.MouseY,
                 };
+
+                deltaX = 0;
+                deltaY = 0;
             }
 
             return vmulti.updateMouse(report);
