@@ -21,7 +21,7 @@ namespace WiiTUIO
                 System.Diagnostics.ProcessStartInfo procStartInfo =
                     new System.Diagnostics.ProcessStartInfo();
 
-                procStartInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory+relativePath+"\\";
+                procStartInfo.WorkingDirectory = relativePath == null ? null : System.AppDomain.CurrentDomain.BaseDirectory+relativePath+"\\";
                 
                 procStartInfo.FileName = procStartInfo.WorkingDirectory + file;
                 procStartInfo.Arguments = arguments;
