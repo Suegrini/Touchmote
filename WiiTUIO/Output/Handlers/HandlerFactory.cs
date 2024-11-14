@@ -37,6 +37,7 @@ namespace WiiTUIO.Output.Handlers
             all.Add(mouseHandler);
             ViGEmHandler gamepadHandler = new ViGEmHandler(id);
             if (gamepadHandler.isAvailable) all.Add(gamepadHandler);
+            all.Add(new CursorHandler(id));
 
             return all;
         }

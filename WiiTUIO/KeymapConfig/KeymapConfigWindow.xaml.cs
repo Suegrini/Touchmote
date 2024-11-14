@@ -225,6 +225,10 @@ namespace WiiTUIO
                 {
                     this.selectedOutput = KeymapOutputType.XINPUT;
                 }
+                else if (cbItem == cbiCursor)
+                {
+                    this.selectedOutput = KeymapOutputType.CURSOR;
+                }
                 else if (cbItem == cbiOther)
                 {
                     this.selectedOutput = KeymapOutputType.DISABLE;

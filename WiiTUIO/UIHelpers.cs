@@ -126,7 +126,7 @@ namespace WiiTUIO
             IntPtr HWND_TOPMOST = new IntPtr(-1);
             IntPtr HWND_NOTOPMOST = new IntPtr(-2);
 
-            IntPtr zorder = Settings.Default.noTopmost ? HWND_NOTOPMOST : HWND_TOPMOST;
+            IntPtr zorder = HWND_NOTOPMOST;
 
             IntPtr hWnd = new WindowInteropHelper(window).Handle;
 

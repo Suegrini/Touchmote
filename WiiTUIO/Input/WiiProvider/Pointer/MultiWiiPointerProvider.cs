@@ -500,12 +500,7 @@ namespace WiiTUIO.Provider
                                 
                             }
                         }
-
-                        if (Settings.Default.pointer_customCursor)
-                        {
-                            D3DCursorWindow.Current.RefreshCursors();
-                        }
-
+                        D3DCursorWindow.Current.RefreshCursors();
                     }
                     catch (Exception ex)
                     {

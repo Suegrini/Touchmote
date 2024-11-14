@@ -148,17 +148,6 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private bool _alternativeStickToCursorMapping = false;
-        public bool alternativeStickToCursorMapping
-        {
-            get { return _alternativeStickToCursorMapping; }
-            set
-            {
-                _alternativeStickToCursorMapping = value;
-                OnPropertyChanged("alternativeStickToCursorMapping");
-            }
-        }
-
         private bool _disconnectWiimotesOnDolphin = false;
         public bool disconnectWiimotesOnDolphin
         {
@@ -255,40 +244,6 @@ namespace WiiTUIO.Properties
             {
                 _pointer_marginsLeftRight = value;
                 OnPropertyChanged("pointer_marginsLeftRight");
-            }
-        }
-
-        private bool _pointer_customCursor = true;
-        public bool pointer_customCursor
-        {
-            get { return _pointer_customCursor; }
-            set
-            {
-                _pointer_customCursor = value;
-                OnPropertyChanged("pointer_customCursor");
-            }
-        }
-
-        private int _pointer_cursorStillHideTimeout = 3000;
-        public int pointer_cursorStillHideTimeout
-        {
-            get { return _pointer_cursorStillHideTimeout; }
-            set
-            {
-                _pointer_cursorStillHideTimeout = value;
-                OnPropertyChanged("pointer_cursorStillHideTimeout");
-            }
-        }
-
-        //Delta pixels before the cursor is considered still.
-        private int _pointer_cursorStillThreshold = 10;
-        public int pointer_cursorStillThreshold
-        {
-            get { return _pointer_cursorStillThreshold; }
-            set
-            {
-                _pointer_cursorStillThreshold = value;
-                OnPropertyChanged("pointer_cursorStillThreshold");
             }
         }
 

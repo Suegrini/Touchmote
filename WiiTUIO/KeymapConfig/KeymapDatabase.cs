@@ -354,6 +354,10 @@ namespace WiiTUIO
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Left Bumper", "360.bumperl"));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.XINPUT, "Right Bumper", "360.bumperr"));
 
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.CURSOR, "Cursor", "cursor", false, false, true, false));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.CURSOR, "Lightgun Cursor", "lightguncursor", false, false, true, false));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.CURSOR, "Cursor Press", "cursorpress"));
+
             allOutputs.Add(new KeymapOutput(KeymapOutputType.DISABLE, "Disable", this.DisableKey));
         }
 
@@ -698,7 +702,7 @@ namespace WiiTUIO
         {
             JObject buttons = new JObject();
 
-            buttons.Add(new JProperty("Pointer", "lightgunmouse"));
+            buttons.Add(new JProperty("Pointer", "lightguncursor"));
 
             buttons.Add(new JProperty("A", "disable"));
 
@@ -822,6 +826,7 @@ namespace WiiTUIO
         MOUSE,
         XINPUT,
         KEYBOARD,
+        CURSOR,
         DISABLE
     }
     public class KeymapOutput

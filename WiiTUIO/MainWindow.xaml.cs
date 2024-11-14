@@ -136,13 +136,10 @@ namespace WiiTUIO
                 OverlayWindow.Current.Show();
                 CalibrationOverlay.Current.Show();
 
-                if (Settings.Default.pointer_customCursor)
+                System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(new Action(delegate()
                 {
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(new Action(delegate()
-                    {
-                        D3DCursorWindow.Current.Start((new WindowInteropHelper(OverlayWindow.Current)).Handle);
-                    }));
-                }
+                    D3DCursorWindow.Current.Start((new WindowInteropHelper(OverlayWindow.Current)).Handle);
+                }));
 
                 if (previousForegroundWindow != IntPtr.Zero && Settings.Default.minimizeOnStart)
                     UIHelpers.SetForegroundWindow(previousForegroundWindow);

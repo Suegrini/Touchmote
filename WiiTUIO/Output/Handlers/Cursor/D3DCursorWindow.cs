@@ -54,7 +54,7 @@ namespace WiiTUIO.Output
         private void updateWindowToScreen(Screen screen)
         {
             Console.WriteLine("Setting cursor window position to " + screen.Bounds);
-            SetD3DCursorWindowPosition(screen.Bounds.X, screen.Bounds.Y, screen.Bounds.Width, screen.Bounds.Height, !Settings.Default.noTopmost);
+            SetD3DCursorWindowPosition(screen.Bounds.X, screen.Bounds.Y, screen.Bounds.Width, screen.Bounds.Height, true);
         }
 
         private Mutex mutex;
@@ -87,7 +87,7 @@ namespace WiiTUIO.Output
         //Should be run with a dispatcher
         public void Start(IntPtr parent)
         {
-            StartD3DCursorWindow(Process.GetCurrentProcess().Handle, parent, primaryScreen.Bounds.X, primaryScreen.Bounds.Y, primaryScreen.Bounds.Width, primaryScreen.Bounds.Height, !Settings.Default.noTopmost, (float)Settings.Default.pointer_cursorSize);
+            StartD3DCursorWindow(Process.GetCurrentProcess().Handle, parent, primaryScreen.Bounds.X, primaryScreen.Bounds.Y, primaryScreen.Bounds.Width, primaryScreen.Bounds.Height, true, (float)Settings.Default.pointer_cursorSize);
             updateWindowToScreen(primaryScreen);
         }
 
