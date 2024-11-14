@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace WiiTUIO.Output
+namespace WiiTUIO
 {
-    class CursorColor
+    class IDColor
     {
         public static Color getColor(int id)
         {

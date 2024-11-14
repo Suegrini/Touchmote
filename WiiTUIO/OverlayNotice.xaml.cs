@@ -14,7 +14,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WiiTUIO.Output;
 using WiiTUIO.Provider;
 
 namespace WiiTUIO
@@ -32,7 +31,7 @@ namespace WiiTUIO
             InitializeComponent();
             this.noticeMessage.Text = ""+message;
 
-            Color bordercolor = CursorColor.getColor(wiimoteID);
+            Color bordercolor = IDColor.getColor(wiimoteID);
             //bordercolor.ScA = 0.5f;
             bordercolor.R = (byte)(bordercolor.R * 0.8);
             bordercolor.G = (byte)(bordercolor.G * 0.8);

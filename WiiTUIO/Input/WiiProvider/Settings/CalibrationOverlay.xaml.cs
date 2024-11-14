@@ -10,7 +10,6 @@ using System.Timers;
 using WiiTUIO.DeviceUtils;
 using WiiTUIO.Properties;
 using PointF = WiimoteLib.PointF;
-using WiiTUIO.Output;
 using System.Diagnostics;
 using WiiTUIO.Filters;
 
@@ -151,7 +150,7 @@ namespace WiiTUIO.Provider
                 {
                     this.Activate();
 
-                    Color pointColor = CursorColor.getColor(keyMapper.WiimoteID);
+                    Color pointColor = IDColor.getColor(keyMapper.WiimoteID);
                     pointColor.R = (byte)(pointColor.R * 0.8);
                     pointColor.G = (byte)(pointColor.G * 0.8);
                     pointColor.B = (byte)(pointColor.B * 0.8);

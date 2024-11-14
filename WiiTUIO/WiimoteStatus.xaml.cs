@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WiiTUIO.Output;
 using WiiTUIO.Provider;
 
 namespace WiiTUIO
@@ -33,7 +32,7 @@ namespace WiiTUIO
             this.ID = id;
             this.lbId.Text = ""+id;
             this.setBattery(0);
-            this.color.Stroke = new SolidColorBrush(CursorColor.getColor(id));
+            this.color.Stroke = new SolidColorBrush(IDColor.getColor(id));
         }
 
         public void updateStatus(WiimoteStatus status)

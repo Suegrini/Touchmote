@@ -233,7 +233,7 @@
     <Compile Include="Output\Handlers\IStickHandler.cs" />
     <Compile Include="Output\Handlers\VmulitMouseHandler.cs" />
     <Compile Include="Output\Handlers\VmultiKeyboardHandler.cs" />
-    <Compile Include="Output\CursorColor.cs" />
+    <Compile Include="IDColor.cs" />
     <Compile Include="Output\Handlers\IButtonHandler.cs" />
     <Compile Include="Output\Handlers\KeyboardHandler.cs" />
     <Compile Include="Input\WiiProvider\Pointer\CursorPos.cs" />
