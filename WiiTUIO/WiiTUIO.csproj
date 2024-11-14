@@ -453,9 +453,10 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>GOTO END
+    <PostBuildEvent>copy "$(ProjectDir)VMultiDll_$(PlatformName).dll" "$(TargetDir)VMultiDll.dll" /Y
 
-copy "$(ProjectDir)VMultiDll_$(PlatformName).dll" "$(TargetDir)VMultiDll.dll" /Y
+GOTO END
+
 xcopy "$(TargetDir)..\$(ConfigurationName)" "C:\Program Files\Touchmote" /H /Y
 cd "C:\Program Files\Touchmote"
 
