@@ -21,13 +21,13 @@ namespace WiiTUIO
             {
                 elem.Height = double.NaN; //auto height
                 elem.Visibility = Visibility.Visible;
-                elem.Measure(new Size(2000,2000));
+                elem.Measure(new Size(2000, 2000));
                 double height = (elem.DesiredSize.Height > 0) ? elem.DesiredSize.Height : elem.ActualHeight;
                 DoubleAnimation pAnimation = createDoubleAnimation(height, 1000, false);
                 elem.Height = 0;
                 elem.Visibility = Visibility.Visible;
                 pAnimation.FillBehavior = FillBehavior.Stop;
-                pAnimation.Completed += delegate(object sender, EventArgs pEvent)
+                pAnimation.Completed += delegate (object sender, EventArgs pEvent)
                 {
                     elem.Height = Double.NaN;
                     //elem.BeginAnimation(FrameworkElement., null);
@@ -44,7 +44,7 @@ namespace WiiTUIO
                 elem.Height = elem.DesiredSize.Height;
                 DoubleAnimation pAnimation = createDoubleAnimation(0, 1000, false);
                 pAnimation.FillBehavior = FillBehavior.Stop;
-                pAnimation.Completed += delegate(object sender, EventArgs pEvent)
+                pAnimation.Completed += delegate (object sender, EventArgs pEvent)
                 {
                     //elem.BeginAnimation(FrameworkElement.HeightProperty, null);
                     if (remove && elem.Parent is Panel)
@@ -121,12 +121,12 @@ namespace WiiTUIO
         public static extern int SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, SetWindowPosFlags uFlags);
 
 
-        public static void TopmostFix(Window window)
+        public static void TopmostFix(Window window, bool topmost = true)
         {
             IntPtr HWND_TOPMOST = new IntPtr(-1);
             IntPtr HWND_NOTOPMOST = new IntPtr(-2);
 
-            IntPtr zorder = HWND_NOTOPMOST;
+            IntPtr zorder = topmost ? HWND_TOPMOST : HWND_NOTOPMOST;
 
             IntPtr hWnd = new WindowInteropHelper(window).Handle;
 
@@ -168,7 +168,7 @@ namespace WiiTUIO
         private static void makeExTransparent(IntPtr hwnd)
         {
             int extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle| WS_EX_TRANSPARENT);
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
         }
 
         public static void MakeWindowUnclickable(Window window)
@@ -205,7 +205,7 @@ namespace WiiTUIO
             SendMessage(hwnd, 0xD, (IntPtr)sb.Capacity, sb);
             return sb.ToString();
         }
-        
+
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -215,6 +215,6 @@ namespace WiiTUIO
         public static extern IntPtr GetActiveWindow();
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
-        
+
     }
 }
