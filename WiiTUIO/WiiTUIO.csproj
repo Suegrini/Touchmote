@@ -243,6 +243,7 @@
     <Compile Include="Input\WiiProvider\Pointer\WiimoteStatus.cs" />
     <Compile Include="Input\WiiProvider\Keymap\WiiKeyMap.cs" />
     <Compile Include="Output\Handlers\MouseHandler.cs" />
+    <Compile Include="Output\Handlers\WiimoteHandler.cs" />
     <Compile Include="Output\Handlers\Xinput\ViGEmBus360Device.cs" />
     <Compile Include="Output\Handlers\Xinput\ViGEmBusClient.cs" />
     <Compile Include="Output\Handlers\Xinput\ViGEmBusClientSingleton.cs" />

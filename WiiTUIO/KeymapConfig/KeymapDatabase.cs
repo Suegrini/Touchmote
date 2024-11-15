@@ -358,6 +358,11 @@ namespace WiiTUIO
             allOutputs.Add(new KeymapOutput(KeymapOutputType.CURSOR, "Lightgun Cursor", "lightguncursor", false, false, true, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.CURSOR, "Cursor Press", "cursorpress"));
 
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Short Rumble", "rumbleshort"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Long Rumble", "rumblelong"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Continous Rumble", "rumblehold"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Alternating Rumble", "rumblealt"));
+
             allOutputs.Add(new KeymapOutput(KeymapOutputType.DISABLE, "Disable", this.DisableKey));
         }
 
@@ -826,6 +831,7 @@ namespace WiiTUIO
         MOUSE,
         XINPUT,
         KEYBOARD,
+        WIIMOTE,
         CURSOR,
         DISABLE
     }

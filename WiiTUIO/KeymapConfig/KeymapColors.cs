@@ -20,6 +20,8 @@ namespace WiiTUIO
                     return Colors.OrangeRed;
                 case KeymapOutputType.XINPUT:
                     return Colors.Green;
+                case KeymapOutputType.WIIMOTE:
+                    return Colors.DodgerBlue;
                 case KeymapOutputType.CURSOR:
                     return Colors.Purple;
                 case KeymapOutputType.DISABLE:

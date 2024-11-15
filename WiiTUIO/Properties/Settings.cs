@@ -572,7 +572,51 @@ namespace WiiTUIO.Properties
             }
         }
 
-        private static string SETTINGS_FILENAME = System.AppDomain.CurrentDomain.BaseDirectory+"settings.json";
+        private int _wiimode_rumbleTime_short = 200;
+        public int wiimode_rumbleTime_short
+        {
+            get { return _wiimode_rumbleTime_short; }
+            set
+            {
+                _wiimode_rumbleTime_short = value;
+                OnPropertyChanged("wiimode_rumbleTime_short");
+            }
+        }
+
+        private int _wiimode_rumbleTime_long = 500;
+        public int wiimode_rumbleTime_long
+        {
+            get { return _wiimode_rumbleTime_long; }
+            set
+            {
+                _wiimode_rumbleTime_long = value;
+                OnPropertyChanged("wiimode_rumbleTime_long");
+            }
+        }
+
+        private int _wiimode_rumbleTime_alternatingOn = 100;
+        public int wiimode_rumbleTime_alternatingOn
+        {
+            get { return _wiimode_rumbleTime_alternatingOn; }
+            set
+            {
+                _wiimode_rumbleTime_alternatingOn = value;
+                OnPropertyChanged("wiimode_rumbleTime_alternatingOn");
+            }
+        }
+
+        private int _wiimode_rumbleTime_alternatingOff = 100;
+        public int wiimode_rumbleTime_alternatingOff
+        {
+            get { return _wiimode_rumbleTime_alternatingOff; }
+            set
+            {
+                _wiimode_rumbleTime_alternatingOff = value;
+                OnPropertyChanged("wiimode_rumbleTime_alternatingOff");
+            }
+        }
+
+        private static string SETTINGS_FILENAME = System.AppDomain.CurrentDomain.BaseDirectory + "settings.json";
 
         private static Settings defaultInstance;
 

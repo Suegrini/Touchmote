@@ -28,7 +28,7 @@ namespace WiiTUIO
         private int selectedWiimote = 0;
         private Keymap currentKeymap;
 
-        private SolidColorBrush defaultBrush = new SolidColorBrush(Color.FromRgb(46,46,46));
+        private SolidColorBrush defaultBrush = new SolidColorBrush(Color.FromRgb(46, 46, 46));
         private SolidColorBrush highlightBrush = new SolidColorBrush(Color.FromRgb(65, 177, 225));
 
         private HookApplicationViewModel hookAppVM;
@@ -57,10 +57,10 @@ namespace WiiTUIO
             this.tbOutputFilter.Text = this.tbOutputFilter.Tag.ToString();
             this.tbOutputFilter.Foreground = new SolidColorBrush(Colors.Gray);
 
-            
+
             this.btnAll.IsEnabled = false;
             btnAllBorder.Background = highlightBrush;
-            
+
             this.tbKeymapTitle.LostFocus += tbKeymapTitle_LostFocus;
             this.tbKeymapTitle.KeyUp += tbKeymapTitle_KeyUp;
             this.tbKeymapTitle.Foreground = new SolidColorBrush(Colors.Black);
@@ -225,6 +225,10 @@ namespace WiiTUIO
                 {
                     this.selectedOutput = KeymapOutputType.XINPUT;
                 }
+                else if (cbItem == cbiWiimote)
+                {
+                    this.selectedOutput = KeymapOutputType.WIIMOTE;
+                }
                 else if (cbItem == cbiCursor)
                 {
                     this.selectedOutput = KeymapOutputType.CURSOR;
@@ -233,7 +237,7 @@ namespace WiiTUIO
                 {
                     this.selectedOutput = KeymapOutputType.DISABLE;
                 }
-                this.fillOutputList(this.selectedOutput,"");
+                this.fillOutputList(this.selectedOutput, "");
             }
         }
 
@@ -667,9 +671,9 @@ namespace WiiTUIO
             searchStrings.Clear();
             searchStrings.Add(
                 new HookAppDataItem(SEARCH_STRING_HELPTEXT, true)
-            {
-                Index = 0,
-            });
+                {
+                    Index = 0,
+                });
         }
     }
 }
