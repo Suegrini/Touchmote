@@ -109,6 +109,8 @@ namespace WiiTUIO.Output.Handlers
                 {
                     this.cursor.Hide();
                 }
+
+                return true;
             }
             else if (key.Equals("lightguncursor"))
             {
@@ -144,23 +146,35 @@ namespace WiiTUIO.Output.Handlers
 
                     this.cursor.Hide();
                 }
+
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         public bool setButtonDown(string key)
         {
             if (key.Equals("cursorpress"))
+            {
                 this.cursor.SetReleased();
-            return true;
+
+                return true;
+            }
+
+            return false;
         }
 
         public bool setButtonUp(string key)
         {
             if (key.Equals("cursorpress"))
+            {
                 this.cursor.SetPressed();
-            return true;
+
+                return true;
+            }
+
+            return false;
         }
 
         public bool startUpdate()
