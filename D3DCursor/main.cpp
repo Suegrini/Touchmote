@@ -12,6 +12,7 @@
 #include <dwmapi.h>
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 // Import libraries to link with
@@ -26,6 +27,7 @@
 #define ANIMATION_DURATION 100
 
 #define TEXTURE_PATH L"Resources\\circle.png"
+#define CUSTOM_TEXTURE_PATH L"Resources\\custom.png"
 
 
 struct D3DCURSOR
@@ -69,6 +71,8 @@ CURSORPTR				*clearQueue = new CURSORPTR[MAX_CURSORS];
 INT nToClear=0;
 
 BOOL wait = true;
+
+BOOL isCustomTexture = false;
 
 
 // +--------------+
@@ -126,6 +130,9 @@ HRESULT D3DStartup(HWND hWnd)
 
 	g_pD3DDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE);
 
+	std::ifstream customtexture(CUSTOM_TEXTURE_PATH);
+	isCustomTexture = customtexture.good();
+
 	return S_OK;
 }
 
@@ -153,7 +160,30 @@ HRESULT InitSprites(VOID)
 		// created OK
 	}
 
-	D3DXCreateTextureFromFile(g_pD3DDevice,TEXTURE_PATH, &g_circle );
+	const wchar_t* texturePath = isCustomTexture ? CUSTOM_TEXTURE_PATH : TEXTURE_PATH;
+
+	D3DXIMAGE_INFO imageInfo;
+	D3DXGetImageInfoFromFile(texturePath, &imageInfo);
+
+	if (imageInfo.Width > SPRITE_SIZE || imageInfo.Height > SPRITE_SIZE)
+	{
+		LPDIRECT3DSURFACE9 targetSurface;
+		g_pD3DDevice->CreateOffscreenPlainSurface(SPRITE_SIZE, SPRITE_SIZE, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &targetSurface, NULL);
+		D3DXLoadSurfaceFromFile(targetSurface, NULL, NULL, texturePath, NULL, D3DX_FILTER_LINEAR, 0, NULL);
+
+		D3DXCreateTexture(g_pD3DDevice, SPRITE_SIZE, SPRITE_SIZE, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &g_circle);
+
+		LPDIRECT3DSURFACE9 finalSurface;
+		g_circle->GetSurfaceLevel(0, &finalSurface);
+		g_pD3DDevice->UpdateSurface(targetSurface, NULL, finalSurface, NULL);
+
+		targetSurface->Release();
+		finalSurface->Release();
+	}
+	else
+	{
+		D3DXCreateTextureFromFile(g_pD3DDevice, texturePath, &g_circle);
+	}
 
 	return S_OK;
 }
@@ -329,17 +359,20 @@ VOID Render(VOID)
 					g_sprite->SetTransform(&mat);
 					g_sprite->Draw(g_circle, NULL, NULL, NULL, 0xff000000 | cursors[j].color);
 
-					scaling.x *= 0.9f;
-					scaling.y *= 0.9f;
-					D3DXMatrixTransformation2D(&mat, &spriteCentre, 0.0, &scaling, &spriteCentre, 0, &pos);
-					g_sprite->SetTransform(&mat);
-					g_sprite->Draw(g_circle, NULL, NULL, NULL, 0xff000000);
+					if (!isCustomTexture)
+					{
+						scaling.x *= 0.9f;
+						scaling.y *= 0.9f;
+						D3DXMatrixTransformation2D(&mat, &spriteCentre, 0.0, &scaling, &spriteCentre, 0, &pos);
+						g_sprite->SetTransform(&mat);
+						g_sprite->Draw(g_circle, NULL, NULL, NULL, 0xff000000);
 
-					scaling.x *= 0.5f;
-					scaling.y *= 0.5f;
-					D3DXMatrixTransformation2D(&mat, &spriteCentre, 0.0, &scaling, &spriteCentre, 0, &pos);
-					g_sprite->SetTransform(&mat);
-					g_sprite->Draw(g_circle, NULL, NULL, NULL, 0xffFFFFFF);
+						scaling.x *= 0.5f;
+						scaling.y *= 0.5f;
+						D3DXMatrixTransformation2D(&mat, &spriteCentre, 0.0, &scaling, &spriteCentre, 0, &pos);
+						g_sprite->SetTransform(&mat);
+						g_sprite->Draw(g_circle, NULL, NULL, NULL, 0xffFFFFFF);
+					}
 
 				}
 
