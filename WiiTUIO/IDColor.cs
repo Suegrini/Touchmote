@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using WiiTUIO.Properties;
 
 namespace WiiTUIO
 {
@@ -14,13 +15,13 @@ namespace WiiTUIO
             switch (id)
             {
                 case 1:
-                    return Color.FromRgb(128,255,0);
+                    return Color.FromRgb((byte)Settings.Default.Color_ID1[0], (byte)Settings.Default.Color_ID1[1], (byte)Settings.Default.Color_ID1[2]);
                 case 2:
-                    return Color.FromRgb(197, 0, 255);
+                    return Color.FromRgb((byte)Settings.Default.Color_ID2[0], (byte)Settings.Default.Color_ID2[1], (byte)Settings.Default.Color_ID2[2]);
                 case 3:
-                    return Color.FromRgb(0, 220, 255);
+                    return Color.FromRgb((byte)Settings.Default.Color_ID3[0], (byte)Settings.Default.Color_ID3[1], (byte)Settings.Default.Color_ID3[2]);
                 case 4:
-                    return Color.FromRgb(255, 255, 0);
+                    return Color.FromRgb((byte)Settings.Default.Color_ID4[0], (byte)Settings.Default.Color_ID4[1], (byte)Settings.Default.Color_ID4[2]);
                 default:
                     return randomColor();
             }
