@@ -59,6 +59,8 @@ namespace WiiTUIO.Provider
                         break;
                 }
             }
+
+            this.initializing = false;
         }
 
         private void SBPositionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -84,7 +86,7 @@ namespace WiiTUIO.Provider
                 {
                     Settings.Default.pointer_4IRMode = "square";
                 }
-            
+
                 else if (this.cbiDiamond.IsSelected)
                 {
                     Settings.Default.pointer_4IRMode = "diamond";
