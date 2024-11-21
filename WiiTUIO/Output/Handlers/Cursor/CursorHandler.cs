@@ -37,6 +37,8 @@ namespace WiiTUIO.Output.Handlers
             this.id = id;
             GetScreenBounds();
             cursorPositionHelper = new CursorPositionHelper();
+
+            Settings.Default.PropertyChanged += SettingsChanged;
         }
 
         private void GetScreenBounds()
@@ -51,8 +53,9 @@ namespace WiiTUIO.Output.Handlers
             if (e.PropertyName == "primaryMonitor")
             {
                 GetScreenBounds();
+                D3DCursorWindow.Current.RefreshCursors();
             }
-            D3DCursorWindow.Current.RefreshCursors();
+
         }
 
         public bool connect()

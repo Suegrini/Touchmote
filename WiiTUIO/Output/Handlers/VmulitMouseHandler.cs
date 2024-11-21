@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace WiiTUIO.Output.Handlers
     public class VmultiMouseHandler : IButtonHandler, IStickHandler, ICursorHandler
     {
         private VMulti vmulti;
-        private MouseReport report; 
+        private MouseReport report;
         private MouseReport lastReport = new MouseReport();
 
         // Remainder values used for partial mouse distance calculations.
@@ -85,6 +86,8 @@ namespace WiiTUIO.Output.Handlers
             System.Drawing.Rectangle screenBounds = DeviceUtils.DeviceUtil.GetScreen(Settings.Default.primaryMonitor).Bounds;
             scalingFactorX = 32767f / screenBounds.Width;
             scalingFactorY = 32767f / screenBounds.Height;
+
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
 
         private void SystemEvents_DisplaySettingsChanged(object sender, EventArgs e)
@@ -709,7 +712,7 @@ namespace WiiTUIO.Output.Handlers
                     // Clamp values
                     smoothedPos.X = Math.Min(1.0, Math.Max(0.0, smoothedPos.X));
                     smoothedPos.Y = Math.Min(1.0, Math.Max(0.0, smoothedPos.Y));
-                    
+
                     if (moveCursor)
                     {
                         report.SetPosition((ushort)(32767 * smoothedPos.X), (ushort)(32767 * smoothedPos.Y));
