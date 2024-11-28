@@ -545,10 +545,8 @@ namespace WiiTUIO
         {
             if (!this.tryingToConnect)
             {
-                Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805F9B34FB}_VID&0002057E_PID&0306\"", new Action(delegate ()
-                {
-                    Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805f9b34fb}_VID&0002057e_PID&0330\"", null);
-                }));
+                Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805F9B34FB}_VID&0002057E_PID&0306\"", null);
+                Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805f9b34fb}_VID&0002057e_PID&0330\"", null);
 
                 this.startProvider();
 
@@ -650,16 +648,10 @@ namespace WiiTUIO
         private void completelyDisconnectAll()
         {
             //Disable Wiimote in device manager to disconnect it from the computer (so it doesn't drain battery when not used)
-            Launcher.Launch(null, "pnputil", "/disable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805F9B34FB}_VID&0002057E_PID&0306\"", new Action(delegate ()
-            {
-                Launcher.Launch(null, "pnputil", "/disable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805f9b34fb}_VID&0002057e_PID&0330\"", new Action(delegate ()
-                {
-                    Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805F9B34FB}_VID&0002057E_PID&0306\"", new Action(delegate ()
-                    {
-                        Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805f9b34fb}_VID&0002057e_PID&0330\"", null);
-                    }));
-                }));
-            }));
+            Launcher.Launch(null, "pnputil", "/disable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805F9B34FB}_VID&0002057E_PID&0306\"", null);
+            Launcher.Launch(null, "pnputil", "/disable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805f9b34fb}_VID&0002057e_PID&0330\"", null);
+            Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805F9B34FB}_VID&0002057E_PID&0306\"", null);
+            Launcher.Launch(null, "pnputil", "/enable-device /deviceid \"BTHENUM\\{00001124-0000-1000-8000-00805f9b34fb}_VID&0002057e_PID&0330\"", null);
         }
         #endregion
 
