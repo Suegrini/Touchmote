@@ -90,6 +90,16 @@ namespace WiiTUIO
             Settings.Default.pairOnStart = false;
         }
 
+        private void cbDisconnectOnExit_Checked(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.completelyDisconnect = true;
+        }
+
+        private void cbDisconnectOnExit_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Settings.Default.completelyDisconnect = false;
+        }
+
         private void cbMinimizeToTray_Checked(object sender, RoutedEventArgs e)
         {
             Settings.Default.minimizeToTray = true;
