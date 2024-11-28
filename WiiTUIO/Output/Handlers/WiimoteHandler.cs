@@ -15,9 +15,10 @@ using WiiTUIO.DeviceUtils;
 
 namespace WiiTUIO.Output.Handlers
 {
-    internal class WiimoteHandler : IButtonHandler, IRumbleFeedback
+    internal class WiimoteHandler : IButtonHandler, IFeedback
     {
         public Action<byte, byte> OnRumble { get; set; }
+        public Action<int, bool> OnLED { get; set; }
 
         private enum RumbleState
         {
@@ -26,6 +27,14 @@ namespace WiiTUIO.Output.Handlers
             rumblelong,
             rumblehold,
             rumblealt
+        }
+
+        private enum Leds
+        {
+            led1 = 1,
+            led2,
+            led3,
+            led4
         }
 
         private bool rumbleState = false;
@@ -50,6 +59,8 @@ namespace WiiTUIO.Output.Handlers
 
         public bool reset()
         {
+            OnRumble?.Invoke(0, 0);
+            OnLED?.Invoke(0, true);
             return true;
         }
 
@@ -63,6 +74,11 @@ namespace WiiTUIO.Output.Handlers
 
                 return true;
             }
+            else if (Enum.TryParse(key, true, out Leds led))
+            {
+                OnLED?.Invoke((int)led, true);
+                return true;
+            }
 
             return false;
         }
@@ -74,6 +90,11 @@ namespace WiiTUIO.Output.Handlers
                 rumbleState = false;
                 currRumbleState = RumbleState.none;
 
+                return true;
+            }
+            else if (Enum.TryParse(key, true, out Leds led))
+            {
+                OnLED?.Invoke((int)led, false);
                 return true;
             }
 

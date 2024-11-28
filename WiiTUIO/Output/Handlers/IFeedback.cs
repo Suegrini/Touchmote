@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace WiiTUIO.Output.Handlers
 {
-    public interface IRumbleFeedback
+    public interface IFeedback
     {
         Action<Byte, Byte> OnRumble { get; set; }
+        Action<int, bool> OnLED { get; set; }
     }
 }

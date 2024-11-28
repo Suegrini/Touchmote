@@ -13,7 +13,7 @@ using WiiTUIO.Properties;
 
 namespace WiiTUIO.Output.Handlers.Xinput
 {
-    public class ViGEmHandler : IButtonHandler, IStickHandler, IRumbleFeedback, ICursorHandler
+    public class ViGEmHandler : IButtonHandler, IStickHandler, IFeedback, ICursorHandler
     {
         private class StickLightData
         {
@@ -51,6 +51,7 @@ namespace WiiTUIO.Output.Handlers.Xinput
         private StickLightData rightStickLight = new StickLightData();
 
         public Action<byte, byte> OnRumble { get; set; }
+        public Action<int, bool> OnLED { get; set; } = null;
 
         public ViGEmHandler(long id)
         {

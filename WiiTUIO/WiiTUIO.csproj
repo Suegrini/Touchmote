@@ -227,7 +227,7 @@
     <Compile Include="Output\Handlers\ICursorHandler.cs" />
     <Compile Include="Output\Handlers\InputMethods.cs" />
     <Compile Include="Output\Handlers\IOutputHandler.cs" />
-    <Compile Include="Output\Handlers\IRumbleFeedback.cs" />
+    <Compile Include="Output\Handlers\IFeedback.cs" />
     <Compile Include="Output\Handlers\IStickHandler.cs" />
     <Compile Include="Output\Handlers\VmulitMouseHandler.cs" />
     <Compile Include="Output\Handlers\VmultiKeyboardHandler.cs" />

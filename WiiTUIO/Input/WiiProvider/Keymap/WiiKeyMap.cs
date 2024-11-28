@@ -22,6 +22,7 @@ namespace WiiTUIO.Provider
         public Action<WiiButtonEvent> OnButtonDown;
         public Action<WiiKeyMapConfigChangedEvent> OnConfigChanged;
         public Action<bool> OnRumble;
+        public Action<int, bool> OnLED;
 
         private InputSimulator inputSimulator;
 
@@ -100,10 +101,11 @@ namespace WiiTUIO.Provider
 
             foreach (IOutputHandler outputHandler in outputHandlers)
             {
-                if (outputHandler is IRumbleFeedback)
+                if (outputHandler is IFeedback)
                 {
-                    IRumbleFeedback rumbleFeedback = (IRumbleFeedback)outputHandler;
-                    rumbleFeedback.OnRumble += Xinput_OnRumble;
+                    IFeedback feedback = (IFeedback)outputHandler;
+                    feedback.OnRumble += Xinput_OnRumble;
+                    feedback.OnLED = (led, on) => OnLED(led, on);
                 }
             }
         }

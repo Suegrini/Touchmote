@@ -358,10 +358,14 @@ namespace WiiTUIO
             allOutputs.Add(new KeymapOutput(KeymapOutputType.CURSOR, "Lightgun Cursor", "lightguncursor", false, false, true, false));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.CURSOR, "Cursor Press", "cursorpress"));
 
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Short Rumble", "rumbleshort"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Long Rumble", "rumblelong"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Continous Rumble", "rumblehold"));
-            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Alternating Rumble", "rumblealt"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Rumble Short", "rumbleshort"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Rumble Long", "rumblelong"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Rumble Continous", "rumblehold"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Rumble Alternating", "rumblealt"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "LED 1", "led1"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "LED 2", "led2"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "LED 3", "led3"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "LED 4", "led4"));
 
             allOutputs.Add(new KeymapOutput(KeymapOutputType.DISABLE, "Disable", this.DisableKey));
         }

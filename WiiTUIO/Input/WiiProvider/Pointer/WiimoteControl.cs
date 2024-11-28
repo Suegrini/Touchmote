@@ -55,6 +55,7 @@ namespace WiiTUIO.Provider
             this.keyMapper.OnButtonUp += WiiButton_Up;
             this.keyMapper.OnConfigChanged += WiiKeyMap_ConfigChanged;
             this.keyMapper.OnRumble += WiiKeyMap_OnRumble;
+            this.keyMapper.OnLED += WiiKeyMap_OnLED;
             this.arcadeHook.OnOutput += ArcadeHook_OnOutput;
         }
 
@@ -63,6 +64,30 @@ namespace WiiTUIO.Provider
             Console.WriteLine("Set rumble to: "+rumble);
             WiimoteMutex.WaitOne();
             this.Wiimote.SetRumble(rumble);
+            WiimoteMutex.ReleaseMutex();
+        }
+
+        private void WiiKeyMap_OnLED(int index, bool on)
+        {
+            WiimoteMutex.WaitOne();
+            switch (index)
+            {
+                case 1:
+                    this.Wiimote.SetLEDs(on, this.Wiimote.WiimoteState.LEDState.LED2, this.Wiimote.WiimoteState.LEDState.LED3, this.Wiimote.WiimoteState.LEDState.LED4);
+                    break;
+                case 2:
+                    this.Wiimote.SetLEDs(this.Wiimote.WiimoteState.LEDState.LED1, on, this.Wiimote.WiimoteState.LEDState.LED3, this.Wiimote.WiimoteState.LEDState.LED4);
+                    break;
+                case 3:
+                    this.Wiimote.SetLEDs(this.Wiimote.WiimoteState.LEDState.LED1, this.Wiimote.WiimoteState.LEDState.LED2, on, this.Wiimote.WiimoteState.LEDState.LED4);
+                    break;
+                case 4:
+                    this.Wiimote.SetLEDs(this.Wiimote.WiimoteState.LEDState.LED1, this.Wiimote.WiimoteState.LEDState.LED2, this.Wiimote.WiimoteState.LEDState.LED3, on);
+                    break;
+                default:
+                    this.Wiimote.SetLEDs(this.Status.ID == 1, this.Status.ID == 2, this.Status.ID == 3, this.Status.ID == 4);
+                    break;
+            }
             WiimoteMutex.ReleaseMutex();
         }
 
