@@ -366,6 +366,8 @@ namespace WiiTUIO
             allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "LED 2", "led2"));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "LED 3", "led3"));
             allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "LED 4", "led4"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Speaker Sound 1", "sound1"));
+            allOutputs.Add(new KeymapOutput(KeymapOutputType.WIIMOTE, "Speaker Sound 2", "sound2"));
 
             allOutputs.Add(new KeymapOutput(KeymapOutputType.DISABLE, "Disable", this.DisableKey));
         }

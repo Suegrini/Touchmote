@@ -52,6 +52,7 @@ namespace WiiTUIO.Output.Handlers.Xinput
 
         public Action<byte, byte> OnRumble { get; set; }
         public Action<int, bool> OnLED { get; set; } = null;
+        public Action<string, bool> OnSpeaker { get; set; } = null;
 
         public ViGEmHandler(long id)
         {

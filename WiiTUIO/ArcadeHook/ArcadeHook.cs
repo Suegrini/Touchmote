@@ -17,8 +17,8 @@ namespace WiiTUIO.ArcadeHook
         private const int RetryDelayMs = 1000;
         private string gameName;
         private bool isRunning = true;
-        public event Action<string, int, int> OnExecute;
-        string pattern = @"^wii [1-4] [0-5] (?:\d+|%s%)$";
+        public event Action<int, string, string> OnExecute;
+        string pattern = @"^wii [1-4] [0-6] (?:[\w\-\.]+|%s%)$";
 
         public ArcadeHookMain()
         {
@@ -67,12 +67,12 @@ namespace WiiTUIO.ArcadeHook
                     }
 
                     if (gameName != null && gameName != "___empty")
-                    { 
-                    if (int.TryParse(line.value, out int intValue))
-                        ProcessIniCommand(line.key, intValue);
+                    {
+                        if (int.TryParse(line.value, out int intValue))
+                            ProcessIniCommand(line.key, intValue);
 
-                    if (line.key == "MameStop")
-                        GameEnded();
+                        if (line.key == "MameStop")
+                            GameEnded();
                     }
                 }
             }
@@ -139,21 +139,28 @@ namespace WiiTUIO.ArcadeHook
                     {
                         string[] readValues = trimmedCommand.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                        if (int.TryParse(readValues[1], out int player))
+                        if (int.TryParse(readValues[1], out int id))
                         {
                             string device = readValues[0];
                             string action = readValues[2];
-                            int value = readValues[3] == "%s%" ? recValue : int.Parse(readValues[3]);
-                            ExecuteAction(device, player, action, value, recValue);
+
+                            if (int.Parse(action) != 6 && !int.TryParse(readValues[3], out _) && readValues[3] != "%s%")
+                            {
+                                return;
+                            }
+
+                            string value = readValues[3] == "%s%" ? recValue.ToString() : readValues[3];
+
+                            ExecuteAction(device, id, action, value, recValue);
                         }
                     }
                 }
             }
         }
 
-        private void ExecuteAction(string device, int player, string action, int value, int recValue)
+        private void ExecuteAction(string device, int id, string action, string value, int recValue)
         {
-            if (player >= 1 && player <= 4)
+            if (id >= 1 && id <= 4)
             {
                 switch (device)
                 {
@@ -161,17 +168,20 @@ namespace WiiTUIO.ArcadeHook
                         switch (action)
                         {
                             case "0":
-                                double fillResult = (double)recValue / value * 4;
-                                OnExecute?.Invoke("LEDFill", (int)Math.Round(fillResult), player);
+                                int fillResult = (int)Math.Round((double)recValue / int.Parse(value) * 4);
+                                OnExecute?.Invoke(id, "LEDFill", fillResult.ToString());
                                 break;
                             case "1":
                             case "2":
                             case "3":
                             case "4":
-                                OnExecute?.Invoke("LED", int.Parse(action), player);
+                                OnExecute?.Invoke(id, "LED", action);
                                 break;
                             case "5":
-                                OnExecute?.Invoke("Rumble", value, player);
+                                OnExecute?.Invoke(id, "Rumble", value);
+                                break;
+                            case "6":
+                                OnExecute?.Invoke(id, "Sound", value);
                                 break;
                         }
                         break;
@@ -181,8 +191,8 @@ namespace WiiTUIO.ArcadeHook
 
         private void GameEnded()
         {
-            for (int i = 1; i < 5; i++)
-                OnExecute?.Invoke("MameStop", 0, i);
+            for (int id = 1; id < 5; id++)
+                OnExecute?.Invoke(id, "MameStop", null);
             gameName = null;
             Debug.WriteLine("Game ended");
             tcpClient.Close();

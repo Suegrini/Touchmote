@@ -10,5 +10,6 @@ namespace WiiTUIO.Output.Handlers
     {
         Action<Byte, Byte> OnRumble { get; set; }
         Action<int, bool> OnLED { get; set; }
+        Action<string, bool> OnSpeaker { get; set; }
     }
 }

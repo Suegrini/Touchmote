@@ -200,6 +200,9 @@ namespace WiiTUIO
             StartArcadeHook();
 
             this.commandListener = CommandListener.Default;
+
+            AudioUtil.IsValid("sound1");
+            AudioUtil.IsValid("sound2");
         }
 
         private void processChanged(ProcessChangedEvent obj)

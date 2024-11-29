@@ -19,6 +19,7 @@ namespace WiiTUIO.Output.Handlers
     {
         public Action<byte, byte> OnRumble { get; set; }
         public Action<int, bool> OnLED { get; set; }
+        public Action<string, bool> OnSpeaker { get; set; }
 
         private enum RumbleState
         {
@@ -61,6 +62,7 @@ namespace WiiTUIO.Output.Handlers
         {
             OnRumble?.Invoke(0, 0);
             OnLED?.Invoke(0, true);
+            OnSpeaker?.Invoke(null, false);
             return true;
         }
 
@@ -77,6 +79,11 @@ namespace WiiTUIO.Output.Handlers
             else if (Enum.TryParse(key, true, out Leds led))
             {
                 OnLED?.Invoke((int)led, true);
+                return true;
+            }
+            else if (key.Contains("sound"))
+            {
+                OnSpeaker?.Invoke(key, true);
                 return true;
             }
 

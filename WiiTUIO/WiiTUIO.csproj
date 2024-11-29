@@ -211,6 +211,7 @@
     <Compile Include="ArcadeHook\OutputProvider.cs" />
     <Compile Include="Autostart.cs" />
     <Compile Include="CommandListener.cs" />
+    <Compile Include="DeviceUtils\AudioUtil.cs" />
     <Compile Include="DeviceUtils\DeviceUtil.cs" />
     <Compile Include="Filters\CircularBuffer.cs" />
     <Compile Include="Filters\CoordFilter.cs" />

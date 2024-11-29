@@ -10,7 +10,7 @@ namespace WiiTUIO
 
 
 
-        public static void Launch(string relativePath, string file,string arguments, Action callback)
+        public static bool Launch(string relativePath, string file,string arguments, Action callback)
         {
             try
             {
@@ -21,8 +21,8 @@ namespace WiiTUIO
                 System.Diagnostics.ProcessStartInfo procStartInfo =
                     new System.Diagnostics.ProcessStartInfo();
 
-                procStartInfo.WorkingDirectory = System.AppDomain.CurrentDomain.BaseDirectory+relativePath+"\\";
-                
+                procStartInfo.WorkingDirectory = relativePath == null ? null : System.AppDomain.CurrentDomain.BaseDirectory+relativePath+"\\";
+
                 procStartInfo.FileName = procStartInfo.WorkingDirectory + file;
                 procStartInfo.Arguments = arguments;
                 // The following commands are needed to redirect the standard output.
@@ -44,12 +44,19 @@ namespace WiiTUIO
                 {
                     callback();
                 }
+
+                if (proc.ExitCode != 0)
+                {
+                    return false;
+                }
             }
             catch (Exception objException)
             {
                 Console.WriteLine(objException.Message);
                 // Log the exception
+                return false;
             }
+            return true;
         }
 
         public static void RestartComputer()

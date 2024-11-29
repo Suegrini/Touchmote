@@ -23,7 +23,7 @@ namespace WiiTUIO.Provider
     {
         private int WIIMOTE_POWER_SAVE_DISCONNECT_TIMEOUT = 15000;
         private int POWER_SAVE_STATUS_INTERVAL = 6000;
- 
+
         private int WIIMOTE_DISCONNECT_TIMEOUT = 2000; //If we haven't recieved input from a wiimote in 2 seconds we consider it disconnected.
         private int WIIMOTE_SIGNIFICANT_DISCONNECT_TIMEOUT = Settings.Default.autoDisconnectTimeout; //If we haven't recieved significant input from a wiimote in 60 seconds we will put it to sleep
         private ulong OLD_FRAME_TIMEOUT = 200; //Timeout for a previous frame from a Wiimote to be considered old, so we wont enable it when getting input from other wiimotes.
@@ -73,7 +73,7 @@ namespace WiiTUIO.Provider
         public event Action<int,int> OnConnect;
         public event Action<int,int> OnDisconnect;
 
-   
+
         #endregion
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace WiiTUIO.Provider
             wiimoteHandlerThread.Priority = ThreadPriority.Highest;
             wiimoteHandlerThread.IsBackground = true;
             wiimoteHandlerThread.Start();
-            
+
         }
 
         #endregion
@@ -189,7 +189,7 @@ namespace WiiTUIO.Provider
                         }
                         else if (control.Status.InPowerSave)
                         {
-                            
+
 
                             if (CONNECTION_THREAD_SLEEP * statusWait >= POWER_SAVE_STATUS_INTERVAL)
                             {
@@ -236,7 +236,7 @@ namespace WiiTUIO.Provider
 
                 this.pWC.Clear();
                 this.pWC.FindAllWiimotes();
-                
+
                 foreach (Wiimote pDevice in pWC)
                 {
                     try
@@ -259,9 +259,9 @@ namespace WiiTUIO.Provider
                         // Say we screwed up.
                         pErrorReport = pError;
                         //throw new Exception("Error establishing connection: " + , pError);
-                    
+
                     }
-                
+
                 }
             }
             catch (Exception e)
@@ -290,6 +290,11 @@ namespace WiiTUIO.Provider
             int id = this.getFirstFreeId();
             wiimote.SetLEDs(id == 1, id == 2, id == 3, id == 4);
 
+            wiimote.WiimoteState.SpeakerState.DataFormat = SpeakerDataFormat.ADPCM;
+            wiimote.WiimoteState.SpeakerState.SampleRate = 3000;
+            wiimote.WiimoteState.SpeakerState.Volume = 0xFF;
+            wiimote.EnableSpeaker();
+
             WiimoteControl control = new WiimoteControl(id, wiimote);
 
             pDeviceMutex.WaitOne(); //Don't mess with the list of wiimotes if it is enumerating in an update
@@ -304,7 +309,7 @@ namespace WiiTUIO.Provider
 
         }
 
-        
+
 
         private int getFirstFreeId()
         {
@@ -331,6 +336,7 @@ namespace WiiTUIO.Provider
                 control.Status.InPowerSave = true;
                 control.Wiimote.SetLEDs(false, false, false, false);
                 control.Wiimote.SetRumble(false);
+                control.Wiimote.SetSpeakerMuteState(true);
             }
             catch { }
             finally
@@ -349,6 +355,7 @@ namespace WiiTUIO.Provider
                 int id = control.Status.ID;
                 control.Wiimote.SetLEDs(id == 1, id == 2, id == 3, id == 4);
                 control.Wiimote.SetRumble(true);
+                control.Wiimote.SetSpeakerMuteState(false);
                 new Timer(connectRumble,control.Wiimote,0,Timeout.Infinite);
             }
             catch { }
@@ -396,13 +403,14 @@ namespace WiiTUIO.Provider
                     wiimoteid = this.pWiimoteMap.Count + 1;
                 }
                 pDeviceMutex.ReleaseMutex();
-                
+
                 try
                 {
                     pDevice.SetReportType(InputReport.Status, false);
 
                     pDevice.SetRumble(false);
                     pDevice.SetLEDs(true, true, true, true);
+                    pDevice.DisableSpeaker();
                 }
                 catch { }
 
@@ -432,9 +440,9 @@ namespace WiiTUIO.Provider
         /// <param name="e"></param>
         private void handleWiimoteExtensionChanged(object sender, WiimoteExtensionChangedEventArgs e)
         {
-            
+
             //pDeviceMutex.WaitOne();
-            
+
             // Check we have a valid device.
             if (sender == null)
                 return;
@@ -451,15 +459,15 @@ namespace WiiTUIO.Provider
                 Console.WriteLine("Disabling extension " + e.ExtensionType);
                 pDevice.SetReportType(InputReport.IRAccel, true);
             }
-            
+
             //pDeviceMutex.ReleaseMutex();
-            
+
         }
 
 
         private void WiimoteHandlerWorker()
         {
-            
+
             double millisecondsForEachFrame = 1000 / Settings.Default.pointer_FPS;
             DateTime lastFrame = DateTime.Now;
 
@@ -497,7 +505,7 @@ namespace WiiTUIO.Provider
                                 {
                                     this.OnStatusUpdate(control.Status);
                                 }
-                                
+
                             }
                         }
                         D3DCursorWindow.Current.RefreshCursors();

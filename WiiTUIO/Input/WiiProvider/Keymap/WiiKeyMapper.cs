@@ -57,7 +57,7 @@ namespace WiiTUIO.Provider
         StickRDown,
         StickRLeft,
         StickRRight
-        
+
     }
 
     public enum NunchukButton
@@ -87,6 +87,7 @@ namespace WiiTUIO.Provider
         public Action<WiiKeyMapConfigChangedEvent> OnConfigChanged;
         public Action<bool> OnRumble;
         public Action<int, bool> OnLED;
+        public Action<string, bool> OnSpeaker;
 
         private WiiKeyMap KeyMap;
 
@@ -206,6 +207,7 @@ namespace WiiTUIO.Provider
             this.KeyMap.OnConfigChanged += keyMap_onConfigChanged;
             this.KeyMap.OnRumble += keyMap_onRumble;
             this.KeyMap.OnLED = (led, on) => this.OnLED(led, on);
+            this.KeyMap.OnSpeaker = (name, play) => this.OnSpeaker(name, play);
 
             if (callConfigChangedEvt)
             {

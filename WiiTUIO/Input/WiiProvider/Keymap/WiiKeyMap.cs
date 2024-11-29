@@ -23,6 +23,7 @@ namespace WiiTUIO.Provider
         public Action<WiiKeyMapConfigChangedEvent> OnConfigChanged;
         public Action<bool> OnRumble;
         public Action<int, bool> OnLED;
+        public Action<string, bool> OnSpeaker;
 
         private InputSimulator inputSimulator;
 
@@ -106,6 +107,7 @@ namespace WiiTUIO.Provider
                     IFeedback feedback = (IFeedback)outputHandler;
                     feedback.OnRumble += Xinput_OnRumble;
                     feedback.OnLED = (led, on) => OnLED(led, on);
+                    feedback.OnSpeaker = (name, play) => OnSpeaker(name, play);
                 }
             }
         }
@@ -1049,7 +1051,7 @@ namespace WiiTUIO.Provider
                             newValue = newValue > 1 ? 1 : newValue;
                             //Set value to 0 if it's within deadzone
                             newValue = newValue <= outConfig.Deadzone ? 0 : (newValue - outConfig.Deadzone) / (1 - outConfig.Deadzone);
-                            
+
                             //Add the scaling from the config
                             newValue = newValue * outConfig.Scale;
                             if (stickHandler.setValue(output.Key.ToLower(), newValue))
@@ -1189,7 +1191,7 @@ namespace WiiTUIO.Provider
         {
             if(this.config.TryGetValue(button, out KeymapOutConfig currconfig))
                 return currconfig.Inherited;
-                
+
             return false;
         }
 

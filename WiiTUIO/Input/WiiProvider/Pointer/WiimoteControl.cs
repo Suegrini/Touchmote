@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,6 +15,7 @@ using WiimoteLib;
 using WiiTUIO.ArcadeHook;
 using WiiTUIO.Output.Handlers;
 using WiiTUIO.Properties;
+using WiiTUIO.DeviceUtils;
 using WindowsInput;
 
 namespace WiiTUIO.Provider
@@ -56,6 +58,7 @@ namespace WiiTUIO.Provider
             this.keyMapper.OnConfigChanged += WiiKeyMap_ConfigChanged;
             this.keyMapper.OnRumble += WiiKeyMap_OnRumble;
             this.keyMapper.OnLED += WiiKeyMap_OnLED;
+            this.keyMapper.OnSpeaker += WiiKeyMap_OnSpeaker;
             this.arcadeHook.OnOutput += ArcadeHook_OnOutput;
         }
 
@@ -91,24 +94,60 @@ namespace WiiTUIO.Provider
             WiimoteMutex.ReleaseMutex();
         }
 
-        private void ArcadeHook_OnOutput(string key, int value)
+        private void WiiKeyMap_OnSpeaker(string filename, bool play)
         {
+            if (!play)
+            {
+                this.Wiimote.StopPlayback();
+                return;
+            }
+
+            int maxPlaybackTime = 3500; // Max playback time in milliseconds
+
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", filename + ".wav");
+
+            if (AudioUtil.IsValid(filename)) // Check for valid file or convert file if necessary
+            {
+                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (BinaryReader reader = new BinaryReader(fs))
+                    {
+                        reader.BaseStream.Seek(44, SeekOrigin.Begin);   // Skip WAV header
+
+                        byte[] soundData = reader.ReadBytes((int)(fs.Length - 44));
+
+                        int maxBytes = (int)(this.Wiimote.WiimoteState.SpeakerState.SampleRate * (maxPlaybackTime / 1000.0) * 0.5);
+                        if (soundData.Length > maxBytes)
+                            Array.Resize(ref soundData, maxBytes);  // Truncate to max playback time
+
+                        this.Wiimote.StartPlayback(soundData);
+                    }
+                }
+            }
+        }
+
+        private void ArcadeHook_OnOutput(string key, string value)
+        {
+            int val = int.Parse(value);
             try
             {
                 switch (key)
                 {
                     case "Rumble":
-                        WiiKeyMap_OnRumble(value > 0);
+                        WiiKeyMap_OnRumble(val > 0);
                         break;
                     case "LED":
                         WiimoteMutex.WaitOne();
-                        this.Wiimote.SetLEDs(value == 1, value == 2, value == 3, value == 4);
+                        this.Wiimote.SetLEDs(val == 1, val == 2, val == 3, val == 4);
                         WiimoteMutex.ReleaseMutex();
                         break;
                     case "LEDFill":
                         WiimoteMutex.WaitOne();
-                        this.Wiimote.SetLEDs(value >= 1, value >= 2, value >= 3, value >= 4);
+                        this.Wiimote.SetLEDs(val >= 1, val >= 2, val >= 3, val >= 4);
                         WiimoteMutex.ReleaseMutex();
+                        break;
+                    case "Sound":
+                        WiiKeyMap_OnSpeaker(value, true);
                         break;
                     case "MameStop":
                         WiiKeyMap_OnRumble(false);

@@ -5,7 +5,7 @@ namespace WiiTUIO.ArcadeHook
     public class OutputProvider
     {
         private ArcadeHookMain arcadeHook;
-        public Action<string, int> OnOutput;
+        public Action<string, string> OnOutput;
         int wiiMoteID;
 
         public OutputProvider(int id)
@@ -15,9 +15,9 @@ namespace WiiTUIO.ArcadeHook
             this.arcadeHook.OnExecute += SendOutput;
         }
 
-        public void SendOutput(string key, int value, int player)
+        public void SendOutput(int id, string key, string value)
         {
-            if (player == this.wiiMoteID)
+            if (id == this.wiiMoteID)
                 OnOutput?.Invoke(key, value);
         }
     }
