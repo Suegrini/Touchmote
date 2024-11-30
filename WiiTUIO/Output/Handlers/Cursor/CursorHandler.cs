@@ -55,6 +55,11 @@ namespace WiiTUIO.Output.Handlers
                 GetScreenBounds();
                 D3DCursorWindow.Current.RefreshCursors();
             }
+            else if (e.PropertyName == "Color_ID")
+            {
+                this.cursor.SetColor(IDColor.getColor((int)this.id));
+                D3DCursorWindow.Current.RefreshCursors();
+            }
 
         }
 

@@ -34,6 +34,11 @@ namespace WiiTUIO.Output
             this.Hidden = false;
         }
 
+        public void SetColor(Color color)
+        {
+            this.Color = color;
+        }
+
         public void SetPosition(Point point)
         {
             this.X = (int)point.X;

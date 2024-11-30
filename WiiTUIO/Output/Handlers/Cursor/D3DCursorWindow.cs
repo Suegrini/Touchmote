@@ -76,6 +76,9 @@ namespace WiiTUIO.Output
         private static extern void SetD3DCursorHidden(int id, bool hidden);
 
         [DllImport("D3DCursor.dll")]
+        private static extern void SetD3DCursorColor(int id, uint color);
+
+        [DllImport("D3DCursor.dll")]
         private static extern void AddD3DCursor(int id, uint color);
 
         [DllImport("D3DCursor.dll")]

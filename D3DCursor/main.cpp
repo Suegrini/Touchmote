@@ -605,6 +605,11 @@ extern "C" __declspec(dllexport)VOID WINAPI SetD3DCursorHidden(int id, bool hidd
 	}
 }
 
+extern "C" __declspec(dllexport)VOID WINAPI SetD3DCursorColor(int id, DWORD color)
+{
+	cursors[id].color = color;
+}
+
 extern "C" __declspec(dllexport)VOID WINAPI AddD3DCursor(int id, DWORD color)
 {
 	if(id >= MAX_CURSORS)
