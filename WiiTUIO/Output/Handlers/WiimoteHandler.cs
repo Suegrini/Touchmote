@@ -19,7 +19,7 @@ namespace WiiTUIO.Output.Handlers
     {
         public Action<byte, byte> OnRumble { get; set; }
         public Action<int, bool> OnLED { get; set; }
-        public Action<string, bool> OnSpeaker { get; set; }
+        public Action<string> OnSpeaker { get; set; }
 
         private enum RumbleState
         {
@@ -43,6 +43,9 @@ namespace WiiTUIO.Output.Handlers
         private RumbleState currRumbleState = RumbleState.none;
         private long prevRumbleTime;
 
+        private bool isAudioLooping = false;
+        private long prevAudioTime;
+
         public WiimoteHandler()
         {
 
@@ -62,7 +65,13 @@ namespace WiiTUIO.Output.Handlers
         {
             OnRumble?.Invoke(0, 0);
             OnLED?.Invoke(0, true);
-            OnSpeaker?.Invoke(null, false);
+            OnSpeaker?.Invoke(null);
+
+            currRumbleState = RumbleState.none;
+            rumbleState = false;
+            prevRumbleState = false;
+            isAudioLooping = false;
+
             return true;
         }
 
@@ -83,7 +92,14 @@ namespace WiiTUIO.Output.Handlers
             }
             else if (key.Contains("sound"))
             {
-                OnSpeaker?.Invoke(key, true);
+                OnSpeaker?.Invoke(key);
+                return true;
+            }
+            else if (key == "loop")
+            {
+                OnSpeaker?.Invoke("loop");
+                isAudioLooping = true;
+                prevAudioTime = Stopwatch.GetTimestamp();
                 return true;
             }
 
@@ -104,6 +120,12 @@ namespace WiiTUIO.Output.Handlers
                 OnLED?.Invoke((int)led, false);
                 return true;
             }
+            else if (key == "loop")
+            {
+                OnSpeaker?.Invoke(null);
+                isAudioLooping = false;
+                return true;
+            }
 
             return false;
         }
@@ -116,16 +138,17 @@ namespace WiiTUIO.Output.Handlers
         public bool endUpdate()
         {
             long currentTime = Stopwatch.GetTimestamp();
-            double elapsedMs = (currentTime - prevRumbleTime) * (1000.0 / Stopwatch.Frequency);
+            double elapsedRumbleMs = (currentTime - prevRumbleTime) * (1000.0 / Stopwatch.Frequency);
+            double elapsedSoundMs = (currentTime - prevAudioTime) * (1000.0 / Stopwatch.Frequency);
 
             switch (currRumbleState)
             {
-                case RumbleState.rumbleshort when elapsedMs >= Settings.Default.wiimode_rumbleTime_short:
-                case RumbleState.rumblelong when elapsedMs >= Settings.Default.wiimode_rumbleTime_long:
+                case RumbleState.rumbleshort when elapsedRumbleMs >= Settings.Default.wiimode_rumbleTime_short:
+                case RumbleState.rumblelong when elapsedRumbleMs >= Settings.Default.wiimode_rumbleTime_long:
                     rumbleState = false;
                     currRumbleState = RumbleState.none;
                     break;
-                case RumbleState.rumblealt when (rumbleState && elapsedMs >= Settings.Default.wiimode_rumbleTime_alternatingOn) || (!rumbleState && elapsedMs >= Settings.Default.wiimode_rumbleTime_alternatingOff):
+                case RumbleState.rumblealt when (rumbleState && elapsedRumbleMs >= Settings.Default.wiimode_rumbleTime_alternatingOn) || (!rumbleState && elapsedRumbleMs >= Settings.Default.wiimode_rumbleTime_alternatingOff):
                     rumbleState = !rumbleState;
                     prevRumbleTime = Stopwatch.GetTimestamp();
                     break;
@@ -137,6 +160,12 @@ namespace WiiTUIO.Output.Handlers
             {
                 OnRumble?.Invoke((byte)(rumbleState ? 255 : 0), 0);
                 prevRumbleState = rumbleState;
+            }
+
+            if (isAudioLooping && elapsedSoundMs >= Settings.Default.wiimode_loopSoundTime)
+            {
+                OnSpeaker?.Invoke("loop");
+                prevAudioTime = currentTime;
             }
 
             return true;

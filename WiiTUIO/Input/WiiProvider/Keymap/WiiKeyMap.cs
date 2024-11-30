@@ -23,7 +23,7 @@ namespace WiiTUIO.Provider
         public Action<WiiKeyMapConfigChangedEvent> OnConfigChanged;
         public Action<bool> OnRumble;
         public Action<int, bool> OnLED;
-        public Action<string, bool> OnSpeaker;
+        public Action<string> OnSpeaker;
 
         private InputSimulator inputSimulator;
 
@@ -107,7 +107,7 @@ namespace WiiTUIO.Provider
                     IFeedback feedback = (IFeedback)outputHandler;
                     feedback.OnRumble += Xinput_OnRumble;
                     feedback.OnLED = (led, on) => OnLED(led, on);
-                    feedback.OnSpeaker = (name, play) => OnSpeaker(name, play);
+                    feedback.OnSpeaker = (name) => OnSpeaker(name);
                 }
             }
         }

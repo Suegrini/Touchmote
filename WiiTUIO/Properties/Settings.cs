@@ -616,6 +616,17 @@ namespace WiiTUIO.Properties
             }
         }
 
+        private int _wiimode_loopSoundTime = 200;
+        public int wiimode_loopSoundTime
+        {
+            get { return _wiimode_loopSoundTime; }
+            set
+            {
+                _wiimode_loopSoundTime = value;
+                OnPropertyChanged("wiimode_loopSoundTime");
+            }
+        }
+
         private int[] _color_ID1 = { 128, 255, 0 };
         public int[] Color_ID1
         {

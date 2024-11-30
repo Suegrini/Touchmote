@@ -87,7 +87,7 @@ namespace WiiTUIO.Provider
         public Action<WiiKeyMapConfigChangedEvent> OnConfigChanged;
         public Action<bool> OnRumble;
         public Action<int, bool> OnLED;
-        public Action<string, bool> OnSpeaker;
+        public Action<string> OnSpeaker;
 
         private WiiKeyMap KeyMap;
 
@@ -207,7 +207,7 @@ namespace WiiTUIO.Provider
             this.KeyMap.OnConfigChanged += keyMap_onConfigChanged;
             this.KeyMap.OnRumble += keyMap_onRumble;
             this.KeyMap.OnLED = (led, on) => this.OnLED(led, on);
-            this.KeyMap.OnSpeaker = (name, play) => this.OnSpeaker(name, play);
+            this.KeyMap.OnSpeaker = (name) => this.OnSpeaker(name);
 
             if (callConfigChangedEvt)
             {

@@ -94,9 +94,9 @@ namespace WiiTUIO.Provider
             WiimoteMutex.ReleaseMutex();
         }
 
-        private void WiiKeyMap_OnSpeaker(string filename, bool play)
+        private void WiiKeyMap_OnSpeaker(string filename)
         {
-            if (!play)
+            if (filename == null)
             {
                 this.Wiimote.StopPlayback();
                 return;
@@ -147,7 +147,7 @@ namespace WiiTUIO.Provider
                         WiimoteMutex.ReleaseMutex();
                         break;
                     case "Sound":
-                        WiiKeyMap_OnSpeaker(value, true);
+                        WiiKeyMap_OnSpeaker(value);
                         break;
                     case "MameStop":
                         WiiKeyMap_OnRumble(false);
