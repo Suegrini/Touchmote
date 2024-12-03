@@ -206,8 +206,8 @@ namespace WiiTUIO.Provider
             this.KeyMap.OnButtonUp += keyMap_onButtonUp;
             this.KeyMap.OnConfigChanged += keyMap_onConfigChanged;
             this.KeyMap.OnRumble += keyMap_onRumble;
-            this.KeyMap.OnLED = (led, on) => this.OnLED(led, on);
-            this.KeyMap.OnSpeaker = (name) => this.OnSpeaker(name);
+            this.KeyMap.OnLED += keyMap_onLED;
+            this.KeyMap.OnSpeaker += keyMap_onSpeaker;
 
             if (callConfigChangedEvt)
             {
@@ -425,6 +425,22 @@ namespace WiiTUIO.Provider
             if (this.OnRumble != null)
             {
                 this.OnRumble(rumble);
+            }
+        }
+
+        private void keyMap_onLED(int led, bool on)
+        {
+            if (this.OnLED != null)
+            {
+                this.OnLED(led, on);
+            }
+        }
+
+        private void keyMap_onSpeaker(string name)
+        {
+            if (this.OnSpeaker != null)
+            {
+                this.OnSpeaker(name);
             }
         }
 

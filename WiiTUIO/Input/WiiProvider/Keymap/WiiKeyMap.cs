@@ -106,8 +106,8 @@ namespace WiiTUIO.Provider
                 {
                     IFeedback feedback = (IFeedback)outputHandler;
                     feedback.OnRumble += Xinput_OnRumble;
-                    feedback.OnLED = (led, on) => OnLED(led, on);
-                    feedback.OnSpeaker = (name) => OnSpeaker(name);
+                    feedback.OnLED += Handler_OnLED;
+                    feedback.OnSpeaker += Handler_OnSpeaker;
                 }
             }
         }
@@ -150,6 +150,22 @@ namespace WiiTUIO.Provider
             if (this.OnRumble != null)
             {
                 OnRumble(big > Settings.Default.xinput_rumbleThreshold_big || small > Settings.Default.xinput_rumbleThreshold_small);
+            }
+        }
+
+        private void Handler_OnLED(int led, bool on)
+        {
+            if (this.OnLED != null)
+            {
+                OnLED(led, on);
+            }
+        }
+
+        private void Handler_OnSpeaker(string name)
+        {
+            if (this.OnSpeaker != null)
+            {
+                OnSpeaker(name);
             }
         }
 
