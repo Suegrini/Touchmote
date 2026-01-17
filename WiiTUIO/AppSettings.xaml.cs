@@ -1,4 +1,6 @@
-﻿using HidLibrary;
+﻿using ControlzEx.Theming;
+using HidLibrary;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,6 +54,8 @@ namespace WiiTUIO
             this.providerSettingsContent.Children.Add(MultiWiiPointerProvider.getSettingsControl());
 
             this.cbWindowsStart.IsChecked = Autostart.IsAutostart();
+
+            this.themeToggle.IsOn = Settings.Default.darkMode;
         }
 
         private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -123,6 +127,23 @@ namespace WiiTUIO
         private void btnEditKeymaps_Click(object sender, RoutedEventArgs e)
         {
             KeymapConfigWindow.Instance.Show();
+
+        }
+
+        private void ToggleTheme_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.themeToggle.IsOn)
+            {
+                ThemeManager.Current.ChangeTheme(Application.Current, "Dark.Green");
+                ThemeManager.Current.ChangeTheme(KeymapConfigWindow.Instance, "Dark.Blue");
+                Settings.Default.darkMode = true;
+            }
+            else
+            {
+                ThemeManager.Current.ChangeTheme(Application.Current, "Light.Green");
+                ThemeManager.Current.ChangeTheme(KeymapConfigWindow.Instance, "Light.Blue");
+                Settings.Default.darkMode = false;
+            }
         }
     }
 }

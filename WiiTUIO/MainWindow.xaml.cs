@@ -31,6 +31,7 @@ using WiiCPP;
 using WiiTUIO.Output.Handlers.Xinput;
 using WiiTUIO.ArcadeHook;
 using System.IO.Pipes;
+using ControlzEx.Theming;
 
 namespace WiiTUIO
 {
@@ -117,6 +118,11 @@ namespace WiiTUIO
             KeymapDatabase.Current.CreateDefaultFiles();
 
             base.OnInitialized(e);
+
+            if(Settings.Default.darkMode)
+            {
+                ThemeManager.Current.ChangeTheme(Application.Current, "Dark.Green");
+            }
 
             KeymapConfigWindow.Instance.Visibility = System.Windows.Visibility.Collapsed;
 

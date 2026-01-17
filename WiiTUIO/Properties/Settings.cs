@@ -60,6 +60,17 @@ namespace WiiTUIO.Properties
             }
         }
 
+        private bool _darkMode = false;
+        public bool darkMode
+        {
+            get { return _darkMode; }
+            set
+            {
+                _darkMode = value;
+                OnPropertyChanged("darkMode");
+            }
+        }
+
         private bool _notifications_enabled = true;
         public bool notifications_enabled
         {
