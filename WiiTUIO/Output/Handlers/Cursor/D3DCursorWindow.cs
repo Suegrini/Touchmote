@@ -133,6 +133,7 @@ namespace WiiTUIO.Output
                 SetD3DCursorPosition(cursor.ID, cursor.X, cursor.Y);
                 SetD3DCursorPressed(cursor.ID, cursor.Pressed);
                 SetD3DCursorHidden(cursor.ID, cursor.Hidden);
+                SetD3DCursorColor(cursor.ID, (uint)((((uint)cursor.Color.R) << 16) | (((uint)cursor.Color.G) << 8) | (uint)cursor.Color.B));
 
                 anyCursorIsVisible |= !cursor.Hidden;
             }

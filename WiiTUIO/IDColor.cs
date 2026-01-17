@@ -67,7 +67,7 @@ namespace WiiTUIO
                     break;
             }
             Settings.Default.Save();
-            return setColor(id, color.R, color.G, color.B);
+            return color;
         }
 
         public static Color randomColor()
