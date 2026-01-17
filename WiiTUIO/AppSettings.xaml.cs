@@ -55,7 +55,11 @@ namespace WiiTUIO
 
             this.cbWindowsStart.IsChecked = Autostart.IsAutostart();
 
-            this.ThemeToggleButton.IsChecked = Settings.Default.darkMode;
+            if(Settings.Default.darkMode)
+            {
+                this.ThemeToggleButton.IsChecked = true;
+                ThemeManager.Current.ChangeTheme(KeymapConfigWindow.Instance, "Dark.Blue");
+            }
         }
 
         private void Settings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
              mc:Ignorable="d" d:DesignWidth="429">
     <StackPanel x:Name="canvasSettings">
         <Canvas Height="240">
@@ -20,7 +19,7 @@
             <CheckBox x:Name="cbMinimizeToTray" Content="Minimize to tray" Canvas.Left="125" Canvas.Top="154" FontFamily="Segoe UI Semilight" Checked="cbMinimizeToTray_Checked" Unchecked="cbMinimizeToTray_Unchecked" />
             <CheckBox x:Name="cbMinimizeOnStart" Content="Start minimized" Canvas.Left="125" Canvas.Top="177" FontFamily="Segoe UI Semilight" Checked="cbMinimizeOnStart_Checked" Unchecked="cbMinimizeOnStart_Unchecked" />
             <Button x:Name="btnEditKeymaps" Content="Controller Config" Canvas.Left="125" Canvas.Top="211" Width="135" Click="btnEditKeymaps_Click" Height="30"/>
-            <ToggleButton x:Name="ThemeToggleButton" Width="20" Height="20" Background="Transparent" BorderBrush="Transparent" Click="ToggleTheme_Click" Canvas.Right="34" Canvas.Top="20">
+            <ToggleButton x:Name="ThemeToggleButton" Width="20" Height="20" Background="Transparent" BorderBrush="Transparent" Click="ToggleTheme_Click" IsChecked="False" Canvas.Right="34" Canvas.Top="20">
                 <ToggleButton.Style>
                     <Style TargetType="ToggleButton">
                         <Setter Property="Template">
