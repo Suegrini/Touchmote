@@ -32,7 +32,7 @@ namespace WiiTUIO
             this.ID = id;
             this.lbId.Text = ""+id;
             this.setBattery(0);
-            this.color.Stroke = new SolidColorBrush(IDColor.getColor(id));
+            colorBtn.BorderBrush = new SolidColorBrush(IDColor.getColor(id));
         }
 
         public void updateStatus(WiimoteStatus status)
@@ -68,6 +68,27 @@ namespace WiiTUIO
             this.battery4.Fill = percentage > 40 ? light : dark;
             this.battery5.Fill = percentage > 50 ? light : dark;
             this.battery6.Fill = percentage > 70 ? light : dark;
+        }
+
+        private void popClick(object sender, RoutedEventArgs e)
+        {
+            colorBtn.IsEnabled = false;
+            colorPopup.IsOpen = true;
+            picker.SelectedColor = IDColor.getColor(this.ID);
+        }
+
+        private void popClosed(object sender, EventArgs e)
+        {
+            colorBtn.IsEnabled = true;
+        }
+
+        private void svClick(object sender, RoutedEventArgs e)
+        {
+            if (picker.SelectedColor.HasValue)
+            {
+                colorBtn.BorderBrush = new SolidColorBrush(IDColor.setColor(this.ID, picker.SelectedColor.Value));
+            }
+            colorPopup.IsOpen = false;
         }
     }
 }

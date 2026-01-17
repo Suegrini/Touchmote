@@ -28,6 +28,48 @@ namespace WiiTUIO
 
         }
 
+        public static Color setColor(int id, int r, int g, int b)
+        {
+            switch (id)
+            {
+                case 1:
+                    Settings.Default.Color_ID1 = new int[] { r, g, b };
+                    break;
+                case 2:
+                    Settings.Default.Color_ID2 = new int[] { r, g, b };
+                    break;
+                case 3:
+                    Settings.Default.Color_ID3 = new int[] { r, g, b };
+                    break;
+                case 4:
+                    Settings.Default.Color_ID4 = new int[] { r, g, b };
+                    break;
+            }
+            Settings.Default.Save();
+            return Color.FromRgb((byte)r, (byte)g, (byte)b);
+        }
+
+        public static Color setColor(int id, Color color)
+        {
+            switch (id)
+            {
+                case 1:
+                    Settings.Default.Color_ID1 = new int[] { color.R, color.G, color.B };
+                    break;
+                case 2:
+                    Settings.Default.Color_ID2 = new int[] { color.R, color.G, color.B };
+                    break;
+                case 3:
+                    Settings.Default.Color_ID3 = new int[] { color.R, color.G, color.B };
+                    break;
+                case 4:
+                    Settings.Default.Color_ID4 = new int[] { color.R, color.G, color.B };
+                    break;
+            }
+            Settings.Default.Save();
+            return setColor(id, color.R, color.G, color.B);
+        }
+
         public static Color randomColor()
         {
             Random rand = new Random();
