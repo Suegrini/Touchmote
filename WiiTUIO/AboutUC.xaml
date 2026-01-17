@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" d:DesignWidth="419">
+             mc:Ignorable="d" d:DesignWidth="429">
     <Canvas Height="180">
         <Button x:Name="btnAboutBack" Width="40" Height="40" Style="{DynamicResource MahApps.Styles.Button.Circle}" Canvas.Left="10" Canvas.Top="10" Click="btnAboutBack_Click">
             <iconPacks:PackIconMaterial Kind="ArrowLeft" Width="14" Height="14" Foreground="{DynamicResource MahApps.Brushes.Gray3}" Opacity="0.8"/>

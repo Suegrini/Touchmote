@@ -4,7 +4,7 @@
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
   xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
   Title="Touchmote" ResizeMode="CanMinimize"
-  Width="419" SizeToContent="Height">
+  Width="429" SizeToContent="Height">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -30,7 +30,7 @@
             </Button>
         </Controls:WindowCommands>
     </Controls:MetroWindow.LeftWindowCommands>
-    <StackPanel Width="419">
+    <StackPanel Width="429">
         <StackPanel Name="mainPanel">
             <StackPanel Name="spErrorMsg" Background="#FFFF4138" MouseUp="spErrorMsg_MouseUp" Cursor="Hand">
                 <TextBlock Margin="10" FontSize="14" FontFamily="Segoe UI Semibold">Error</TextBlock>
