@@ -433,12 +433,12 @@ namespace WiiTUIO
             }
         }
 
-        private void AddHookAppEntry(object sender, MouseButtonEventArgs e)
+        private void AddHookAppEntry(object sender, RoutedEventArgs e)
         {
             hookAppVM.AddNewSearchString();
         }
 
-        private void RemoveHookAppEntry(object sender, MouseButtonEventArgs e)
+        private void RemoveHookAppEntry(object sender, RoutedEventArgs e)
         {
             FrameworkElement element = sender as FrameworkElement;
             HookApplicationViewModel.HookAppDataItem item =

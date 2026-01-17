@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="415">
     <UserControl.Resources>
@@ -47,11 +48,11 @@
                     </Rectangle.OpacityMask>
                 </Rectangle>
             </Grid>
-            <Border Name="connection_input_config_border" Background="#FFFFFFFF" BorderThickness="0" BorderBrush="White" Margin="5,5,5,5" CornerRadius="2">
+            <Border Name="connection_input_config_border" Background="{DynamicResource MahApps.Brushes.ThemeBackground}" BorderThickness="0" BorderBrush="White" Margin="5,5,5,5" CornerRadius="2">
                 <StackPanel>
                     <Grid>
-                        <TextBlock Text="Deadzone" Margin="5,5,75,5" FontSize="11" FontFamily="Segoe UI Semilight" Foreground="Black" TextAlignment="Right" VerticalAlignment="Center" />
-                        <Controls:NumericUpDown Name="deadzone_updown" StringFormat="F2" Value="0.01" Interval="0.1" Maximum="1.0" Margin="34,0,5,0" FontFamily="Segoe UI Semilight" FontSize="15" Minimum="0" BorderBrush="#FFDEDEDE" RenderTransformOrigin="1.0,0.5">
+                        <TextBlock Text="Deadzone" Margin="5,5,75,5" FontSize="11" FontFamily="Segoe UI Semilight" TextAlignment="Right" VerticalAlignment="Center" />
+                        <Controls:NumericUpDown Name="deadzone_updown" StringFormat="F2" Value="0.01" Interval="0.1" Maximum="1.0" Margin="34,0,5,0" FontFamily="Segoe UI Semilight" FontSize="15" Minimum="0" RenderTransformOrigin="1.0,0.5">
                             <Controls:NumericUpDown.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
@@ -63,8 +64,8 @@
                         </Controls:NumericUpDown>
                     </Grid>
                     <Grid>
-                        <TextBlock Text="Scale" Margin="5,5,75,5" FontSize="11" FontFamily="Segoe UI Semilight" Foreground="Black" TextAlignment="Right" VerticalAlignment="Center" />
-                        <Controls:NumericUpDown Name="scale_updown" StringFormat="F2" Value="1.0" Interval="0.1" Maximum="10.0" Margin="34,0,5,0" FontFamily="Segoe UI Semilight" FontSize="15" Minimum="0" BorderBrush="#FFDEDEDE" RenderTransformOrigin="1.0,0.5" >
+                        <TextBlock Text="Scale" Margin="5,5,75,5" FontSize="11" FontFamily="Segoe UI Semilight" TextAlignment="Right" VerticalAlignment="Center" />
+                        <Controls:NumericUpDown Name="scale_updown" StringFormat="F2" Value="1.0" Interval="0.1" Maximum="10.0" Margin="34,0,5,0" FontFamily="Segoe UI Semilight" FontSize="15" Minimum="0" RenderTransformOrigin="1.0,0.5" >
                             <Controls:NumericUpDown.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
@@ -76,8 +77,8 @@
                         </Controls:NumericUpDown>
                     </Grid>
                     <Grid>
-                        <TextBlock Text="Threshold" Margin="5,5,75,5" FontSize="11" FontFamily="Segoe UI Semilight" Foreground="Black" TextAlignment="Right" VerticalAlignment="Center" />
-                        <Controls:NumericUpDown Name="threshold_updown" StringFormat="F2" Value="0.8" Interval="0.1" Maximum="1.0" Margin="34,0,5,0" FontFamily="Segoe UI Semilight" FontSize="16" Minimum="0" BorderBrush="#FFDEDEDE" RenderTransformOrigin="1.0,0.5">
+                        <TextBlock Text="Threshold" Margin="5,5,75,5" FontSize="11" FontFamily="Segoe UI Semilight" TextAlignment="Right" VerticalAlignment="Center" />
+                        <Controls:NumericUpDown Name="threshold_updown" StringFormat="F2" Value="0.8" Interval="0.1" Maximum="1.0" Margin="34,0,5,0" FontFamily="Segoe UI Semilight" FontSize="16" Minimum="0" RenderTransformOrigin="1.0,0.5">
                             <Controls:NumericUpDown.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
@@ -93,24 +94,22 @@
         </StackPanel>
         <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}" Margin="196,5,70,5"></Border>
         <Grid Margin="196,0,0,0" VerticalAlignment="Center">
-            <StackPanel Margin="0,5,70,5" Name="connection_output_stack" MinHeight="30" Width="140" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="140"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            </StackPanel>
-            <!--Border Name="connection_output_border" Background="Black" BorderThickness="0" BorderBrush="#F20A0A0A" Margin="226,5,40,5" AllowDrop="True" Drop="connection_output_border_Drop" DragEnter="connection_output_border_DragEnter" DragLeave="connection_output_border_DragLeave" CornerRadius="2">
-            <TextBlock Name="connection_output_name" Text="Default" Margin="5" FontSize="14" FontFamily="Segoe UI Semilight" Foreground="White" TextAlignment="Center" />
-        </Border-->
+            <StackPanel Grid.Column="0" Margin="0,5,0,5" Name="connection_output_stack" Width="140"  MinHeight="30"  VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
 
-            <!--Rectangle Width="30" Height="30" StrokeThickness="3" RadiusY="2" RadiusX="2" Stroke="Gray" Margin="360,0,0,0" /-->
-            <Rectangle Name="rAdd" Cursor="Hand" MouseUp="rAdd_MouseUp"  Width="14" Height="14" Margin="0,0,40,13" Fill="Gray" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource appbar_add}" Stretch="Fill" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
-            <Rectangle Name="rClear" Cursor="Hand" MouseUp="rClear_MouseUp"  Width="11" Height="11" Margin="0,0,13,14" Fill="Gray" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                <Rectangle.OpacityMask>
-                    <VisualBrush Visual="{StaticResource appbar_close}" Stretch="Fill" />
-                </Rectangle.OpacityMask>
-            </Rectangle>
+            <Button Grid.Column="1"
+            Name="rAdd" Cursor="Hand" Margin="10,0,0,0" Width="14" Height="14" Style="{x:Null}" Background="Transparent" BorderThickness="0" Click="rAdd_MouseUp">
+                <iconPacks:PackIconMaterial Kind="Plus" Width="14" Height="14" Foreground="{DynamicResource MahApps.Brushes.Gray3}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
+
+            <Button Grid.Column="2" Name="rClear" Cursor="Hand"  Margin="10,0,0,0" Width="14" Height="14" Style="{x:Null}" Background="Transparent" BorderThickness="0" Click="rClear_MouseUp">
+                <iconPacks:PackIconMaterial Kind="Close" Width="11" Height="11" Foreground="{DynamicResource MahApps.Brushes.Gray3}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Button>
         </Grid>
     </Grid>
 </UserControl>

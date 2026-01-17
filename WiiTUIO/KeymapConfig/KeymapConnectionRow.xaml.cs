@@ -230,7 +230,7 @@ namespace WiiTUIO
             }
         }
 
-        private void rClear_MouseUp(object sender, MouseButtonEventArgs e)
+        private void rClear_MouseUp(object sender, RoutedEventArgs e)
         {
             if (this.config.Stack.Count == 1)
             {
@@ -253,7 +253,7 @@ namespace WiiTUIO
             }
         }
 
-        private void rAdd_MouseUp(object sender, MouseButtonEventArgs e)
+        private void rAdd_MouseUp(object sender, RoutedEventArgs e)
         {
             this.config.addOutput(KeymapDatabase.Current.getDisableOutput());
             this.SetConfig(this.config);
