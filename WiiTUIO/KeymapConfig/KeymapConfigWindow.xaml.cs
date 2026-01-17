@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using ControlzEx.Theming;
 
 namespace WiiTUIO
 {
@@ -28,8 +29,9 @@ namespace WiiTUIO
         private int selectedWiimote = 0;
         private Keymap currentKeymap;
 
+        private Theme currentTheme;
+        private SolidColorBrush highlightBrush;
         private SolidColorBrush defaultBrush = new SolidColorBrush(Color.FromRgb(46, 46, 46));
-        private SolidColorBrush highlightBrush = new SolidColorBrush(Color.FromRgb(65, 177, 225));
 
         private HookApplicationViewModel hookAppVM;
 
@@ -52,18 +54,19 @@ namespace WiiTUIO
 
             InitializeComponent();
 
+            this.currentTheme = ThemeManager.Current.DetectTheme(this);
+
+            if (currentTheme != null) 
+                highlightBrush = currentTheme.Resources["MahApps.Brushes.Accent"] as SolidColorBrush;
+
+
             this.tbKeymapTitle.Text = this.tbKeymapTitle.Tag.ToString();
-            this.tbKeymapTitle.Foreground = new SolidColorBrush(Colors.Gray);
             this.tbOutputFilter.Text = this.tbOutputFilter.Tag.ToString();
-            this.tbOutputFilter.Foreground = new SolidColorBrush(Colors.Gray);
 
-
-            this.btnAll.IsEnabled = false;
             btnAllBorder.Background = highlightBrush;
 
             this.tbKeymapTitle.LostFocus += tbKeymapTitle_LostFocus;
             this.tbKeymapTitle.KeyUp += tbKeymapTitle_KeyUp;
-            this.tbKeymapTitle.Foreground = new SolidColorBrush(Colors.Black);
 
             hookAppItemsControl.DataContext = hookAppVM;
 
@@ -320,75 +323,50 @@ namespace WiiTUIO
 
         private void btnAll_Click(object sender, RoutedEventArgs e)
         {
-            btnAll.IsEnabled = false;
             btnAllBorder.Background = highlightBrush;
-            btn1.IsEnabled = true;
             btn1Border.Background = defaultBrush;
-            btn2.IsEnabled = true;
             btn2Border.Background = defaultBrush;
-            btn3.IsEnabled = true;
             btn3Border.Background = defaultBrush;
-            btn4.IsEnabled = true;
             btn4Border.Background = defaultBrush;
             this.selectWiimoteNumber(0);
         }
 
         private void btn1_Click(object sender, RoutedEventArgs e)
         {
-            btnAll.IsEnabled = true;
             btnAllBorder.Background = defaultBrush;
-            btn1.IsEnabled = false;
             btn1Border.Background = highlightBrush;
-            btn2.IsEnabled = true;
             btn2Border.Background = defaultBrush;
-            btn3.IsEnabled = true;
             btn3Border.Background = defaultBrush;
-            btn4.IsEnabled = true;
             btn4Border.Background = defaultBrush;
             this.selectWiimoteNumber(1);
         }
 
         private void btn2_Click(object sender, RoutedEventArgs e)
         {
-            btnAll.IsEnabled = true;
             btnAllBorder.Background = defaultBrush;
-            btn1.IsEnabled = true;
             btn1Border.Background = defaultBrush;
-            btn2.IsEnabled = false;
             btn2Border.Background = highlightBrush;
-            btn3.IsEnabled = true;
             btn3Border.Background = defaultBrush;
-            btn4.IsEnabled = true;
             btn4Border.Background = defaultBrush;
             this.selectWiimoteNumber(2);
         }
 
         private void btn3_Click(object sender, RoutedEventArgs e)
         {
-            btnAll.IsEnabled = true;
             btnAllBorder.Background = defaultBrush;
-            btn1.IsEnabled = true;
             btn1Border.Background = defaultBrush;
-            btn2.IsEnabled = true;
             btn2Border.Background = defaultBrush;
-            btn3.IsEnabled = false;
             btn3Border.Background = highlightBrush;
-            btn4.IsEnabled = true;
             btn4Border.Background = defaultBrush;
             this.selectWiimoteNumber(3);
         }
 
         private void btn4_Click(object sender, RoutedEventArgs e)
         {
-            btnAll.IsEnabled = true;
             btnAllBorder.Background = defaultBrush;
-            btn1.IsEnabled = true;
             btn1Border.Background = defaultBrush;
-            btn2.IsEnabled = true;
             btn2Border.Background = defaultBrush;
-            btn3.IsEnabled = true;
             btn3Border.Background = defaultBrush;
-            btn4.IsEnabled = false;
             btn4Border.Background = highlightBrush;
             this.selectWiimoteNumber(4);
         }
@@ -559,7 +537,7 @@ namespace WiiTUIO
             }
         }
 
-        private const string SEARCH_STRING_HELPTEXT = "Search string (process name or window title, e.g. example.exe)";
+        private const string SEARCH_STRING_HELPTEXT = "Process name or window title";
         private ObservableCollection<HookAppDataItem> searchStrings = new ObservableCollection<HookAppDataItem>();
         public ObservableCollection<HookAppDataItem> SearchStrings => searchStrings;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ControlzEx.Theming;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,13 +25,20 @@ namespace WiiTUIO
         private Keymap keymap;
 
         private SolidColorBrush defaultBrush = new SolidColorBrush(Color.FromRgb(46, 46, 46));
-        private SolidColorBrush highlightBrush = new SolidColorBrush(Color.FromRgb(65, 177, 225));
+        private SolidColorBrush highlightBrush;
+        private Theme currentTheme;
 
         public Action<Keymap> OnClick; //filename
 
         public KeymapRow(Keymap keymap, bool active, bool defaultk)
         {
             InitializeComponent();
+
+            this.currentTheme = ThemeManager.Current.DetectTheme(this);
+
+            if (currentTheme != null)
+                highlightBrush = currentTheme.Resources["MahApps.Brushes.Accent"] as SolidColorBrush;
+
             this.keymap = keymap;
             this.tbName.Text = keymap.getName();
 

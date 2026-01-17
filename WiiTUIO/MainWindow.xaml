@@ -8,18 +8,11 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Green.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatButton.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.AnimatedTabControl.xaml" />
                 <ResourceDictionary Source="/Resources/Icons.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
-    <Controls:MetroWindow.WindowCommands>
+    <Controls:MetroWindow.LeftWindowCommands>
         <Controls:WindowCommands>
             <Button Name="btnAbout" Content="about" Click="btnAbout_Click" />
             <Button Name="btnAppSettings" Click="btnAppSettings_Click">
@@ -36,7 +29,7 @@
                 </StackPanel>
             </Button>
         </Controls:WindowCommands>
-    </Controls:MetroWindow.WindowCommands>
+    </Controls:MetroWindow.LeftWindowCommands>
     <StackPanel Width="419">
         <StackPanel Name="mainPanel">
             <StackPanel Name="spErrorMsg" Background="#FFFF4138" MouseUp="spErrorMsg_MouseUp" Cursor="Hand">
