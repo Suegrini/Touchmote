@@ -106,15 +106,15 @@ namespace WiiTUIO.Provider
 
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", filename + ".wav");
 
-            if (AudioUtil.IsValid(filename)) // Check for valid file or convert file if necessary
+            if (AudioUtil.IsValid(filename, out long headerSize)) // Check for valid file or convert file if necessary
             {
                 using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
                     using (BinaryReader reader = new BinaryReader(fs))
                     {
-                        reader.BaseStream.Seek(44, SeekOrigin.Begin);   // Skip WAV header
+                        reader.BaseStream.Seek(headerSize, SeekOrigin.Begin);   // Skip WAV header
 
-                        byte[] soundData = reader.ReadBytes((int)(fs.Length - 44));
+                        byte[] soundData = reader.ReadBytes((int)(fs.Length - headerSize));
 
                         int maxBytes = (int)(this.Wiimote.WiimoteState.SpeakerState.SampleRate * (maxPlaybackTime / 1000.0) * 0.5);
                         if (soundData.Length > maxBytes)

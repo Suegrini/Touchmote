@@ -8,8 +8,10 @@ namespace WiiTUIO.DeviceUtils
     {
         private static readonly string[] audioExtensions = { ".wav", ".mp3", ".aac", ".ogg", ".flac" };
 
-        public static bool IsValid(string fileName)
+        public static bool IsValid(string fileName, out long headerSize)
         {
+            headerSize = 0;
+
             string baseFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", fileName);
 
             foreach (string extension in audioExtensions)
@@ -18,20 +20,28 @@ namespace WiiTUIO.DeviceUtils
 
                 if (File.Exists(filePath))
                 {
-                    if (extension == ".wav" && IsValidFormat(filePath))
+                    if (extension == ".wav" && IsValidFormat(filePath, out long size))
                     {
+                        headerSize = size;
                         return true;
                     }
 
-                    return ConvertToYamahaADPCM(baseFilePath, extension);
+                    if (ConvertToYamahaADPCM(baseFilePath, extension))
+                    {
+                        string convertedPath = baseFilePath + ".wav";
+                        return IsValidFormat(convertedPath, out headerSize); // re-validate converted file
+                    }
+
+                    return false;
                 }
             }
-
             return false;
         }
 
-        private static bool IsValidFormat(string filePath)
+        private static bool IsValidFormat(string filePath, out long headerSize)
         {
+            headerSize = 0;
+
             using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read)) using (BinaryReader reader = new BinaryReader(fs))
             { 
                 byte[] riff = reader.ReadBytes(4);
@@ -42,28 +52,45 @@ namespace WiiTUIO.DeviceUtils
                 byte[] wave = reader.ReadBytes(4);
                 if (System.Text.Encoding.ASCII.GetString(wave) != "WAVE")
                     return false;
-                
-                byte[] fmt = reader.ReadBytes(4);
-                if (System.Text.Encoding.ASCII.GetString(fmt) != "fmt ")
-                    return false;
-                reader.ReadInt32();
-                
-                short formatCode = reader.ReadInt16();
-                if (formatCode != 0x0020)
-                    return false;
 
-                short channels = reader.ReadInt16();
-                if (channels != 1)
-                    return false;
+                bool fmtValid = false;
 
-                int sampleRate = reader.ReadInt32();
-                if (sampleRate != 3000)
-                    return false;
-                reader.ReadBytes(6);
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                {
+                    string chunkId = new string(reader.ReadChars(4));
+                    int chunkSize = reader.ReadInt32();
 
-                short bitsPerSample = reader.ReadInt16();
+                    if (chunkId == "fmt ")
+                    {
+                        short formatCode = reader.ReadInt16();
+                        short channels = reader.ReadInt16();
+                        int sampleRate = reader.ReadInt32();
+                        reader.ReadBytes(6);
+                        short bitsPerSample = reader.ReadInt16();
 
-                return bitsPerSample == 4;
+                        fmtValid = (formatCode == 0x0020
+                            && channels == 1
+                            && sampleRate == 3000
+                            && bitsPerSample == 4);
+
+                        int remaining = chunkSize - 16;
+
+                        if (remaining > 0)
+                            reader.BaseStream.Seek(remaining, SeekOrigin.Current);
+                    }
+                    else if (chunkId == "data")
+                    {
+                        headerSize = reader.BaseStream.Position;
+                        break;
+                    }
+                    else
+                    {
+                        reader.BaseStream.Seek(chunkSize, SeekOrigin.Current);
+                        if (chunkSize % 2 == 1)
+                            reader.BaseStream.Seek(1, SeekOrigin.Current);
+                    }
+                }
+                return fmtValid && headerSize > 0;
             }
         }
 

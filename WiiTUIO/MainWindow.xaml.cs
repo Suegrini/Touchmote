@@ -207,8 +207,8 @@ namespace WiiTUIO
 
             this.commandListener = CommandListener.Default;
 
-            AudioUtil.IsValid("sound1");
-            AudioUtil.IsValid("sound2");
+            AudioUtil.IsValid("sound1", out _);
+            AudioUtil.IsValid("sound2", out _);
         }
 
         private void processChanged(ProcessChangedEvent obj)
