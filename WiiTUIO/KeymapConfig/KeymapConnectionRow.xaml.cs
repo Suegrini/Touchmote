@@ -54,7 +54,7 @@ namespace WiiTUIO
             }
 
             this.connection_input_config_border.Visibility = Visibility.Collapsed;
-            this.connection_input_config_closebutton.Visibility = Visibility.Hidden;
+
             if(this.input.Continous)
             {
                 this.deadzone_updown.Value = this.config.Deadzone;
@@ -63,7 +63,7 @@ namespace WiiTUIO
             }
             else
             {
-                this.connection_input_config_openbutton.Visibility = Visibility.Hidden;
+                this.connection_input_config_button.Visibility = Visibility.Hidden;
             }
             
 
@@ -259,22 +259,20 @@ namespace WiiTUIO
             this.SetConfig(this.config);
         }
 
-        private void connection_input_config_openbutton_MouseUp(object sender, MouseButtonEventArgs e)
+        private void connection_input_config_click(object sender, RoutedEventArgs e)
         {
-            this.connection_input_config_border.Visibility = Visibility.Visible;
-            this.connection_input_config_openbutton.Visibility = Visibility.Hidden;
-            this.connection_input_config_closebutton.Visibility = Visibility.Visible;
-        }
-
-        private void connection_input_config_closebutton_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            this.config.Deadzone = this.deadzone_updown.Value.Value;
-            this.config.Scale = this.scale_updown.Value.Value;
-            this.config.Threshold = this.threshold_updown.Value.Value;
-            this.SetConfig(this.config);
-            this.connection_input_config_border.Visibility = Visibility.Collapsed;
-            this.connection_input_config_openbutton.Visibility = Visibility.Visible;
-            this.connection_input_config_closebutton.Visibility = Visibility.Hidden;
+            if (this.connection_input_config_button.IsChecked == true)
+            {
+                this.connection_input_config_border.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                this.config.Deadzone = this.deadzone_updown.Value.Value;
+                this.config.Scale = this.scale_updown.Value.Value;
+                this.config.Threshold = this.threshold_updown.Value.Value;
+                this.SetConfig(this.config);
+                this.connection_input_config_border.Visibility = Visibility.Collapsed;
+            }
         }
 
     }
