@@ -70,7 +70,7 @@ namespace WiiTUIO.DeviceUtils
 
                         fmtValid = (formatCode == 0x0020
                             && channels == 1
-                            && sampleRate == 3000
+                            && sampleRate == 6000 //6000 since its the only sample rate that works
                             && bitsPerSample == 4);
 
                         int remaining = chunkSize - 16;
@@ -98,19 +98,33 @@ namespace WiiTUIO.DeviceUtils
         {
             string filePath = baseFilePath + extension;
             string outputPath = baseFilePath + ".wav";
+            string bakPath = null;
+
             if (extension == ".wav")
             {
-                File.Move(filePath, filePath + ".bak");
-                filePath += ".bak";
+                bakPath = filePath + ".bak";
+
+                if (File.Exists(bakPath))
+                    File.Delete(bakPath);
+
+                File.Move(filePath, bakPath);
+                filePath = bakPath;
             }
 
-            if (!Launcher.Launch(null, "ffmpeg", $"-i \"{filePath}\" -ar 3000 -ac 1 -c:a adpcm_yamaha \"{outputPath}\" -hide_banner", null))
+            if (!Launcher.Launch(null, "ffmpeg", $"-i \"{filePath}\" -ar 6000 -ac 1 -c:a adpcm_yamaha \"{outputPath}\" -hide_banner", null)) //6000 since its the only sample rate that works
             {
-                if (extension == ".wav") File.Move(filePath, baseFilePath + extension);
+                if (bakPath != null && File.Exists(bakPath))
+                    File.Move(bakPath, baseFilePath + extension);
+
                 return false;
             }
 
-            return File.Exists(outputPath) && new FileInfo(outputPath).Length > 0;
+            bool success = File.Exists(outputPath) && new FileInfo(outputPath).Length > 0;
+
+            if (success && bakPath != null && File.Exists(bakPath))
+                File.Delete(bakPath);
+
+            return success;
         }
     }
 }

@@ -291,7 +291,7 @@ namespace WiiTUIO.Provider
             wiimote.SetLEDs(id == 1, id == 2, id == 3, id == 4);
 
             wiimote.WiimoteState.SpeakerState.DataFormat = SpeakerDataFormat.ADPCM;
-            wiimote.WiimoteState.SpeakerState.SampleRate = 3000;
+            wiimote.WiimoteState.SpeakerState.SampleRate = 3000; //does nothing with current WiimoteLib, stuck at 6000
             wiimote.WiimoteState.SpeakerState.Volume = 0xFF;
             wiimote.EnableSpeaker();
 

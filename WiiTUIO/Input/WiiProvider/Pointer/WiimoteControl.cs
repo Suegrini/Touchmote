@@ -102,7 +102,7 @@ namespace WiiTUIO.Provider
                 return;
             }
 
-            int maxPlaybackTime = 3500; // Max playback time in milliseconds
+            //int maxPlaybackTime = 3500; // Max playback time in milliseconds
 
             string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", filename + ".wav");
 
@@ -116,9 +116,9 @@ namespace WiiTUIO.Provider
 
                         byte[] soundData = reader.ReadBytes((int)(fs.Length - headerSize));
 
-                        int maxBytes = (int)(this.Wiimote.WiimoteState.SpeakerState.SampleRate * (maxPlaybackTime / 1000.0) * 0.5);
-                        if (soundData.Length > maxBytes)
-                            Array.Resize(ref soundData, maxBytes);  // Truncate to max playback time
+                        //int maxBytes = (int)(this.Wiimote.WiimoteState.SpeakerState.SampleRate * (maxPlaybackTime / 1000.0) * 0.5);
+                        //if (soundData.Length > maxBytes)
+                        //    Array.Resize(ref soundData, maxBytes);  // Truncate to max playback time
 
                         this.Wiimote.StartPlayback(soundData);
                     }
